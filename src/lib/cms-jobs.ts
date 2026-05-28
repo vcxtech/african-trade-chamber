@@ -13,7 +13,7 @@ function mapDoc(doc: Record<string, unknown>): CareerJob {
     jobType: String(doc.jobType ?? 'Full-time'),
     category: String(doc.category ?? 'Leadership'),
     postedAt: normalizePostedAt(doc.postedAt),
-    applyUrl: String(doc.applyUrl ?? `/careers/${doc.slug}`),
+    applyUrl: String(doc.applyUrl ?? `/careers/${doc.slug}/apply`),
     summary: String(doc.summary ?? ''),
     roleHtml: doc.roleHtml ? String(doc.roleHtml) : undefined,
     responsibilitiesHtml: doc.responsibilitiesHtml ? String(doc.responsibilitiesHtml) : undefined,

@@ -57,4 +57,10 @@ export const defaultContactPage: ContactPageData = {
       url: 'https://www.youtube.com/channel/UClXYhsa3V-MllfWHnz2VGOQ',
     },
   ],
+  newsletterTitle: 'Newsletter Signup',
+  newsletterBody:
+    'Stay informed with ATC updates, trade insights, event announcements, and member news. Subscribe to our newsletter and receive curated content directly in your inbox.',
+  newsletterSubmitLabel: 'Subscribe',
+  newsletterSuccessMessage:
+    'Thank you for subscribing. You will receive our next newsletter soon.',
 }

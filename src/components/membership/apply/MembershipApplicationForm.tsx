@@ -12,6 +12,7 @@ import {
   Step7Success,
 } from '@/components/membership/apply/MembershipApplyFormFields'
 import { buildMailtoBody, validateFormStep } from '@/components/membership/apply/membership-apply-form-utils'
+import { submitForm } from '@/lib/form-submit'
 
 const TOTAL_STEPS = 6
 const NAVY = '#002740'
@@ -106,7 +107,7 @@ export function MembershipApplicationForm() {
     if (currentStep > 1) showStep(currentStep - 1)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const form = formRef.current
     if (!form || !validateFormStep(form, currentStep)) return
@@ -115,11 +116,22 @@ export function MembershipApplicationForm() {
     setConfirmEmail(email)
 
     const orgName = (form.querySelector('#orgName') as HTMLInputElement)?.value ?? 'Application'
-    const subject = `ATC Membership Application - ${orgName}`
     const body = buildMailtoBody(form)
-    window.location.href = `mailto:info@africantradechamber.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    const fd = new FormData(form)
+    const data = Object.fromEntries(fd.entries()) as Record<string, unknown>
+    data.summaryBody = body
 
-    showStep(7)
+    const result = await submitForm({
+      formType: 'membership',
+      email,
+      subject: `ATC Membership Application - ${orgName}`,
+      data,
+    })
+
+    if (result.ok) {
+      setSubmitted(true)
+      showStep(7)
+    }
   }
 
   return (

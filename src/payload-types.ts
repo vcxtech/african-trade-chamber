@@ -71,12 +71,14 @@ export interface Config {
     media: Media;
     pages: Page;
     news: News;
+    insights: Insight;
     jobs: Job;
     'hero-slides': HeroSlide;
     'hero-feature-cards': HeroFeatureCard;
     'membership-categories': MembershipCategory;
     'member-testimonials': MemberTestimonial;
     'team-members': TeamMember;
+    'form-submissions': FormSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,12 +90,14 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
+    insights: InsightsSelect<false> | InsightsSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
     'hero-slides': HeroSlidesSelect<false> | HeroSlidesSelect<true>;
     'hero-feature-cards': HeroFeatureCardsSelect<false> | HeroFeatureCardsSelect<true>;
     'membership-categories': MembershipCategoriesSelect<false> | MembershipCategoriesSelect<true>;
     'member-testimonials': MemberTestimonialsSelect<false> | MemberTestimonialsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -284,7 +288,7 @@ export interface News {
     };
     [k: string]: unknown;
   } | null;
-  category?: ('chamber' | 'member' | 'press') | null;
+  category?: ('chamber' | 'member' | 'press' | 'media' | 'newsletter') | null;
   featuredImage?: (number | null) | Media;
   /**
    * Remote image URL (e.g. imported from WordPress uploads)
@@ -297,6 +301,42 @@ export interface News {
   featured?: boolean | null;
   priority?: ('low' | 'medium' | 'high') | null;
   expiryDate?: string | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "insights".
+ */
+export interface Insight {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  category: 'trade-market-brief' | 'sector-report' | 'investment-snapshot' | 'policy-paper';
+  author?: string | null;
+  featuredImage?: (number | null) | Media;
+  /**
+   * Remote image URL (e.g. imported from WordPress uploads)
+   */
+  imageUrl?: string | null;
+  originalUrl?: string | null;
   publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -463,6 +503,39 @@ export interface TeamMember {
   createdAt: string;
 }
 /**
+ * Form submissions from the public website
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions".
+ */
+export interface FormSubmission {
+  id: number;
+  formType:
+    | 'contact'
+    | 'donate'
+    | 'volunteer'
+    | 'membership'
+    | 'service-request'
+    | 'newsletter'
+    | 'job-application'
+    | 'fellowship';
+  email?: string | null;
+  subject?: string | null;
+  payload:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  jobSlug?: string | null;
+  status?: ('new' | 'reviewed' | 'archived') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -503,6 +576,10 @@ export interface PayloadLockedDocument {
         value: number | News;
       } | null)
     | ({
+        relationTo: 'insights';
+        value: number | Insight;
+      } | null)
+    | ({
         relationTo: 'jobs';
         value: number | Job;
       } | null)
@@ -525,6 +602,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'team-members';
         value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'form-submissions';
+        value: number | FormSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -653,6 +734,24 @@ export interface NewsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "insights_select".
+ */
+export interface InsightsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  content?: T;
+  category?: T;
+  author?: T;
+  featuredImage?: T;
+  imageUrl?: T;
+  originalUrl?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs_select".
  */
 export interface JobsSelect<T extends boolean = true> {
@@ -768,6 +867,20 @@ export interface TeamMembersSelect<T extends boolean = true> {
   postDate?: T;
   sortOrder?: T;
   published?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions_select".
+ */
+export interface FormSubmissionsSelect<T extends boolean = true> {
+  formType?: T;
+  email?: T;
+  subject?: T;
+  payload?: T;
+  jobSlug?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1461,6 +1574,10 @@ export interface ContactPage {
         id?: string | null;
       }[]
     | null;
+  newsletterTitle: string;
+  newsletterBody: string;
+  newsletterSubmitLabel: string;
+  newsletterSuccessMessage: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2115,6 +2232,10 @@ export interface ContactPageSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  newsletterTitle?: T;
+  newsletterBody?: T;
+  newsletterSubmitLabel?: T;
+  newsletterSuccessMessage?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

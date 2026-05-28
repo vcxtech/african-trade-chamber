@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { SiteSearchModal } from '@/components/search/SiteSearchModal'
 import { SiteLogo } from '@/components/SiteLogo'
 import { SocialIcons } from '@/components/SocialIcons'
 import type { NavChild, NavItem, NavLink, SiteSettingsData, SocialLink } from '@/types/content'
@@ -46,15 +47,21 @@ function SearchIcon() {
 export function Header({ settings }: Props) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
 
   const utilityLinks = settings.utilityBarLinks?.length ? settings.utilityBarLinks : []
   const socialLinks = settings.socialLinks?.length ? settings.socialLinks : []
 
   const closeMobile = () => setMobileOpen(false)
+  const openSearch = () => {
+    setMobileOpen(false)
+    setSearchOpen(true)
+  }
 
   return (
     <header>
+      <SiteSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
       <div className="bg-atc-yellow text-atc-navy">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-end gap-x-1 gap-y-1 px-3 py-2 text-xs sm:gap-x-3 sm:px-6 sm:text-[13px]">
           <nav className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1" aria-label="Utility">
@@ -82,13 +89,23 @@ export function Header({ settings }: Props) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/news"
+            <button
+              type="button"
+              onClick={openSearch}
               className="hidden p-2 text-white transition hover:text-atc-yellow lg:inline-flex"
               aria-label="Search"
             >
               <SearchIcon />
-            </Link>
+            </button>
+
+            <button
+              type="button"
+              onClick={openSearch}
+              className="inline-flex h-10 w-10 items-center justify-center text-atc-yellow lg:hidden"
+              aria-label="Search"
+            >
+              <SearchIcon />
+            </button>
 
             <button
               type="button"

@@ -26,4 +26,8 @@ export type ContactPageData = {
   socialTitle: string
   socialIntro: string
   socialLinks: ContactSocialLink[]
+  newsletterTitle: string
+  newsletterBody: string
+  newsletterSubmitLabel: string
+  newsletterSuccessMessage: string
 }

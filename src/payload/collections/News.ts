@@ -18,6 +18,8 @@ export const News: CollectionConfig = {
         { label: 'Chamber News', value: 'chamber' },
         { label: 'Member News', value: 'member' },
         { label: 'Press Releases', value: 'press' },
+        { label: 'Media Coverage', value: 'media' },
+        { label: 'Newsletter Archive', value: 'newsletter' },
       ],
       defaultValue: 'chamber',
     },

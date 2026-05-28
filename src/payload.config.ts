@@ -9,6 +9,7 @@ import { Users } from './payload/collections/Users'
 import { Media } from './payload/collections/Media'
 import { Pages } from './payload/collections/Pages'
 import { News } from './payload/collections/News'
+import { Insights } from './payload/collections/Insights'
 import { Jobs } from './payload/collections/Jobs'
 import { HeroSlides } from './payload/collections/HeroSlides'
 import { HeroFeatureCards } from './payload/collections/HeroFeatureCards'
@@ -36,6 +37,7 @@ import { NewsListingPage } from './payload/globals/NewsListingPage'
 import { ContactPage } from './payload/globals/ContactPage'
 import { AboutPage } from './payload/globals/AboutPage'
 import { TeamMembers } from './payload/collections/TeamMembers'
+import { FormSubmissions } from './payload/collections/FormSubmissions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -69,12 +71,14 @@ export default buildConfig({
     Media,
     Pages,
     News,
+    Insights,
     Jobs,
     HeroSlides,
     HeroFeatureCards,
     MembershipCategories,
     MemberTestimonials,
     TeamMembers,
+    FormSubmissions,
   ],
   globals: [
     SiteSettings,

@@ -67,13 +67,13 @@ export const defaultSiteSettings: SiteSettingsData = {
 export const defaultHeroSlides: HeroSlide[] = [
   {
     id: '1',
-    title: 'Nigeria Extends Shea Export Ban to Drive Local Value Addition',
+    title: 'AfDB Backs $24.5m Clean Energy Drive in São Tomé and Príncipe',
     description:
-      'Nigeria has extended its ban on the export of raw shea nuts for another year, reinforcing efforts to expand domestic processing and capture greater value from one of its key agricultural commodities.',
+      'The African Development Bank Group has approved a $24.5 million grant to support a transformative clean energy programme in São Tomé and Príncipe, marking a major step toward reducing the country\'s dependence on fossil fuels and strengthening energy security. The funding, provided through the African Development Fund, anchors a broader $30 million investment under the Energy Transition, Efficiency, and Expansion Project (ETREEP), which aims to modernise the island nation\'s power infrastructure and expand access to reliable electricity.',
     ctaLabel: 'Read Full Story',
-    ctaUrl: '/news',
-    backgroundImageUrl: '/images/hero/slide-1-bg.webp',
-    sideImageUrl: '/images/hero/slide-1-side.png',
+    ctaUrl: '/news/afdb-backs-24-5m-clean-energy-drive-in-sao-tome-and-principe',
+    backgroundImageUrl: '/uploads/2025/11/photo-1497435334941-8c899ee9e8e9.jpg',
+    sideImageUrl: '/uploads/2026/04/Thursday-222-1024x421.webp',
     showSideImage: true,
     showApplyOnly: false,
   },

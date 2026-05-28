@@ -49,7 +49,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Engage with governments and regionals bodies to shape agribusiness-friendly policies and harmonized trade regulations under frameworks like the AfCFTA',
         imageUrl: img('Trade & Market Briefs.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/what-we-do',
+        buttonUrl: '/policy-government-engagement',
       },
       {
         title: 'Trade Mission & Expos',
@@ -57,7 +57,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Organize B2B and B2G engagements, trade fairs, and marker development mission to showcase African agricultural products globally.',
         imageUrl: img('Trade Mission & Expos.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/what-we-do',
+        buttonUrl: '/events/trade-missions',
       },
       {
         title: 'Investment Promotion',
@@ -65,7 +65,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Facilities partnership between agribusiness enterprise and investors, including private equity, development mission to showcase African agricultural products globally',
         imageUrl: img('Investment Promotion.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/what-we-do',
+        buttonUrl: '/investment-promotion',
       },
       {
         title: 'Capacity Building',
@@ -73,7 +73,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Delivers training, technical assistance and knowledge sharing platforms to strengthen skills, productivity and business operations',
         imageUrl: img('Capacity Building.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/what-we-do',
+        buttonUrl: '/capacity-building',
       },
     ],
   },
@@ -82,13 +82,13 @@ export const defaultHomepageSections: HomepageSectionsData = {
     headerDescription:
       "ATC's Industry Councils serve as platforms for focused dialogue, collaboration, and strategic action across key sectors. They bring together business leaders, experts, policymakers, and development actors to address sector-specific challenges, promote investment, and unlock trade opportunities across the continent.",
     headerButtonText: 'View all councils',
-    headerButtonUrl: '/councils',
+    headerButtonUrl: '/councils/industry',
     intro: {
       imageUrl: img('Industry council.jpg'),
       title: 'Industry Council',
       text: 'Our councils facilitate sector-specific collaboration, policy advocacy, and business networking to drive growth across Africa.',
       buttonText: 'View all councils',
-      buttonUrl: '/councils',
+      buttonUrl: '/councils/industry',
     },
     councils: [
       {
@@ -97,7 +97,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Supports agricultural transformation, value chain development, and food security through trade in agribusiness.',
         imageUrl: img('Agribusiness Council.avif'),
         buttonText: 'Learn more',
-        buttonUrl: '/councils',
+        buttonUrl: '/councils/agribusiness',
       },
       {
         title: 'Energy Council',
@@ -105,7 +105,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Advances trade, investment, and innovation in power, oil and gas, and renewable energy across Africa.',
         imageUrl: img('Energy Council.avif'),
         buttonText: 'Learn more',
-        buttonUrl: '/councils',
+        buttonUrl: '/councils/energy',
       },
       {
         title: 'Manufacturing Council',
@@ -113,7 +113,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Drives industrial competitiveness, export growth, and development of regional production networks in Africa.',
         imageUrl: img('Manufacturing Council.jpeg'),
         buttonText: 'Learn more',
-        buttonUrl: '/councils',
+        buttonUrl: '/councils/manufacturing',
       },
       {
         title: 'Technology & Innovation Council',
@@ -121,7 +121,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Promotes digital solutions, tech partnerships, and innovation to boost productivity and market access in Africa.',
         imageUrl: img('Technology & Innovation Council.avif'),
         buttonText: 'Learn more',
-        buttonUrl: '/councils',
+        buttonUrl: '/councils/technology-innovation',
       },
     ],
   },
@@ -131,7 +131,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
       description:
         "ATC's Cross-Sector Councils address key development priorities and cross-cutting trade issues. These councils offer targeted support, advocacy, and programming for underrepresented groups across the trade ecosystem.",
       buttonText: 'Learn more',
-      buttonUrl: '/councils',
+      buttonUrl: '/councils/cross-sector',
     },
     councils: [
       {
@@ -140,7 +140,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Shaping trade through evidence-based research and policy advocacy.',
         imageUrl: img('Research & Policy Council.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/councils',
+        buttonUrl: '/councils/research-policy',
       },
       {
         title: 'Young Entrepreneurs Council',
@@ -148,7 +148,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Igniting the future of Africa through Youth-Led Innovation and Entrepreneurship',
         imageUrl: img('Young Entrepreneurs Council.jpeg'),
         buttonText: 'Learn more',
-        buttonUrl: '/councils',
+        buttonUrl: '/councils/young-entrepreneurs',
       },
       {
         title: 'Women Entrepreneurs Council',
@@ -156,7 +156,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Championing women-led enterprises through finance, markets, mentorship, and policy advocacy.',
         imageUrl: img('Women Entrepreneurs Council.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/councils',
+        buttonUrl: '/councils/women-entrepreneurs',
       },
     ],
   },
@@ -165,7 +165,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
     sectionDescription:
       'Joining the African Trade Chamber connects your business to a powerful ecosystem of enterprises, institutions, and decision-makers committed to advancing trade and investment across Africa and global markets.',
     sectionCtaText: 'Apply for membership',
-    sectionCtaUrl: '/membership',
+    sectionCtaUrl: '/membership/apply',
     cards: [
       {
         title: 'Membership Benefits',
@@ -173,7 +173,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Access trade facilitation services, business matchmaking, investment promotion, policy dialogues, visibility opportunities, training, and eligibility for the Africa Trade Awards.',
         imageUrl: img('Membership Benefits.jpg'),
         buttonText: 'Explore Benefits',
-        buttonUrl: '/membership',
+        buttonUrl: '/membership/why-join',
       },
       {
         title: 'Membership Categories',
@@ -181,7 +181,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           "Choose from Premier, Standard, Emerging Corporate, SME, Institutional, or Professional membership tiers, tailored to your organization's size and goals.",
         imageUrl: img('Membership Categories.jpg'),
         buttonText: 'View Categories',
-        buttonUrl: '/membership',
+        buttonUrl: '/membership/categories',
       },
       {
         title: 'Partnership Opportunities',
@@ -206,7 +206,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Concise, country-specific briefs that offer practical intelligence on trade trends, regulatory updates, and market entry strategies.',
         imageUrl: img('Trade & Market Briefs.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/insights',
+        buttonUrl: '/insights/trade-market-briefs',
       },
       {
         title: 'Sector Reports',
@@ -214,7 +214,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'In-depth studies of strategic sectors such as agribusiness, energy, manufacturing, and technology across African markets.',
         imageUrl: img('Sector Reports.avif'),
         buttonText: 'Learn more',
-        buttonUrl: '/insights',
+        buttonUrl: '/insights/sector-reports',
       },
       {
         title: 'Investment Snapshots',
@@ -222,7 +222,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Visual summaries profiling investment hotspots, active funds, and sector attractiveness across the continent.',
         imageUrl: img('Investment Snapshots.jpg'),
         buttonText: 'Learn more',
-        buttonUrl: '/insights',
+        buttonUrl: '/insights/investment-landscape-snapshots',
       },
     ],
   },
@@ -313,7 +313,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Read stories and announcements from ATC members, including business expansions, new ventures, and cross-border partnerships.',
         imageUrl: img('Member News.webp'),
         buttonText: 'Read Member News',
-        buttonUrl: '/news/member',
+        buttonUrl: '/news?category=member',
       },
       {
         title: 'Press Releases',
@@ -321,7 +321,7 @@ export const defaultHomepageSections: HomepageSectionsData = {
           'Access official ATC statements on major initiatives, partnerships, and events.',
         imageUrl: img('Press Releases.jpg'),
         buttonText: 'View Releases',
-        buttonUrl: '/news/press',
+        buttonUrl: '/news?category=press',
       },
     ],
   },

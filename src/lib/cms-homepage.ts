@@ -11,6 +11,11 @@ import type {
   WwdHomepageData,
 } from '@/types/homepage'
 
+function strOrFallback(value?: string | null, fallback?: string): string | undefined {
+  const trimmed = value?.trim()
+  return trimmed || fallback
+}
+
 function mapCard(
   row: {
     title?: string | null
@@ -22,11 +27,11 @@ function mapCard(
   fallback?: HomepageCard,
 ): HomepageCard {
   return {
-    title: row.title || fallback?.title || '',
-    description: row.description || fallback?.description || undefined,
+    title: strOrFallback(row.title, fallback?.title) || '',
+    description: strOrFallback(row.description, fallback?.description),
     imageUrl: resolveImageUrl(row.imageUrl ?? undefined, fallback?.imageUrl),
-    buttonText: row.buttonText || fallback?.buttonText || undefined,
-    buttonUrl: row.buttonUrl || fallback?.buttonUrl || undefined,
+    buttonText: strOrFallback(row.buttonText, fallback?.buttonText),
+    buttonUrl: strOrFallback(row.buttonUrl, fallback?.buttonUrl),
   }
 }
 
@@ -40,8 +45,8 @@ function mapThreeCardSection(
   return {
     sectionTitle: (global.sectionTitle as string) || fallback.sectionTitle,
     sectionDescription: (global.sectionDescription as string) || fallback.sectionDescription,
-    sectionCtaText: (global.sectionCtaText as string) || fallback.sectionCtaText,
-    sectionCtaUrl: (global.sectionCtaUrl as string) || fallback.sectionCtaUrl,
+    sectionCtaText: strOrFallback(global.sectionCtaText as string, fallback.sectionCtaText),
+    sectionCtaUrl: strOrFallback(global.sectionCtaUrl as string, fallback.sectionCtaUrl),
     cards: cards.length ? cards : fallback.cards,
   }
 }
@@ -84,12 +89,12 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
     ])
 
     const featureCards: HeroFeatureCard[] = featureResult.docs?.length
-      ? featureResult.docs.map((doc: PayloadAny) => ({
+      ? featureResult.docs.map((doc: PayloadAny, i: number) => ({
           id: String(doc.id),
           title: doc.title,
           description: doc.description,
-          linkText: doc.linkText || 'Learn more',
-          linkUrl: doc.linkUrl,
+          linkText: strOrFallback(doc.linkText, fallback.featureCards[i]?.linkText) || 'Learn more',
+          linkUrl: strOrFallback(doc.linkUrl, fallback.featureCards[i]?.linkUrl) || '/about',
         }))
       : fallback.featureCards
 
@@ -127,17 +132,27 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
       ? {
           headerTitle: industryGlobal.headerTitle,
           headerDescription: industryGlobal.headerDescription || '',
-          headerButtonText: industryGlobal.headerButtonText || '',
-          headerButtonUrl: industryGlobal.headerButtonUrl || '',
+          headerButtonText:
+            strOrFallback(industryGlobal.headerButtonText, fallback.industryCouncils.headerButtonText) ||
+            '',
+          headerButtonUrl:
+            strOrFallback(industryGlobal.headerButtonUrl, fallback.industryCouncils.headerButtonUrl) ||
+            '',
           intro: {
             imageUrl: resolveImageUrl(
               industryGlobal.intro?.imageUrl,
               fallback.industryCouncils.intro.imageUrl,
             ),
-            title: industryGlobal.intro?.title || undefined,
-            text: industryGlobal.intro?.text || undefined,
-            buttonText: industryGlobal.intro?.buttonText || undefined,
-            buttonUrl: industryGlobal.intro?.buttonUrl || undefined,
+            title: strOrFallback(industryGlobal.intro?.title, fallback.industryCouncils.intro.title),
+            text: strOrFallback(industryGlobal.intro?.text, fallback.industryCouncils.intro.text),
+            buttonText: strOrFallback(
+              industryGlobal.intro?.buttonText,
+              fallback.industryCouncils.intro.buttonText,
+            ),
+            buttonUrl: strOrFallback(
+              industryGlobal.intro?.buttonUrl,
+              fallback.industryCouncils.intro.buttonUrl,
+            ),
           },
           councils:
             industryGlobal.councils?.map((c: PayloadAny, i: number) =>

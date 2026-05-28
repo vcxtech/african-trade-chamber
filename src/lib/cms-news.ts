@@ -87,6 +87,7 @@ export type GetNewsArticlesPageOptions = {
   page?: number
   limit?: number
   category?: NewsCategory
+  excludeCategories?: NewsCategory[]
 }
 
 const emptyPage: NewsArticlesPage = {
@@ -101,17 +102,25 @@ const emptyPage: NewsArticlesPage = {
 export async function getNewsArticlesPage(
   options: GetNewsArticlesPageOptions = {},
 ): Promise<NewsArticlesPage> {
-  const { page = 1, limit = NEWS_PER_PAGE, category } = options
+  const { page = 1, limit = NEWS_PER_PAGE, category, excludeCategories } = options
   try {
     const payload = await getPayloadClient()
     if (!payload) return emptyPage
+
+    const where =
+      category
+        ? { category: { equals: category } }
+        : excludeCategories?.length
+          ? { category: { not_in: excludeCategories } }
+          : undefined
+
     const result = await payload.find({
       collection: 'news',
       sort: '-publishedAt',
       page,
       limit,
       depth: 1,
-      ...(category ? { where: { category: { equals: category } } } : {}),
+      ...(where ? { where } : {}),
     })
     return {
       articles: result.docs.map((doc) => mapDoc(doc as unknown as Record<string, unknown>)),

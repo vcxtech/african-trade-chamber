@@ -59,3 +59,18 @@ export async function getPartnershipsPage(): Promise<PartnershipsPageData> {
     return fallback
   }
 }
+
+export async function getPartnershipListCardById(
+  id: string,
+): Promise<PartnershipListCard | null> {
+  const page = await getPartnershipsPage()
+  const card = page.listCards.find((c) => c.id === id)
+  return card ?? null
+}
+
+export async function getPartnershipGetStarted(): Promise<
+  PartnershipsPageData['getStarted'] | null
+> {
+  const page = await getPartnershipsPage()
+  return page.getStarted ?? null
+}

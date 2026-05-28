@@ -10,9 +10,16 @@ import type { NewsArticle } from '@/types/news-article'
 type Props = {
   articles: NewsArticle[]
   initialCategory: string
+  hideCategoryFilter?: boolean
+  emptyMessage?: string
 }
 
-export function NewsListSection({ articles, initialCategory }: Props) {
+export function NewsListSection({
+  articles,
+  initialCategory,
+  hideCategoryFilter = false,
+  emptyMessage,
+}: Props) {
   const router = useRouter()
   const [search, setSearch] = useState('')
 
@@ -38,25 +45,27 @@ export function NewsListSection({ articles, initialCategory }: Props) {
   return (
     <section className="news-list-container" aria-label="News articles">
       <div className="mb-6 flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:flex-wrap md:items-end">
-        <div className="min-w-[200px] flex-1">
-          <label htmlFor="category-filter" className="mb-1 block text-sm font-semibold text-[#002740]">
-            Filter by Category:
-          </label>
-          <select
-            id="category-filter"
-            value={initialCategory}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-          >
-            <option value="">All Categories</option>
-            {NEWS_CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="min-w-[200px] flex-[2]">
+        {!hideCategoryFilter ? (
+          <div className="min-w-[200px] flex-1">
+            <label htmlFor="category-filter" className="mb-1 block text-sm font-semibold text-[#002740]">
+              Filter by Category:
+            </label>
+            <select
+              id="category-filter"
+              value={initialCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+            >
+              <option value="">All Categories</option>
+              {NEWS_CATEGORIES.filter((c) => !['media', 'newsletter'].includes(c.value)).map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
+        <div className={`min-w-[200px] ${hideCategoryFilter ? 'flex-1' : 'flex-[2]'}`}>
           <label htmlFor="news-search" className="mb-1 block text-sm font-semibold text-[#002740]">
             Search News:
           </label>
@@ -73,11 +82,15 @@ export function NewsListSection({ articles, initialCategory }: Props) {
 
       {articles.length === 0 ? (
         <p className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
-          No news articles yet. Add posts in{' '}
-          <Link href="/admin" className="font-semibold text-[#002740] underline">
-            admin
-          </Link>{' '}
-          or import from WordPress with <code className="text-sm">npm run migrate:wp</code>.
+          {emptyMessage ?? (
+            <>
+              No news articles yet. Add posts in{' '}
+              <Link href="/admin" className="font-semibold text-[#002740] underline">
+                admin
+              </Link>{' '}
+              or import from WordPress with <code className="text-sm">npm run migrate:news</code>.
+            </>
+          )}
         </p>
       ) : filtered.length === 0 ? (
         <p className="rounded-lg border border-slate-200 bg-white p-6 text-center text-slate-600">

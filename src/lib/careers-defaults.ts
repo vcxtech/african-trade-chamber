@@ -32,7 +32,7 @@ function job(
     jobType: 'Full-time',
     category: 'Leadership',
     postedAt,
-    applyUrl: `/careers/${slug}`,
+    applyUrl: `/careers/${slug}/apply`,
     summary,
     aboutHtml: ABOUT_ATC,
     requirementsHtml: STANDARD_REQUIREMENTS,

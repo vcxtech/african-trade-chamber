@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import { submitForm } from '@/lib/form-submit'
+
 type Props = { financeEmail: string }
 
 const DONOR_TYPES = [
@@ -11,21 +14,31 @@ const DONOR_TYPES = [
 ]
 
 export function DonateForm({ financeEmail }: Props) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setSubmitting(true)
+    setError(null)
     const fd = new FormData(e.currentTarget)
-    const body = [
-      'ATC DONATION REQUEST',
-      '',
-      `Name: ${fd.get('donor_name')}`,
-      `Email: ${fd.get('donor_email')}`,
-      `Phone: ${fd.get('donor_phone') || 'N/A'}`,
-      `Donor type: ${fd.get('donor_type') || 'N/A'}`,
-      `Amount (GHS): ${fd.get('amount')}`,
-      `Message: ${fd.get('message') || 'N/A'}`,
-    ].join('\n')
-    const subject = encodeURIComponent('ATC Donation - ' + fd.get('donor_name'))
-    window.location.href = `mailto:${financeEmail}?subject=${subject}&body=${encodeURIComponent(body)}`
+    const data = Object.fromEntries(fd.entries()) as Record<string, unknown>
+
+    const result = await submitForm({
+      formType: 'donate',
+      email: String(fd.get('donor_email') ?? ''),
+      subject: `ATC Donation - ${fd.get('donor_name')}`,
+      data: { ...data, notifyEmail: financeEmail },
+    })
+
+    setSubmitting(false)
+    if (result.ok) {
+      setSubmitted(true)
+      e.currentTarget.reset()
+    } else {
+      setError(result.error ?? 'Submission failed')
+    }
   }
 
   const inputClass =
@@ -38,6 +51,11 @@ export function DonateForm({ financeEmail }: Props) {
       className="mx-auto max-w-xl rounded-xl border border-[#e7eef9] bg-white p-6 shadow-[0_10px_20px_rgba(2,6,23,0.08)]"
     >
       <h3 className="mb-5 text-xl font-bold text-[#002740]">Make a Donation</h3>
+      {submitted ? (
+        <p className="rounded-lg bg-green-50 px-4 py-3 text-green-800">Thank you for your donation request. Our team will follow up shortly.</p>
+      ) : (
+      <>
+      {error ? <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
       <div className="space-y-4">
         <div>
           <label htmlFor="donor_name" className="mb-1 block text-sm font-semibold">
@@ -93,11 +111,14 @@ export function DonateForm({ financeEmail }: Props) {
         </div>
         <button
           type="submit"
-          className="w-full rounded-full border-2 border-[#002740] bg-[#002740] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white hover:text-[#002740]"
+          disabled={submitting}
+          className="w-full rounded-full border-2 border-[#002740] bg-[#002740] px-8 py-3.5 text-base font-bold text-white transition-colors hover:bg-white hover:text-[#002740] disabled:opacity-60"
         >
-          Donate Now
+          {submitting ? 'Submitting…' : 'Donate Now'}
         </button>
       </div>
+      </>
+      )}
     </form>
   )
 }

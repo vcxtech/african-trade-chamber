@@ -1,4 +1,4 @@
-export type NewsCategory = 'chamber' | 'member' | 'press'
+export type NewsCategory = 'chamber' | 'member' | 'press' | 'media' | 'newsletter'
 
 export type NewsArticle = {
   id: string

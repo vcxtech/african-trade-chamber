@@ -1,4 +1,5 @@
 import { withPayload } from '@payloadcms/next/withPayload'
+import { wpRedirects } from './redirects/wp-redirects.mjs'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -212,6 +213,237 @@ const nextConfig = {
         destination: '/events/sponsorship',
         permanent: true,
       },
+      {
+        source: '/agribusiness-industry-council',
+        destination: '/councils/agribusiness',
+        permanent: true,
+      },
+      {
+        source: '/agribusiness-industry-council/',
+        destination: '/councils/agribusiness',
+        permanent: true,
+      },
+      {
+        source: '/energy-council',
+        destination: '/councils/energy',
+        permanent: true,
+      },
+      {
+        source: '/energy-council/',
+        destination: '/councils/energy',
+        permanent: true,
+      },
+      {
+        source: '/manufacturing-council',
+        destination: '/councils/manufacturing',
+        permanent: true,
+      },
+      {
+        source: '/manufacturing-council/',
+        destination: '/councils/manufacturing',
+        permanent: true,
+      },
+      {
+        source: '/trade-finance-council',
+        destination: '/councils/trade-finance',
+        permanent: true,
+      },
+      {
+        source: '/trade-finance-council/',
+        destination: '/councils/trade-finance',
+        permanent: true,
+      },
+      {
+        source: '/transport-logistics-council',
+        destination: '/councils/transport-logistics',
+        permanent: true,
+      },
+      {
+        source: '/transport-logistics-council/',
+        destination: '/councils/transport-logistics',
+        permanent: true,
+      },
+      {
+        source: '/mining-extractives-council',
+        destination: '/councils/mining-extractives',
+        permanent: true,
+      },
+      {
+        source: '/mining-extractives-council/',
+        destination: '/councils/mining-extractives',
+        permanent: true,
+      },
+      {
+        source: '/healthcare-council',
+        destination: '/councils/healthcare',
+        permanent: true,
+      },
+      {
+        source: '/healthcare-council/',
+        destination: '/councils/healthcare',
+        permanent: true,
+      },
+      {
+        source: '/tourism-hospitality-council',
+        destination: '/councils/tourism-hospitality',
+        permanent: true,
+      },
+      {
+        source: '/tourism-hospitality-council/',
+        destination: '/councils/tourism-hospitality',
+        permanent: true,
+      },
+      {
+        source: '/creatives-council',
+        destination: '/councils/creatives',
+        permanent: true,
+      },
+      {
+        source: '/creatives-council/',
+        destination: '/councils/creatives',
+        permanent: true,
+      },
+      {
+        source: '/infrastructure-development-council',
+        destination: '/councils/infrastructure-development',
+        permanent: true,
+      },
+      {
+        source: '/infrastructure-development-council/',
+        destination: '/councils/infrastructure-development',
+        permanent: true,
+      },
+      {
+        source: '/customs-council',
+        destination: '/councils/customs',
+        permanent: true,
+      },
+      {
+        source: '/customs-council/',
+        destination: '/councils/customs',
+        permanent: true,
+      },
+      {
+        source: '/professional-services-council',
+        destination: '/councils/professional-services',
+        permanent: true,
+      },
+      {
+        source: '/professional-services-council/',
+        destination: '/councils/professional-services',
+        permanent: true,
+      },
+      {
+        source: '/technology-innovation-council',
+        destination: '/councils/technology-innovation',
+        permanent: true,
+      },
+      {
+        source: '/technology-innovation-council/',
+        destination: '/councils/technology-innovation',
+        permanent: true,
+      },
+      {
+        source: '/research-policy-council',
+        destination: '/councils/research-policy',
+        permanent: true,
+      },
+      {
+        source: '/research-policy-council/',
+        destination: '/councils/research-policy',
+        permanent: true,
+      },
+      {
+        source: '/women-entrepreneurs-council',
+        destination: '/councils/women-entrepreneurs',
+        permanent: true,
+      },
+      {
+        source: '/women-entrepreneurs-council/',
+        destination: '/councils/women-entrepreneurs',
+        permanent: true,
+      },
+      {
+        source: '/young-entrepreneurs-council',
+        destination: '/councils/young-entrepreneurs',
+        permanent: true,
+      },
+      {
+        source: '/young-entrepreneurs-council/',
+        destination: '/councils/young-entrepreneurs',
+        permanent: true,
+      },
+      {
+        source: '/sme-council',
+        destination: '/councils/sme',
+        permanent: true,
+      },
+      {
+        source: '/sme-council/',
+        destination: '/councils/sme',
+        permanent: true,
+      },
+      {
+        source: '/trade-market-briefs',
+        destination: '/insights/trade-market-briefs',
+        permanent: true,
+      },
+      {
+        source: '/trade-market-briefs/',
+        destination: '/insights/trade-market-briefs',
+        permanent: true,
+      },
+      {
+        source: '/sector-reports',
+        destination: '/insights/sector-reports',
+        permanent: true,
+      },
+      {
+        source: '/sector-reports/',
+        destination: '/insights/sector-reports',
+        permanent: true,
+      },
+      {
+        source: '/investment-landscape-snapshots',
+        destination: '/insights/investment-landscape-snapshots',
+        permanent: true,
+      },
+      {
+        source: '/investment-landscape-snapshots/',
+        destination: '/insights/investment-landscape-snapshots',
+        permanent: true,
+      },
+      {
+        source: '/policy-advocacy',
+        destination: '/insights/policy-papers',
+        permanent: true,
+      },
+      {
+        source: '/policy-advocacy/',
+        destination: '/insights/policy-papers',
+        permanent: true,
+      },
+      {
+        source: '/newsletter-content',
+        destination: '/newsletter-archive',
+        permanent: true,
+      },
+      {
+        source: '/newsletter-content/',
+        destination: '/newsletter-archive',
+        permanent: true,
+      },
+      {
+        source: '/sector-report-on-agribusiness-in-ghana',
+        destination: '/insights/sector-reports/sector-report-on-agribusiness-in-ghana',
+        permanent: true,
+      },
+      {
+        source: '/sector-report-on-agribusiness-in-ghana/',
+        destination: '/insights/sector-reports/sector-report-on-agribusiness-in-ghana',
+        permanent: true,
+      },
+      ...wpRedirects,
     ]
   },
 }

@@ -1,6 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { AFRICAN_COUNTRIES } from '@/lib/membership-apply-data'
+import { submitForm } from '@/lib/form-submit'
 
 const ROLE_OPTIONS = [
   'Event Support',
@@ -13,33 +15,46 @@ const ROLE_OPTIONS = [
 type Props = { formEmail: string; submitLabel: string }
 
 export function VolunteerForm({ formEmail, submitLabel }: Props) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setSubmitting(true)
+    setError(null)
     const fd = new FormData(e.currentTarget)
-    const roles = fd.getAll('roles').join(', ')
-    const body = [
-      'ATC VOLUNTEER APPLICATION',
-      '',
-      `Full Name: ${fd.get('fullName')}`,
-      `Email: ${fd.get('email')}`,
-      `Phone: ${fd.get('phone') || 'N/A'}`,
-      `Country: ${fd.get('country')}`,
-      `Occupation: ${fd.get('status')}`,
-      `Expertise: ${fd.get('expertise') || 'N/A'}`,
-      `Languages: ${fd.get('languages') || 'N/A'}`,
-      `Preferred roles: ${roles || 'N/A'}`,
-      `Availability (hrs/week): ${fd.get('availability') || 'N/A'}`,
-      `Duration: ${fd.get('duration') || 'N/A'}`,
-      `Motivation: ${fd.get('motivation')}`,
-    ].join('\n')
-    window.location.href = `mailto:${formEmail}?subject=${encodeURIComponent('ATC Volunteer Application - ' + fd.get('fullName'))}&body=${encodeURIComponent(body)}`
+    const data = Object.fromEntries(fd.entries()) as Record<string, unknown>
+    data.roles = fd.getAll('roles').map(String)
+
+    const result = await submitForm({
+      formType: 'volunteer',
+      email: String(fd.get('email') ?? ''),
+      subject: `ATC Volunteer Application - ${fd.get('fullName')}`,
+      data: { ...data, notifyEmail: formEmail },
+    })
+
+    setSubmitting(false)
+    if (result.ok) {
+      setSubmitted(true)
+      e.currentTarget.reset()
+    } else {
+      setError(result.error ?? 'Submission failed')
+    }
   }
 
   const inputClass =
     'w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:border-[#002740] focus:outline-none focus:ring-2 focus:ring-[#002740]/15'
 
   return (
+    <>
+    {submitted ? (
+      <p className="rounded-xl border border-green-200 bg-green-50 p-6 text-green-800">
+        Thank you for your volunteer application. We will be in touch.
+      </p>
+    ) : (
     <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      {error ? <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
       <h3 className="mb-2 text-lg font-bold text-[#002740]">Personal Information</h3>
       <div className="mb-6 grid gap-4 sm:grid-cols-2">
         <div>
@@ -114,10 +129,13 @@ export function VolunteerForm({ formEmail, submitLabel }: Props) {
       </div>
       <button
         type="submit"
-        className="w-full rounded-lg bg-[#002740] px-6 py-3 font-bold text-white hover:bg-[#001a2e]"
+        disabled={submitting}
+        className="w-full rounded-lg bg-[#002740] px-6 py-3 font-bold text-white hover:bg-[#001a2e] disabled:opacity-60"
       >
-        {submitLabel}
+        {submitting ? 'Submitting…' : submitLabel}
       </button>
     </form>
+    )}
+    </>
   )
 }

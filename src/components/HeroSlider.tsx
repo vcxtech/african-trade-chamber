@@ -11,11 +11,20 @@ type Props = {
 }
 
 function HeroCta({ href, children }: { href: string; children: ReactNode }) {
+  const className =
+    'group inline-flex items-center rounded bg-atc-navy/60 px-6 py-3 text-base font-semibold text-atc-yellow backdrop-blur-sm transition hover:bg-atc-yellow hover:text-atc-navy'
+
+  if (href.startsWith('http')) {
+    return (
+      <a href={href} className={className} target="_blank" rel="noopener noreferrer">
+        {children}
+        <span className="ml-2 text-xl transition-transform group-hover:translate-x-1">→</span>
+      </a>
+    )
+  }
+
   return (
-    <Link
-      href={href}
-      className="group inline-flex items-center rounded bg-atc-navy/60 px-6 py-3 text-base font-semibold text-atc-yellow backdrop-blur-sm transition hover:bg-atc-yellow hover:text-atc-navy"
-    >
+    <Link href={href} className={className}>
       {children}
       <span className="ml-2 text-xl transition-transform group-hover:translate-x-1">→</span>
     </Link>

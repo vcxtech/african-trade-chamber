@@ -46,6 +46,14 @@ export async function getContactPage(): Promise<ContactPageData> {
       socialTitle: String(raw.socialTitle ?? fallback.socialTitle),
       socialIntro: String(raw.socialIntro ?? fallback.socialIntro),
       socialLinks: socialRaw.length ? socialRaw : fallback.socialLinks,
+      newsletterTitle: String(raw.newsletterTitle ?? fallback.newsletterTitle),
+      newsletterBody: String(raw.newsletterBody ?? fallback.newsletterBody),
+      newsletterSubmitLabel: String(
+        raw.newsletterSubmitLabel ?? fallback.newsletterSubmitLabel,
+      ),
+      newsletterSuccessMessage: String(
+        raw.newsletterSuccessMessage ?? fallback.newsletterSuccessMessage,
+      ),
     }
   } catch {
     return fallback

@@ -8,14 +8,19 @@ type Props = {
   category?: NewsCategory
   hasNextPage: boolean
   hasPrevPage: boolean
+  basePath?: string
 }
 
-export function buildNewsListHref(page: number, category?: NewsCategory): string {
+export function buildNewsListHref(
+  page: number,
+  category?: NewsCategory,
+  basePath = '/news',
+): string {
   const params = new URLSearchParams()
-  if (category) params.set('category', category)
+  if (basePath === '/news' && category) params.set('category', category)
   if (page > 1) params.set('page', String(page))
   const q = params.toString()
-  return q ? `/news?${q}` : '/news'
+  return q ? `${basePath}?${q}` : basePath
 }
 
 function pageNumbers(current: number, total: number): number[] {
@@ -31,6 +36,7 @@ export function NewsPagination({
   category,
   hasNextPage,
   hasPrevPage,
+  basePath = '/news',
 }: Props) {
   if (totalPages <= 1) return null
 
@@ -48,7 +54,7 @@ export function NewsPagination({
         <li>
           {hasPrevPage ? (
             <Link
-              href={buildNewsListHref(page - 1, category)}
+              href={buildNewsListHref(page - 1, category, basePath)}
               className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#002740] hover:bg-slate-50"
             >
               Previous
@@ -74,7 +80,7 @@ export function NewsPagination({
                 </span>
               ) : (
                 <Link
-                  href={buildNewsListHref(p, category)}
+                  href={buildNewsListHref(p, category, basePath)}
                   className="flex h-10 min-w-10 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-[#002740] hover:bg-slate-50"
                 >
                   {p}
@@ -86,7 +92,7 @@ export function NewsPagination({
         <li>
           {hasNextPage ? (
             <Link
-              href={buildNewsListHref(page + 1, category)}
+              href={buildNewsListHref(page + 1, category, basePath)}
               className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#002740] hover:bg-slate-50"
             >
               Next

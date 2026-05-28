@@ -37,5 +37,9 @@ export const ContactPage: GlobalConfig = {
         { name: 'url', type: 'text', required: true },
       ],
     },
+    { name: 'newsletterTitle', type: 'text', required: true },
+    { name: 'newsletterBody', type: 'textarea', required: true },
+    { name: 'newsletterSubmitLabel', type: 'text', required: true },
+    { name: 'newsletterSuccessMessage', type: 'textarea', required: true },
   ],
 }

@@ -12,11 +12,15 @@ Optional explicit path:
 npm run migrate:news -- data/africantradechamber.WordPress.2026-05-26.xml
 ```
 
-Then run:
+Then run (after `npm run seed` if you use defaults — **run migrations after seed** so insight seed does not overwrite imported posts):
 
 ```bash
 docker compose up -d postgres
-npm run migrate:news
+npm run seed
+npm run migrate:news -- data/africantradechamber.WordPress.2026-05-26.xml
+npm run migrate:insights -- data/africantradechamber.WordPress.2026-05-26.xml
+npm run migrate:team -- data/africantradechamber.WordPress.2026-05-26.xml
+npm run generate:redirects -- data/africantradechamber.WordPress.2026-05-26.xml
 ```
 
 Posts appear on http://localhost:3002/news
@@ -49,4 +53,17 @@ Images are served at `/uploads/...`. Legacy `/wp-content/uploads/...` URLs rewri
 npm run migrate:team -- data/africantradechamber.WordPress.2026-05-26.xml --fellows-only
 ```
 
-Fellows appear on http://localhost:3002/fellowship/2025
+## Insights publications
+
+```bash
+npm run migrate:insights -- data/africantradechamber.WordPress.2026-05-26.xml
+```
+
+## Legacy URL redirects
+
+Generate redirects from the WordPress export (merged into `next.config.mjs`):
+
+```bash
+npm run generate:redirects -- data/africantradechamber.WordPress.2026-05-26.xml
+```
+

@@ -52,7 +52,7 @@ type WpNewsRow = {
   excerpt?: string
   contentHtml?: string
   publishedAt?: string
-  category: 'chamber' | 'member' | 'press'
+  category: 'chamber' | 'member' | 'press' | 'media' | 'newsletter'
   newsSource?: string
   newsAuthor?: string
   newsDate?: string
@@ -98,20 +98,26 @@ function parseWpDate(raw: string): string | undefined {
   return d.toISOString()
 }
 
-function mapCategory(item: Record<string, unknown>, unmapped: Set<string>): 'chamber' | 'member' | 'press' {
-  const cats = asArray(item.category)
-  for (const c of cats) {
+function mapCategory(item: Record<string, unknown>, unmapped: Set<string>): WpNewsRow['category'] {
+  for (const c of asArray(item.category)) {
     const row = c as Record<string, unknown>
     const domain = String(row['@_domain'] ?? row.domain ?? '')
-    if (domain && domain !== 'news_category') continue
+    if (domain && domain !== 'news_category' && domain !== 'category') continue
     const nicename = String(row['@_nicename'] ?? '').toLowerCase()
     const label = textVal(c).toLowerCase()
     const hay = `${nicename} ${label}`
+    if (hay.includes('newsletter')) return 'newsletter'
+    if (hay.includes('media')) return 'media'
     if (hay.includes('member')) return 'member'
     if (hay.includes('press')) return 'press'
     if (hay.includes('chamber')) return 'chamber'
     if (nicename || label) unmapped.add(`${nicename || label}`)
   }
+
+  const link = textVal(item.link).toLowerCase()
+  if (link.includes('newsletter')) return 'newsletter'
+  if (link.includes('media-coverage')) return 'media'
+
   return 'chamber'
 }
 

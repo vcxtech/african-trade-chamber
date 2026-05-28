@@ -33,6 +33,7 @@ import { defaultCareerJobs } from '../src/lib/careers-defaults'
 import { careerJobToSeedData } from '../src/lib/cms-jobs'
 import { defaultNewsPage } from '../src/lib/news-page-defaults'
 import { newsPageToSeedData } from '../src/lib/cms-news'
+import { insightsSeedDocuments } from '../src/lib/cms-insights'
 import { requireEnv } from './load-env.js'
 
 async function main() {
@@ -65,7 +66,11 @@ async function main() {
   })
   console.log('Updated site-settings global')
 
-  const existingSlides = await payload.find({ collection: 'hero-slides', limit: 1 })
+  const existingSlides = await payload.find({
+    collection: 'hero-slides',
+    sort: 'order',
+    limit: 20,
+  })
   if (!existingSlides.docs.length) {
     for (let i = 0; i < defaultHeroSlides.length; i++) {
       const s = defaultHeroSlides[i]
@@ -87,6 +92,30 @@ async function main() {
       })
     }
     console.log(`Created ${defaultHeroSlides.length} hero slides`)
+  } else {
+    for (let i = 0; i < defaultHeroSlides.length; i++) {
+      const s = defaultHeroSlides[i]
+      const doc = existingSlides.docs[i]
+      if (!doc) continue
+      await payload.update({
+        collection: 'hero-slides',
+        id: doc.id,
+        data: {
+          title: s.title,
+          description: s.description,
+          ctaLabel: s.ctaLabel,
+          ctaUrl: s.ctaUrl,
+          backgroundImageUrl: s.backgroundImageUrl,
+          sideImageUrl: s.sideImageUrl,
+          sideVideoUrl: s.sideVideoUrl,
+          showSideImage: s.showSideImage,
+          showApplyOnly: s.showApplyOnly,
+          order: i,
+          enabled: true,
+        },
+      })
+    }
+    console.log(`Synced ${defaultHeroSlides.length} hero slides`)
   }
 
   const existingCats = await payload.find({ collection: 'membership-categories', limit: 1 })
@@ -108,7 +137,11 @@ async function main() {
     console.log(`Created ${defaultMembershipCategories.length} membership categories`)
   }
 
-  const existingFeatures = await payload.find({ collection: 'hero-feature-cards', limit: 1 })
+  const existingFeatures = await payload.find({
+    collection: 'hero-feature-cards',
+    sort: 'order',
+    limit: 20,
+  })
   if (!existingFeatures.docs.length) {
     for (let i = 0; i < defaultHomepageSections.featureCards.length; i++) {
       const card = defaultHomepageSections.featureCards[i]
@@ -125,6 +158,25 @@ async function main() {
       })
     }
     console.log(`Created ${defaultHomepageSections.featureCards.length} hero feature cards`)
+  } else {
+    for (let i = 0; i < defaultHomepageSections.featureCards.length; i++) {
+      const card = defaultHomepageSections.featureCards[i]
+      const doc = existingFeatures.docs[i]
+      if (!doc) continue
+      await payload.update({
+        collection: 'hero-feature-cards',
+        id: doc.id,
+        data: {
+          title: card.title,
+          description: card.description,
+          linkText: card.linkText,
+          linkUrl: card.linkUrl,
+          order: i,
+          enabled: true,
+        },
+      })
+    }
+    console.log(`Synced ${defaultHomepageSections.featureCards.length} hero feature cards`)
   }
 
   const hp = defaultHomepageSections
@@ -312,6 +364,27 @@ async function main() {
     }
   }
   console.log(`Synced ${defaultCareerJobs.length} career jobs`)
+
+  for (const row of insightsSeedDocuments()) {
+    const existing = await payload.find({
+      collection: 'insights',
+      where: { slug: { equals: row.slug } },
+      limit: 1,
+    })
+    if (existing.docs[0]) {
+      await payload.update({
+        collection: 'insights',
+        id: existing.docs[0].id,
+        data: row,
+      })
+    } else {
+      await payload.create({
+        collection: 'insights',
+        data: row,
+      })
+    }
+  }
+  console.log(`Synced ${insightsSeedDocuments().length} insight articles`)
 
   await payload.updateGlobal({
     slug: 'news-listing-page',

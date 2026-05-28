@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { AFRICAN_COUNTRIES } from '@/lib/african-countries'
+import { submitForm } from '@/lib/form-submit'
 
 const SERVICE_OPTIONS = [
   'Market Entry Support',
@@ -140,7 +141,7 @@ export function ServicesRequestForm({
     return Object.keys(next).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setFormError(null)
     setSuccess(null)
@@ -150,38 +151,21 @@ export function ServicesRequestForm({
       return
     }
 
-    const body = `
-New Service Request — ${contextLabel}
+    const result = await submitForm({
+      formType: 'service-request',
+      email: form.email,
+      subject: `New Service Request - ${form.companyName} (${contextLabel})`,
+      data: { ...form, contextLabel, notifyEmail: REQUEST_EMAIL },
+    })
 
-CONTACT INFORMATION:
-- Full Name: ${form.fullName}
-- Company Name: ${form.companyName}
-- Email: ${form.email}
-- Phone: ${form.phone}
-- Country of Origin: ${form.country}
-
-BUSINESS & GOALS:
-- Target African Countries: ${form.targetCountries}
-- Nature of Business: ${form.businessNature}
-- Industry Sector: ${form.industrySector}
-- Business Size (Operational): ${form.businessSizeOps}
-- Business Size (Revenue): ${form.businessRevenue || 'Not specified'}
-- Objectives: ${form.objectives}
-
-SERVICES OF INTEREST:
-${form.services.map((s) => `- ${s}`).join('\n')}
-
----
-Submitted via africantradechamber.org (${contextLabel})
-`.trim()
-
-    const mailto = `mailto:${REQUEST_EMAIL}?subject=${encodeURIComponent(`New Service Request - ${form.companyName} (${contextLabel})`)}&body=${encodeURIComponent(body)}`
-    window.location.href = mailto
-
-    setSuccess(
-      'Thank you for your request! Your email client should open with a pre-filled message. Our advisory team will contact you within 3 business days.',
-    )
-    setForm(initialState)
+    if (result.ok) {
+      setSuccess(
+        'Thank you for your request! Our advisory team will contact you within 3 business days.',
+      )
+      setForm(initialState)
+    } else {
+      setFormError(result.error ?? 'Unable to submit your request. Please try again.')
+    }
   }
 
   const fieldClass = (key: keyof FormState) =>

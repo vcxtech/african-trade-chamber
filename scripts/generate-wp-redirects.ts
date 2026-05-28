@@ -1,0 +1,164 @@
+/**
+ * Generate Next.js redirect rules from WordPress WXR export.
+ *
+ * Usage:
+ *   npm run generate:redirects -- data/africantradechamber.WordPress.2026-05-26.xml
+ *
+ * Writes: redirects/wp-redirects.mjs
+ */
+
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { XMLParser } from 'fast-xml-parser'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const DATA_DIR = path.resolve(__dirname, '../data')
+const OUT_FILE = path.resolve(__dirname, '../redirects/wp-redirects.mjs')
+
+const INSIGHT_CATEGORY_ROUTES: Record<string, string> = {
+  'sector-reports': 'sector-reports',
+  'market-brief': 'trade-market-briefs',
+  'investment-landscape': 'investment-landscape-snapshots',
+  'atc-policy-brief': 'policy-papers',
+}
+
+const JOB_SLUGS = [
+  'director-of-memberships',
+  'director-of-programs-and-sector-platforms',
+  'director-of-events-and-strategic-convenings',
+  'director-of-trade-and-investment-facilitation',
+  'director-of-policy-and-strategic-intelligence',
+  'director-of-communications-and-institutional-engagement',
+  'director-of-partnerships',
+]
+
+function resolveExportPath(): string {
+  const arg = process.argv[2]
+  if (arg) {
+    const p = path.isAbsolute(arg) ? arg : path.resolve(process.cwd(), arg)
+    if (fs.existsSync(p)) return p
+    console.error(`Export file not found: ${p}`)
+    process.exit(1)
+  }
+
+  const xmlFiles = fs
+    .readdirSync(DATA_DIR)
+    .filter((f) => f.endsWith('.xml'))
+    .map((f) => {
+      const full = path.join(DATA_DIR, f)
+      return { full, size: fs.statSync(full).size, mtime: fs.statSync(full).mtimeMs }
+    })
+    .sort((a, b) => b.size - a.size || b.mtime - a.mtime)
+
+  if (xmlFiles.length) return xmlFiles[0].full
+  return path.join(DATA_DIR, 'wp-export.xml')
+}
+
+function asArray<T>(value: T | T[] | undefined | null): T[] {
+  if (value == null) return []
+  return Array.isArray(value) ? value : [value]
+}
+
+function textVal(node: unknown): string {
+  if (node == null) return ''
+  if (typeof node === 'string' || typeof node === 'number') return String(node).trim()
+  if (typeof node === 'object' && node !== null && '#text' in node) {
+    return String((node as Record<string, unknown>)['#text']).trim()
+  }
+  return String(node).trim()
+}
+
+function mapInsightCategory(item: Record<string, unknown>): string | undefined {
+  for (const c of asArray(item.category)) {
+    const row = c as Record<string, unknown>
+    const domain = String(row['@_domain'] ?? row.domain ?? '')
+    if (domain && domain !== 'category') continue
+    const nicename = String(row['@_nicename'] ?? '').toLowerCase()
+    return INSIGHT_CATEGORY_ROUTES[nicename]
+  }
+  return undefined
+}
+
+type Redirect = { source: string; destination: string; permanent: boolean }
+
+function addRedirect(redirects: Map<string, Redirect>, source: string, destination: string) {
+  if (!source || !destination) return
+  const normalizedSource = source.replace(/\/$/, '') || '/'
+  const normalizedDest = destination.replace(/\/$/, '') || '/'
+  if (normalizedSource === normalizedDest) return
+  if (!redirects.has(normalizedSource)) {
+    redirects.set(normalizedSource, {
+      source: normalizedSource,
+      destination: normalizedDest,
+      permanent: true,
+    })
+  }
+}
+
+function parseRedirects(xml: string): Redirect[] {
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '@_',
+    trimValues: true,
+    parseTagValue: false,
+    isArray: (name) => name === 'item' || name === 'category',
+  })
+
+  const parsed = parser.parse(xml)
+  const channel = parsed?.rss?.channel ?? parsed?.channel
+  const items = asArray(channel?.item) as Record<string, unknown>[]
+
+  const redirects = new Map<string, Redirect>()
+
+  for (const item of items) {
+    const postType = textVal(item['wp:post_type'])
+    const status = textVal(item['wp:status'])
+    if (status && status !== 'publish') continue
+
+    const slug = textVal(item['wp:post_name'])
+    if (!slug) continue
+
+    if (postType === 'news') {
+      addRedirect(redirects, `/${slug}`, `/news/${slug}`)
+    }
+
+    if (postType === 'post') {
+      const insightRoute = mapInsightCategory(item)
+      if (insightRoute) {
+        addRedirect(redirects, `/${slug}`, `/insights/${insightRoute}/${slug}`)
+      }
+    }
+  }
+
+  for (const slug of JOB_SLUGS) {
+    addRedirect(redirects, `/job-${slug}`, `/careers/${slug}`)
+    addRedirect(redirects, `/${slug}`, `/careers/${slug}`)
+  }
+
+  return [...redirects.values()].sort((a, b) => a.source.localeCompare(b.source))
+}
+
+function main() {
+  const exportPath = resolveExportPath()
+  console.log('Generating WP redirects from:', exportPath)
+
+  if (!fs.existsSync(exportPath)) {
+    console.error('No export file found')
+    process.exit(1)
+  }
+
+  const xml = fs.readFileSync(exportPath, 'utf-8')
+  const redirects = parseRedirects(xml)
+
+  fs.mkdirSync(path.dirname(OUT_FILE), { recursive: true })
+  fs.writeFileSync(
+    OUT_FILE,
+    `/** Auto-generated by scripts/generate-wp-redirects.ts — do not edit manually */\nexport const wpRedirects = ${JSON.stringify(redirects, null, 2)}\n`,
+    'utf-8',
+  )
+
+  console.log(`Wrote ${redirects.length} redirects to ${OUT_FILE}`)
+}
+
+main()

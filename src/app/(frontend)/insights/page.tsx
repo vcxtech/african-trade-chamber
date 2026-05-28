@@ -1,10 +1,11 @@
-export const metadata = { title: 'Insights' }
+import { InsightsHubPageSection } from '@/components/insights/InsightsHubPageSection'
+import { defaultInsightsHubPage } from '@/lib/insights-hub-defaults'
+
+export const metadata = {
+  title: 'Insights',
+  description: defaultInsightsHubPage.headerSubtitle.slice(0, 160),
+}
 
 export default function InsightsPage() {
-  return (
-    <div className="mx-auto max-w-4xl px-4 py-16 lg:px-8">
-      <h1 className="text-3xl font-bold text-atc-navy">Insights</h1>
-      <p className="mt-4 text-atc-navy/80">Research and insights — content coming from CMS.</p>
-    </div>
-  )
+  return <InsightsHubPageSection data={defaultInsightsHubPage} />
 }

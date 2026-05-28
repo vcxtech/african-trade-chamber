@@ -26,7 +26,11 @@ export default async function NewsPage({ searchParams }: Props) {
 
   const [intro, listing] = await Promise.all([
     getNewsPage(),
-    getNewsArticlesPage({ category, page }),
+    getNewsArticlesPage({
+      category,
+      page,
+      excludeCategories: category ? undefined : ['media', 'newsletter'],
+    }),
   ])
 
   const currentPage =
