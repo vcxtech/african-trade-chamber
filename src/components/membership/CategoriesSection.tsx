@@ -56,7 +56,9 @@ export function CategoriesSection({
           </div>
         ) : null}
 
-        <div className={`grid gap-5 md:grid-cols-2 lg:grid-cols-3 ${standalone ? '' : 'mb-[30px]'}`}>
+        <div
+          className={`grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 ${standalone ? '' : 'mb-[30px]'}`}
+        >
           {categories.map((category) => (
             <CategoryItem key={category.id} category={category} />
           ))}

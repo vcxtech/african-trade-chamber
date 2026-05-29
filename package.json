@@ -18,7 +18,9 @@
     "generate:redirects": "tsx scripts/generate-wp-redirects.ts",
     "seed": "tsx scripts/seed.ts",
     "reset-admin": "tsx scripts/reset-admin.ts",
-    "verify:admin": "tsx scripts/verify-admin.ts"
+    "verify:admin": "tsx scripts/verify-admin.ts",
+    "media:import-uploads": "tsx scripts/import-media-from-uploads.ts",
+    "media:link-legacy-urls": "tsx scripts/link-legacy-media-urls.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.84.1",

@@ -1,5 +1,6 @@
 import { defaultContactPage } from '@/lib/contact-defaults'
 import { getPayloadClient } from '@/lib/cms'
+import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import type { ContactPageData, ContactSocialLink } from '@/types/contact-page'
 
 export function contactPageToSeedData(data: ContactPageData) {
@@ -15,7 +16,7 @@ export async function getContactPage(): Promise<ContactPageData> {
   try {
     const payload = await getPayloadClient()
     if (!payload) return fallback
-    const global = await payload.findGlobal({ slug: 'contact-page' })
+    const global = await payload.findGlobal({ slug: 'contact-page', depth: 1 })
     if (!global) return fallback
     const raw = global as unknown as Record<string, unknown>
 
@@ -25,8 +26,18 @@ export async function getContactPage(): Promise<ContactPageData> {
     return {
       introTitle: String(raw.introTitle ?? fallback.introTitle),
       introBody: String(raw.introBody ?? fallback.introBody),
-      introImageUrl: String(raw.introImageUrl ?? fallback.introImageUrl),
-      introImageAlt: String(raw.introImageAlt ?? fallback.introImageAlt),
+      introImageUrl:
+        resolvePayloadMediaUrl(
+          raw.introImage,
+          raw.introImageUrl as string | undefined,
+          fallback.introImageUrl,
+        ) || fallback.introImageUrl,
+      introImageAlt:
+        resolvePayloadMediaAlt(
+          raw.introImage,
+          raw.introImageAlt as string | undefined,
+          fallback.introTitle,
+        ) || fallback.introImageAlt,
       email: String(raw.email ?? fallback.email),
       phone: String(raw.phone ?? fallback.phone),
       address: String(raw.address ?? fallback.address),

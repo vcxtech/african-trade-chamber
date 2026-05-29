@@ -1,6 +1,6 @@
 import { defaultFellowshipPage } from '@/lib/fellowship-defaults'
-import { resolveImageUrl } from '@/lib/image-url'
 import { getPayloadClient } from '@/lib/cms'
+import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import type {
   FellowshipCohort,
   FellowshipCtaBlock,
@@ -54,10 +54,17 @@ function mapCohort(row: Record<string, unknown>, fallback?: FellowshipCohort): F
     title: String(row.title ?? fallback?.title ?? ''),
     description: String(row.description ?? fallback?.description ?? ''),
     imageUrl:
-      resolveImageUrl(row.imageUrl as string | undefined, fallback?.imageUrl) ||
+      resolvePayloadMediaUrl(row.image, row.imageUrl as string | undefined, fallback?.imageUrl) ||
       fallback?.imageUrl ||
       '',
-    imageAlt: String(row.imageAlt ?? fallback?.imageAlt ?? ''),
+    imageAlt:
+      resolvePayloadMediaAlt(
+        row.image,
+        row.imageAlt as string | undefined,
+        String(row.title ?? fallback?.title ?? ''),
+      ) ||
+      fallback?.imageAlt ||
+      '',
     exploreUrl: String(row.exploreUrl ?? fallback?.exploreUrl ?? '#'),
     exploreExternal: Boolean(row.exploreExternal ?? fallback?.exploreExternal),
   }
@@ -145,8 +152,11 @@ export function fellowshipPageFromSeedShape(raw: Record<string, unknown>): Fello
 
   return {
     heroImageUrl:
-      resolveImageUrl(raw.heroImageUrl as string | undefined, fallback.heroImageUrl) ||
-      fallback.heroImageUrl,
+      resolvePayloadMediaUrl(
+        raw.heroImage,
+        raw.heroImageUrl as string | undefined,
+        fallback.heroImageUrl,
+      ) || fallback.heroImageUrl,
     introText: String(raw.introText ?? fallback.introText),
     cohorts: cohortsRaw.length
       ? cohortsRaw.map((row, i) => mapCohort(row, fallback.cohorts[i]))
@@ -160,7 +170,7 @@ export async function getFellowshipPage(): Promise<FellowshipPageData> {
   try {
     const payload = await getPayloadClient()
     if (!payload) return fallback
-    const global = await payload.findGlobal({ slug: 'fellowship-page' })
+    const global = await payload.findGlobal({ slug: 'fellowship-page', depth: 1 })
     if (!global) return fallback
     return fellowshipPageFromSeedShape(global as unknown as Record<string, unknown>)
   } catch {

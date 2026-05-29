@@ -1,15 +1,12 @@
 import type { GlobalConfig } from 'payload'
+import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const FellowshipPage: GlobalConfig = {
   slug: 'fellowship-page',
   label: 'Fellowship Page',
   fields: [
-    {
-      name: 'heroImageUrl',
-      type: 'text',
-      required: true,
-      admin: { description: 'Hero background — prefer /images/fellowship/hero.png' },
-    },
+    mediaImageField({ name: 'heroImage', label: 'Hero background image' }),
+    legacyImageUrlField('heroImageUrl'),
     {
       name: 'introText',
       type: 'textarea',
@@ -24,8 +21,9 @@ export const FellowshipPage: GlobalConfig = {
         { name: 'yearLabel', type: 'text', required: true },
         { name: 'title', type: 'text', required: true },
         { name: 'description', type: 'textarea', required: true },
-        { name: 'imageUrl', type: 'text', required: true },
-        { name: 'imageAlt', type: 'text', required: true },
+        mediaImageField({ name: 'image', label: 'Image' }),
+        imageAltField(),
+        legacyImageUrlField('imageUrl'),
         { name: 'exploreUrl', type: 'text', required: true },
         {
           name: 'exploreExternal',

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { homepageCardFields } from '../fields/homepageCardFields'
+import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const IndustryCouncilsHomepage: GlobalConfig = {
   slug: 'industry-councils-homepage',
@@ -13,7 +14,8 @@ export const IndustryCouncilsHomepage: GlobalConfig = {
       type: 'group',
       name: 'intro',
       fields: [
-        { name: 'imageUrl', type: 'text' },
+        mediaImageField({ name: 'image', label: 'Image' }),
+        legacyImageUrlField('imageUrl'),
         { name: 'title', type: 'text' },
         { name: 'text', type: 'textarea' },
         { name: 'buttonText', type: 'text' },

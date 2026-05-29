@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const ContactPage: GlobalConfig = {
   slug: 'contact-page',
@@ -6,8 +7,9 @@ export const ContactPage: GlobalConfig = {
   fields: [
     { name: 'introTitle', type: 'text', required: true },
     { name: 'introBody', type: 'textarea', required: true },
-    { name: 'introImageUrl', type: 'text', required: true },
-    { name: 'introImageAlt', type: 'text', required: true },
+    mediaImageField({ name: 'introImage', label: 'Intro image' }),
+    imageAltField({ name: 'introImageAlt' }),
+    legacyImageUrlField('introImageUrl'),
     { name: 'email', type: 'email', required: true },
     { name: 'phone', type: 'text', required: true },
     { name: 'address', type: 'textarea', required: true },

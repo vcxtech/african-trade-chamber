@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const News: CollectionConfig = {
   slug: 'news',
@@ -23,12 +24,8 @@ export const News: CollectionConfig = {
       ],
       defaultValue: 'chamber',
     },
-    { name: 'featuredImage', type: 'upload', relationTo: 'media' },
-    {
-      name: 'imageUrl',
-      type: 'text',
-      admin: { description: 'Remote image URL (e.g. imported from WordPress uploads)' },
-    },
+    mediaImageField({ name: 'featuredImage', label: 'Featured image' }),
+    legacyImageUrlField('imageUrl'),
     { name: 'newsSource', type: 'text' },
     { name: 'newsAuthor', type: 'text' },
     { name: 'newsDate', type: 'date' },

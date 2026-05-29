@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { homepageCardFields } from '../fields/homepageCardFields'
+import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const WwdHomepage: GlobalConfig = {
   slug: 'wwd-homepage',
@@ -21,8 +22,9 @@ export const WwdHomepage: GlobalConfig = {
       name: 'intro',
       fields: [
         { name: 'title', type: 'text', defaultValue: 'Our Services' },
-        { name: 'content', type: 'textarea' },
-        { name: 'imageUrl', type: 'text' },
+        { name: 'content', type: 'textarea', label: 'Description' },
+        mediaImageField({ name: 'image', label: 'Image' }),
+        legacyImageUrlField('imageUrl'),
         { name: 'buttonText', type: 'text', defaultValue: 'View all services' },
         { name: 'buttonUrl', type: 'text' },
       ],

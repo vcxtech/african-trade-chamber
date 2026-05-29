@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 const listItemFields = [{ name: 'text', type: 'text' as const, required: true }]
 
@@ -14,8 +15,9 @@ export const PartnershipsPage: GlobalConfig = {
       fields: [
         { name: 'id', type: 'text', required: true },
         { name: 'title', type: 'text', required: true },
-        { name: 'imageUrl', type: 'text', required: true },
-        { name: 'imageAlt', type: 'text', required: true },
+        mediaImageField({ name: 'image', label: 'Image' }),
+        imageAltField(),
+        legacyImageUrlField('imageUrl'),
         { name: 'items', type: 'array', fields: listItemFields },
       ],
     },
@@ -25,8 +27,9 @@ export const PartnershipsPage: GlobalConfig = {
       fields: [
         { name: 'title', type: 'text', required: true },
         { name: 'body', type: 'textarea', required: true },
-        { name: 'imageUrl', type: 'text', required: true },
-        { name: 'imageAlt', type: 'text', required: true },
+        mediaImageField({ name: 'image', label: 'Image' }),
+        imageAltField(),
+        legacyImageUrlField('imageUrl'),
         { name: 'requestLabel', type: 'text', required: true },
         { name: 'requestEmail', type: 'text', required: true },
         { name: 'guideLabel', type: 'text', required: true },

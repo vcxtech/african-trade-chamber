@@ -1,18 +1,9 @@
 import { TEAM_CATEGORY_LABELS } from '@/lib/about-defaults'
 import { getPayloadClient } from '@/lib/cms'
+import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import { resolveMemberImageUrl } from '@/lib/wp-uploads'
 import type { TeamMember, TeamMemberCategory } from '@/types/about-page'
 import type { Fellow, FellowSocialLinks } from '@/types/fellow'
-
-function photoUrl(photo: unknown): string | undefined {
-  if (!photo || typeof photo === 'number') return undefined
-  const media = photo as Record<string, unknown>
-  const url = media.url as string | undefined
-  if (!url) return undefined
-  if (url.startsWith('http')) return url
-  const base = (process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002').replace(/\/$/, '')
-  return `${base}${url.startsWith('/') ? url : `/${url}`}`
-}
 
 function mapSocialLinks(raw: unknown): FellowSocialLinks | undefined {
   if (!raw || typeof raw !== 'object') return undefined
@@ -29,38 +20,31 @@ function mapSocialLinks(raw: unknown): FellowSocialLinks | undefined {
 function mapDoc(doc: Record<string, unknown>): TeamMember {
   const category = (doc.category as TeamMemberCategory) || 'advisory'
   const media = doc.photo
-  const alt =
-    media && typeof media === 'object' && media !== null && 'alt' in media
-      ? String((media as Record<string, unknown>).alt || '')
-      : ''
-
-  const rawImage = (doc.imageUrl ? String(doc.imageUrl) : undefined) || photoUrl(media)
+  const name = String(doc.name ?? '')
+  const rawImage = resolvePayloadMediaUrl(media, doc.imageUrl as string | undefined)
 
   return {
     id: String(doc.id),
-    name: String(doc.name ?? ''),
+    name,
     slug: String(doc.slug ?? ''),
     position: doc.position ? String(doc.position) : undefined,
     category,
     categoryLabel: TEAM_CATEGORY_LABELS[category] ?? category,
     bio: doc.bio ? String(doc.bio) : undefined,
     imageUrl: resolveMemberImageUrl(rawImage),
-    imageAlt: alt || String(doc.name ?? ''),
+    imageAlt: resolvePayloadMediaAlt(media, null, name),
     sortOrder: typeof doc.sortOrder === 'number' ? doc.sortOrder : 0,
   }
 }
 
 function mapFellowDoc(doc: Record<string, unknown>): Fellow {
   const media = doc.photo
-  const alt =
-    media && typeof media === 'object' && media !== null && 'alt' in media
-      ? String((media as Record<string, unknown>).alt || '')
-      : ''
-  const rawImage = (doc.imageUrl ? String(doc.imageUrl) : undefined) || photoUrl(media)
+  const name = String(doc.name ?? '')
+  const rawImage = resolvePayloadMediaUrl(media, doc.imageUrl as string | undefined)
 
   return {
     id: String(doc.id),
-    name: String(doc.name ?? ''),
+    name,
     slug: String(doc.slug ?? ''),
     position: doc.position ? String(doc.position) : undefined,
     country: doc.country ? String(doc.country) : undefined,
@@ -68,7 +52,7 @@ function mapFellowDoc(doc: Record<string, unknown>): Fellow {
     cohortYear: typeof doc.cohortYear === 'number' ? doc.cohortYear : undefined,
     bio: doc.bio ? String(doc.bio) : undefined,
     imageUrl: resolveMemberImageUrl(rawImage),
-    imageAlt: alt || String(doc.name ?? ''),
+    imageAlt: resolvePayloadMediaAlt(media, null, name),
     socialLinks: mapSocialLinks(doc.socialLinks),
     postDate: doc.postDate ? String(doc.postDate) : undefined,
     sortOrder: typeof doc.sortOrder === 'number' ? doc.sortOrder : 0,

@@ -3,7 +3,7 @@ import Link from 'next/link'
 type Props = {
   href: string
   children: React.ReactNode
-  variant?: 'inline' | 'header' | 'centered'
+  variant?: 'inline' | 'card' | 'header' | 'centered'
   className?: string
 }
 
@@ -14,11 +14,14 @@ function ctaClass(variant: Props['variant'], className: string) {
   if (variant === 'header') {
     return `group mt-4 inline-flex items-center rounded border border-atc-navy bg-atc-navy px-5 py-2 text-base font-semibold text-white transition hover:border-atc-yellow hover:bg-atc-yellow hover:text-atc-navy ${className}`
   }
-  return `group absolute bottom-5 left-5 inline-flex items-center rounded px-3 py-1.5 text-sm font-semibold text-atc-navy transition hover:bg-atc-yellow ${className}`
+  if (variant === 'card') {
+    return `group absolute bottom-5 left-5 inline-flex items-center rounded px-3 py-1.5 text-sm font-semibold text-atc-navy transition hover:bg-atc-yellow ${className}`
+  }
+  return `group mt-6 inline-flex items-center rounded px-3 py-1.5 text-sm font-semibold text-atc-navy transition hover:bg-atc-yellow ${className}`
 }
 
 function CtaContent({ children, variant }: { children: React.ReactNode; variant: Props['variant'] }) {
-  if (variant === 'inline') {
+  if (variant === 'inline' || variant === 'card') {
     return (
       <>
         {children}

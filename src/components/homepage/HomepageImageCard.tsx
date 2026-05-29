@@ -34,7 +34,9 @@ export function HomepageImageCard({ card, imageHeight = 'default', className = '
           <p className="mt-3 text-sm leading-relaxed text-[#4a4a4a]">{card.description}</p>
         ) : null}
         {card.buttonText && card.buttonUrl ? (
-          <HomepageCta href={card.buttonUrl}>{card.buttonText}</HomepageCta>
+          <HomepageCta href={card.buttonUrl} variant="card">
+            {card.buttonText}
+          </HomepageCta>
         ) : null}
       </div>
     </article>

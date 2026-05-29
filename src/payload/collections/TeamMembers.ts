@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const TeamMembers: CollectionConfig = {
   slug: 'team-members',
@@ -47,12 +48,8 @@ export const TeamMembers: CollectionConfig = {
       ],
     },
     { name: 'bio', type: 'textarea' },
-    { name: 'photo', type: 'upload', relationTo: 'media' },
-    {
-      name: 'imageUrl',
-      type: 'text',
-      admin: { description: 'Remote image URL (e.g. imported from WordPress uploads)' },
-    },
+    mediaImageField({ name: 'photo', label: 'Photo' }),
+    legacyImageUrlField('imageUrl'),
     {
       name: 'postDate',
       type: 'text',

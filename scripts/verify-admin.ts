@@ -69,6 +69,25 @@ async function main() {
     }
   }
 
+  const mediaCollection = payload.config.collections.find((c) => c.slug === 'media')
+  const mediaListComponent = mediaCollection?.admin?.components?.views?.list?.Component
+  const mediaListPath =
+    typeof mediaListComponent === 'string'
+      ? mediaListComponent
+      : 'missing list component'
+  record(
+    'Media grid list view',
+    mediaListPath === '/components/admin/media/MediaListView#MediaListView',
+    mediaListPath,
+  )
+
+  const mediaDefaultLimit = mediaCollection?.admin?.pagination?.defaultLimit
+  record(
+    'Media pagination default',
+    mediaDefaultLimit === 40,
+    mediaDefaultLimit != null ? String(mediaDefaultLimit) : 'missing',
+  )
+
   // News sample with content
   const newsSample = await payload.find({
     collection: 'news',
@@ -149,6 +168,68 @@ async function main() {
   // Media directory
   const mediaDir = path.join(ROOT, 'media')
   record('Media staticDir exists', fs.existsSync(mediaDir), mediaDir)
+
+  const mediaCount = await payload.find({ collection: 'media', limit: 0, overrideAccess: true })
+  record(
+    'Media library populated',
+    mediaCount.totalDocs > 0,
+    `${mediaCount.totalDocs} document(s) (run npm run media:import-uploads to bulk-import public images)`,
+  )
+
+  // Legacy URL → Media library linking
+  try {
+    const wwd = await payload.findGlobal({ slug: 'wwd-homepage', depth: 0, overrideAccess: true })
+    const services = (wwd as { services?: Array<{ image?: unknown; imageUrl?: string }> })?.services
+    const linkedService = services?.find((s) => s.image != null && s.image !== '')
+    record(
+      'WWD service image linked',
+      Boolean(linkedService),
+      linkedService ? 'at least one service has Media relation' : 'no services linked yet',
+    )
+  } catch (err) {
+    record('WWD service image linked', false, err instanceof Error ? err.message : String(err))
+  }
+
+  try {
+    const newsWithUrl = await payload.find({
+      collection: 'news',
+      limit: 5,
+      overrideAccess: true,
+      where: { imageUrl: { exists: true } },
+    })
+    const linkedNews = newsWithUrl.docs.filter((d) => {
+      const row = d as { imageUrl?: string; featuredImage?: unknown }
+      return row.imageUrl && row.featuredImage != null && row.featuredImage !== ''
+    })
+    record(
+      'News featuredImage linked',
+      linkedNews.length > 0,
+      `${linkedNews.length}/${newsWithUrl.docs.length} sampled posts with imageUrl have featuredImage`,
+    )
+  } catch (err) {
+    record('News featuredImage linked', false, err instanceof Error ? err.message : String(err))
+  }
+
+  try {
+    const membershipHp = await payload.findGlobal({
+      slug: 'membership-homepage',
+      depth: 0,
+      overrideAccess: true,
+    })
+    const cards = (membershipHp as { cards?: Array<{ image?: unknown; imageUrl?: string }> })?.cards
+    const linkedCard = cards?.find((c) => c.image != null && c.image !== '')
+    record(
+      'Membership homepage card linked',
+      Boolean(linkedCard),
+      linkedCard ? 'at least one card has Media relation' : 'no cards linked yet',
+    )
+  } catch (err) {
+    record(
+      'Membership homepage card linked',
+      false,
+      err instanceof Error ? err.message : String(err),
+    )
+  }
 
   // Media upload smoke test (1x1 PNG)
   const testPng = Buffer.from(

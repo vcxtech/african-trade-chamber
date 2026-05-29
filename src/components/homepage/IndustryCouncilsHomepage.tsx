@@ -34,7 +34,7 @@ export function IndustryCouncilsHomepage({ data }: Props) {
                 />
               </div>
             ) : null}
-            <div className="relative flex flex-1 flex-col p-6 pb-16">
+            <div className="relative flex flex-1 flex-col p-6 sm:p-8">
               <h3 className="text-2xl font-bold text-atc-navy">{data.intro.title}</h3>
               {data.intro.text ? (
                 <p className="mt-3 text-base leading-relaxed text-[#4a4a4a]">{data.intro.text}</p>

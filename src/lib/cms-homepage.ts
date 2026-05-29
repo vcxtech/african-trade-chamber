@@ -1,6 +1,6 @@
 import { defaultHomepageSections } from '@/lib/homepage-defaults'
-import { resolveImageUrl } from '@/lib/image-url'
 import { getPayloadClient } from '@/lib/cms'
+import { resolvePayloadMediaUrl } from '@/lib/payload-media'
 import type {
   CrossSectorHomepageData,
   HeroFeatureCard,
@@ -20,6 +20,7 @@ function mapCard(
   row: {
     title?: string | null
     description?: string | null
+    image?: unknown
     imageUrl?: string | null
     buttonText?: string | null
     buttonUrl?: string | null
@@ -29,7 +30,10 @@ function mapCard(
   return {
     title: strOrFallback(row.title, fallback?.title) || '',
     description: strOrFallback(row.description, fallback?.description),
-    imageUrl: resolveImageUrl(row.imageUrl ?? undefined, fallback?.imageUrl),
+    imageUrl:
+      resolvePayloadMediaUrl(row.image, row.imageUrl, fallback?.imageUrl) ||
+      fallback?.imageUrl ||
+      '',
     buttonText: strOrFallback(row.buttonText, fallback?.buttonText),
     buttonUrl: strOrFallback(row.buttonUrl, fallback?.buttonUrl),
   }
@@ -78,14 +82,14 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
         sort: 'order',
         limit: 10,
       }),
-      payload.findGlobal({ slug: 'wwd-homepage' }),
-      payload.findGlobal({ slug: 'industry-councils-homepage' }),
-      payload.findGlobal({ slug: 'cross-sector-councils-homepage' }),
-      payload.findGlobal({ slug: 'membership-homepage' }),
-      payload.findGlobal({ slug: 'insights-homepage' }),
-      payload.findGlobal({ slug: 'event-homepage' }),
-      payload.findGlobal({ slug: 'get-involved-homepage' }),
-      payload.findGlobal({ slug: 'news-homepage' }),
+      payload.findGlobal({ slug: 'wwd-homepage', depth: 1 }),
+      payload.findGlobal({ slug: 'industry-councils-homepage', depth: 1 }),
+      payload.findGlobal({ slug: 'cross-sector-councils-homepage', depth: 1 }),
+      payload.findGlobal({ slug: 'membership-homepage', depth: 1 }),
+      payload.findGlobal({ slug: 'insights-homepage', depth: 1 }),
+      payload.findGlobal({ slug: 'event-homepage', depth: 1 }),
+      payload.findGlobal({ slug: 'get-involved-homepage', depth: 1 }),
+      payload.findGlobal({ slug: 'news-homepage', depth: 1 }),
     ])
 
     const featureCards: HeroFeatureCard[] = featureResult.docs?.length
@@ -106,6 +110,7 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
             {
               title: wwdGlobal.intro?.title,
               description: wwdGlobal.intro?.content,
+              image: wwdGlobal.intro?.image,
               imageUrl: wwdGlobal.intro?.imageUrl,
               buttonText: wwdGlobal.intro?.buttonText,
               buttonUrl: wwdGlobal.intro?.buttonUrl,
@@ -118,6 +123,7 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
                 {
                   title: s.title,
                   description: s.description,
+                  image: s.image,
                   imageUrl: s.imageUrl,
                   buttonText: s.buttonText,
                   buttonUrl: s.buttonUrl,
@@ -139,10 +145,14 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
             strOrFallback(industryGlobal.headerButtonUrl, fallback.industryCouncils.headerButtonUrl) ||
             '',
           intro: {
-            imageUrl: resolveImageUrl(
-              industryGlobal.intro?.imageUrl,
-              fallback.industryCouncils.intro.imageUrl,
-            ),
+            imageUrl:
+              resolvePayloadMediaUrl(
+                industryGlobal.intro?.image,
+                industryGlobal.intro?.imageUrl,
+                fallback.industryCouncils.intro.imageUrl,
+              ) ||
+              fallback.industryCouncils.intro.imageUrl ||
+              '',
             title: strOrFallback(industryGlobal.intro?.title, fallback.industryCouncils.intro.title),
             text: strOrFallback(industryGlobal.intro?.text, fallback.industryCouncils.intro.text),
             buttonText: strOrFallback(
@@ -160,6 +170,7 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
                 {
                   title: c.title,
                   description: c.description,
+                  image: c.image,
                   imageUrl: c.imageUrl,
                   buttonText: c.buttonText,
                   buttonUrl: c.buttonUrl,
@@ -176,6 +187,8 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
             {
               title: crossGlobal.intro.title,
               description: crossGlobal.intro.description,
+              image: crossGlobal.intro.image,
+              imageUrl: crossGlobal.intro.imageUrl,
               buttonText: crossGlobal.intro.buttonText,
               buttonUrl: crossGlobal.intro.buttonUrl,
             },
@@ -187,6 +200,7 @@ export async function getHomepageSections(): Promise<HomepageSectionsData> {
                 {
                   title: c.title,
                   description: c.description,
+                  image: c.image,
                   imageUrl: c.imageUrl,
                   buttonText: c.buttonText,
                   buttonUrl: c.buttonUrl,

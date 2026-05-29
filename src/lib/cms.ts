@@ -5,6 +5,7 @@ import {
   defaultMembershipCategories,
   defaultSiteSettings,
 } from '@/lib/defaults'
+import { resolvePayloadMediaUrl } from '@/lib/payload-media'
 import type { HeroSlide, MembershipCategory, NavChild, NavItem, NavLink, SiteSettingsData } from '@/types/content'
 
 /** Legacy CMS rows may still point "Contact Us" at /get-involved. */
@@ -169,22 +170,37 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
       where: { enabled: { equals: true } },
       sort: 'order',
       limit: 10,
+      depth: 1,
     })
     if (!result.docs.length) return defaultHeroSlides
-    return result.docs.map((doc) => ({
-      id: String(doc.id),
-      title: doc.title as string,
-      description: (doc.description as string) || '',
-      ctaLabel: (doc.ctaLabel as string) || 'Learn more',
-      ctaUrl: (doc.ctaUrl as string) || '/',
-      backgroundImageUrl: (doc.backgroundImageUrl as string) || '',
-      sideImageUrl: (doc.sideImageUrl as string) || '',
-      sideVideoUrl: (doc.sideVideoUrl as string) || '',
-      showSideImage:
-        Boolean(doc.showSideImage) ||
-        Boolean((doc.sideImageUrl as string) || (doc.sideVideoUrl as string)),
-      showApplyOnly: Boolean(doc.showApplyOnly),
-    }))
+    return result.docs.map((doc, i) => {
+      const fallback = defaultHeroSlides[i]
+      const backgroundImageUrl =
+        resolvePayloadMediaUrl(
+          doc.backgroundImage,
+          doc.backgroundImageUrl as string | undefined,
+          fallback?.backgroundImageUrl,
+        ) || ''
+      const sideImageUrl =
+        resolvePayloadMediaUrl(
+          doc.sideImage,
+          doc.sideImageUrl as string | undefined,
+          fallback?.sideImageUrl,
+        ) || ''
+      return {
+        id: String(doc.id),
+        title: doc.title as string,
+        description: (doc.description as string) || '',
+        ctaLabel: (doc.ctaLabel as string) || 'Learn more',
+        ctaUrl: (doc.ctaUrl as string) || '/',
+        backgroundImageUrl,
+        sideImageUrl,
+        sideVideoUrl: (doc.sideVideoUrl as string) || '',
+        showSideImage:
+          Boolean(doc.showSideImage) || Boolean(sideImageUrl || (doc.sideVideoUrl as string)),
+        showApplyOnly: Boolean(doc.showApplyOnly),
+      }
+    })
   } catch {
     return defaultHeroSlides
   }

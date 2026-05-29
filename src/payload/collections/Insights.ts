@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const Insights: CollectionConfig = {
   slug: 'insights',
@@ -23,12 +24,8 @@ export const Insights: CollectionConfig = {
       ],
     },
     { name: 'author', type: 'text' },
-    { name: 'featuredImage', type: 'upload', relationTo: 'media' },
-    {
-      name: 'imageUrl',
-      type: 'text',
-      admin: { description: 'Remote image URL (e.g. imported from WordPress uploads)' },
-    },
+    mediaImageField({ name: 'featuredImage', label: 'Featured image' }),
+    legacyImageUrlField('imageUrl'),
     { name: 'originalUrl', type: 'text' },
     { name: 'publishedAt', type: 'date' },
   ],

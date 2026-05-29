@@ -218,12 +218,17 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Site media library — select or upload images used across pages and posts.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
-  alt: string;
+  /**
+   * Accessibility description shown when the image cannot be displayed.
+   */
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -235,6 +240,16 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * Generic CMS pages served at /{slug}. Main site sections (About, Contact, etc.) are edited under Globals.
@@ -295,7 +310,7 @@ export interface News {
   category?: ('chamber' | 'member' | 'press' | 'media' | 'newsletter') | null;
   featuredImage?: (number | null) | Media;
   /**
-   * Remote image URL (e.g. imported from WordPress uploads)
+   * Legacy import URL; used when no Media item is selected.
    */
   imageUrl?: string | null;
   newsSource?: string | null;
@@ -337,7 +352,7 @@ export interface Insight {
   author?: string | null;
   featuredImage?: (number | null) | Media;
   /**
-   * Remote image URL (e.g. imported from WordPress uploads)
+   * Legacy import URL; used when no Media item is selected.
    */
   imageUrl?: string | null;
   originalUrl?: string | null;
@@ -415,7 +430,15 @@ export interface HeroSlide {
   description?: string | null;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
+  backgroundImage?: (number | null) | Media;
+  /**
+   * Legacy import URL; used when no Media item is selected.
+   */
   backgroundImageUrl?: string | null;
+  sideImage?: (number | null) | Media;
+  /**
+   * Legacy import URL; used when no Media item is selected.
+   */
   sideImageUrl?: string | null;
   /**
    * MP4 URL for right-side video (slide 3)
@@ -494,7 +517,7 @@ export interface TeamMember {
   bio?: string | null;
   photo?: (number | null) | Media;
   /**
-   * Remote image URL (e.g. imported from WordPress uploads)
+   * Legacy import URL; used when no Media item is selected.
    */
   imageUrl?: string | null;
   /**
@@ -699,6 +722,20 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -796,7 +833,9 @@ export interface HeroSlidesSelect<T extends boolean = true> {
   description?: T;
   ctaLabel?: T;
   ctaUrl?: T;
+  backgroundImage?: T;
   backgroundImageUrl?: T;
+  sideImage?: T;
   sideImageUrl?: T;
   sideVideoUrl?: T;
   showSideImage?: T;
@@ -1011,6 +1050,10 @@ export interface WwdHomepage {
   intro?: {
     title?: string | null;
     content?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Legacy import URL; used when no Media item is selected.
+     */
     imageUrl?: string | null;
     buttonText?: string | null;
     buttonUrl?: string | null;
@@ -1019,6 +1062,14 @@ export interface WwdHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1040,6 +1091,10 @@ export interface IndustryCouncilsHomepage {
   headerButtonText?: string | null;
   headerButtonUrl?: string | null;
   intro?: {
+    image?: (number | null) | Media;
+    /**
+     * Legacy import URL; used when no Media item is selected.
+     */
     imageUrl?: string | null;
     title?: string | null;
     text?: string | null;
@@ -1050,6 +1105,14 @@ export interface IndustryCouncilsHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1068,6 +1131,11 @@ export interface CrossSectorCouncilsHomepage {
   intro: {
     title: string;
     description?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Legacy import URL; used when no Media item is selected.
+     */
+    imageUrl?: string | null;
     buttonText?: string | null;
     buttonUrl?: string | null;
   };
@@ -1075,6 +1143,14 @@ export interface CrossSectorCouncilsHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1098,6 +1174,14 @@ export interface MembershipHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1121,6 +1205,14 @@ export interface InsightsHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1144,6 +1236,14 @@ export interface EventHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1167,6 +1267,14 @@ export interface GetInvolvedHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1190,6 +1298,14 @@ export interface NewsHomepage {
     | {
         title: string;
         description?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
         imageUrl?: string | null;
         buttonText?: string | null;
         buttonUrl?: string | null;
@@ -1263,18 +1379,26 @@ export interface CountryOfficesPage {
  */
 export interface FellowshipPage {
   id: number;
+  heroImage?: (number | null) | Media;
   /**
-   * Hero background — prefer /images/fellowship/hero.png
+   * Legacy import URL; used when no Media item is selected.
    */
-  heroImageUrl: string;
+  heroImageUrl?: string | null;
   introText: string;
   cohorts?:
     | {
         yearLabel: string;
         title: string;
         description: string;
-        imageUrl: string;
-        imageAlt: string;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
+        imageUrl?: string | null;
         exploreUrl: string;
         exploreExternal?: boolean | null;
         id?: string | null;
@@ -1343,17 +1467,31 @@ export interface MembershipPage {
   headerSubtitle: string;
   whyJoin: {
     title: string;
+    image?: (number | null) | Media;
+    /**
+     * Describe the image for accessibility. Defaults from filename if empty.
+     */
+    imageAlt?: string | null;
+    /**
+     * Legacy import URL; used when no Media item is selected.
+     */
+    imageUrl?: string | null;
     body: string;
-    imageUrl: string;
-    imageAlt: string;
     ctaLabel: string;
     ctaHref: string;
   };
   benefits: {
     title: string;
     intro: string;
-    imageUrl: string;
-    imageAlt: string;
+    image?: (number | null) | Media;
+    /**
+     * Describe the image for accessibility. Defaults from filename if empty.
+     */
+    imageAlt?: string | null;
+    /**
+     * Legacy import URL; used when no Media item is selected.
+     */
+    imageUrl?: string | null;
     items?:
       | {
           text: string;
@@ -1385,8 +1523,15 @@ export interface GetInvolvedPage {
   intro: {
     title: string;
     body: string;
-    imageUrl: string;
-    imageAlt: string;
+    image?: (number | null) | Media;
+    /**
+     * Describe the image for accessibility. Defaults from filename if empty.
+     */
+    imageAlt?: string | null;
+    /**
+     * Legacy import URL; used when no Media item is selected.
+     */
+    imageUrl?: string | null;
     ctaLabel?: string | null;
     ctaHref?: string | null;
     id?: string | null;
@@ -1395,8 +1540,15 @@ export interface GetInvolvedPage {
     | {
         title: string;
         body: string;
-        imageUrl: string;
-        imageAlt: string;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
+        imageUrl?: string | null;
         ctaLabel?: string | null;
         ctaHref?: string | null;
         id?: string | null;
@@ -1417,8 +1569,15 @@ export interface PartnershipsPage {
     | {
         id: string;
         title: string;
-        imageUrl: string;
-        imageAlt: string;
+        image?: (number | null) | Media;
+        /**
+         * Describe the image for accessibility. Defaults from filename if empty.
+         */
+        imageAlt?: string | null;
+        /**
+         * Legacy import URL; used when no Media item is selected.
+         */
+        imageUrl?: string | null;
         items?:
           | {
               text: string;
@@ -1430,8 +1589,15 @@ export interface PartnershipsPage {
   getStarted: {
     title: string;
     body: string;
-    imageUrl: string;
-    imageAlt: string;
+    image?: (number | null) | Media;
+    /**
+     * Describe the image for accessibility. Defaults from filename if empty.
+     */
+    imageAlt?: string | null;
+    /**
+     * Legacy import URL; used when no Media item is selected.
+     */
+    imageUrl?: string | null;
     requestLabel: string;
     requestEmail: string;
     guideLabel: string;
@@ -1549,8 +1715,15 @@ export interface ContactPage {
   id: number;
   introTitle: string;
   introBody: string;
-  introImageUrl: string;
-  introImageAlt: string;
+  introImage?: (number | null) | Media;
+  /**
+   * Describe the image for accessibility. Defaults from filename if empty.
+   */
+  introImageAlt?: string | null;
+  /**
+   * Legacy import URL; used when no Media item is selected.
+   */
+  introImageUrl?: string | null;
   email: string;
   phone: string;
   address: string;
@@ -1682,6 +1855,7 @@ export interface WwdHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         content?: T;
+        image?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1691,6 +1865,8 @@ export interface WwdHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1713,6 +1889,7 @@ export interface IndustryCouncilsHomepageSelect<T extends boolean = true> {
   intro?:
     | T
     | {
+        image?: T;
         imageUrl?: T;
         title?: T;
         text?: T;
@@ -1724,6 +1901,8 @@ export interface IndustryCouncilsHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1743,6 +1922,8 @@ export interface CrossSectorCouncilsHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
       };
@@ -1751,6 +1932,8 @@ export interface CrossSectorCouncilsHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1774,6 +1957,8 @@ export interface MembershipHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1797,6 +1982,8 @@ export interface InsightsHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1820,6 +2007,8 @@ export interface EventHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1843,6 +2032,8 @@ export interface GetInvolvedHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1866,6 +2057,8 @@ export interface NewsHomepageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        image?: T;
+        imageAlt?: T;
         imageUrl?: T;
         buttonText?: T;
         buttonUrl?: T;
@@ -1919,6 +2112,7 @@ export interface CountryOfficesPageSelect<T extends boolean = true> {
  * via the `definition` "fellowship-page_select".
  */
 export interface FellowshipPageSelect<T extends boolean = true> {
+  heroImage?: T;
   heroImageUrl?: T;
   introText?: T;
   cohorts?:
@@ -1927,8 +2121,9 @@ export interface FellowshipPageSelect<T extends boolean = true> {
         yearLabel?: T;
         title?: T;
         description?: T;
-        imageUrl?: T;
+        image?: T;
         imageAlt?: T;
+        imageUrl?: T;
         exploreUrl?: T;
         exploreExternal?: T;
         id?: T;
@@ -1991,9 +2186,10 @@ export interface MembershipPageSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
-        body?: T;
-        imageUrl?: T;
+        image?: T;
         imageAlt?: T;
+        imageUrl?: T;
+        body?: T;
         ctaLabel?: T;
         ctaHref?: T;
       };
@@ -2002,8 +2198,9 @@ export interface MembershipPageSelect<T extends boolean = true> {
     | {
         title?: T;
         intro?: T;
-        imageUrl?: T;
+        image?: T;
         imageAlt?: T;
+        imageUrl?: T;
         items?:
           | T
           | {
@@ -2041,8 +2238,9 @@ export interface GetInvolvedPageSelect<T extends boolean = true> {
     | {
         title?: T;
         body?: T;
-        imageUrl?: T;
+        image?: T;
         imageAlt?: T;
+        imageUrl?: T;
         ctaLabel?: T;
         ctaHref?: T;
         id?: T;
@@ -2052,8 +2250,9 @@ export interface GetInvolvedPageSelect<T extends boolean = true> {
     | {
         title?: T;
         body?: T;
-        imageUrl?: T;
+        image?: T;
         imageAlt?: T;
+        imageUrl?: T;
         ctaLabel?: T;
         ctaHref?: T;
         id?: T;
@@ -2074,8 +2273,9 @@ export interface PartnershipsPageSelect<T extends boolean = true> {
     | {
         id?: T;
         title?: T;
-        imageUrl?: T;
+        image?: T;
         imageAlt?: T;
+        imageUrl?: T;
         items?:
           | T
           | {
@@ -2088,8 +2288,9 @@ export interface PartnershipsPageSelect<T extends boolean = true> {
     | {
         title?: T;
         body?: T;
-        imageUrl?: T;
+        image?: T;
         imageAlt?: T;
+        imageUrl?: T;
         requestLabel?: T;
         requestEmail?: T;
         guideLabel?: T;
@@ -2207,8 +2408,9 @@ export interface NewsListingPageSelect<T extends boolean = true> {
 export interface ContactPageSelect<T extends boolean = true> {
   introTitle?: T;
   introBody?: T;
-  introImageUrl?: T;
+  introImage?: T;
   introImageAlt?: T;
+  introImageUrl?: T;
   email?: T;
   phone?: T;
   address?: T;

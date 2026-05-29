@@ -1,4 +1,11 @@
 import type { GlobalConfig } from 'payload'
+import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
+
+const imageFields = [
+  mediaImageField({ name: 'image', label: 'Image' }),
+  imageAltField(),
+  legacyImageUrlField('imageUrl'),
+]
 
 export const MembershipPage: GlobalConfig = {
   slug: 'membership-page',
@@ -11,9 +18,8 @@ export const MembershipPage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'title', type: 'text', required: true },
+        ...imageFields,
         { name: 'body', type: 'textarea', required: true },
-        { name: 'imageUrl', type: 'text', required: true },
-        { name: 'imageAlt', type: 'text', required: true },
         { name: 'ctaLabel', type: 'text', required: true },
         { name: 'ctaHref', type: 'text', required: true },
       ],
@@ -24,8 +30,7 @@ export const MembershipPage: GlobalConfig = {
       fields: [
         { name: 'title', type: 'text', required: true },
         { name: 'intro', type: 'textarea', required: true },
-        { name: 'imageUrl', type: 'text', required: true },
-        { name: 'imageAlt', type: 'text', required: true },
+        ...imageFields,
         {
           name: 'items',
           type: 'array',

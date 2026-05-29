@@ -6,6 +6,7 @@ import {
   parseInsightCategoryRoute,
 } from '@/lib/insight-categories'
 import { getPayloadClient } from '@/lib/cms'
+import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import type {
   InsightArticle,
   InsightArticleDetail,
@@ -23,28 +24,15 @@ function truncateExcerpt(text: string): string {
   return `${t.slice(0, EXCERPT_MAX)}...`
 }
 
-function featuredImageUrl(featuredImage: unknown): string | undefined {
-  if (!featuredImage || typeof featuredImage === 'number') return undefined
-  const media = featuredImage as Record<string, unknown>
-  const url = media.url as string | undefined
-  if (!url) return undefined
-  if (url.startsWith('http')) return url
-  const base = (process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002').replace(/\/$/, '')
-  return `${base}${url.startsWith('/') ? url : `/${url}`}`
-}
-
 function mapDoc(doc: Record<string, unknown>): InsightArticle {
   const category = parseInsightCategory(String(doc.category ?? '')) ?? 'sector-report'
   const excerptRaw = doc.excerpt ? String(doc.excerpt) : ''
   const media = doc.featuredImage
-  const alt =
-    media && typeof media === 'object' && media !== null && 'alt' in media
-      ? String((media as Record<string, unknown>).alt || '')
-      : ''
+  const title = String(doc.title ?? '')
 
   return {
     id: String(doc.id),
-    title: String(doc.title ?? ''),
+    title,
     slug: String(doc.slug ?? ''),
     excerpt: excerptRaw ? truncateExcerpt(excerptRaw) : undefined,
     category,
@@ -52,9 +40,8 @@ function mapDoc(doc: Record<string, unknown>): InsightArticle {
     categoryRoute: INSIGHT_CATEGORY_TO_ROUTE[category],
     publishedAt: doc.publishedAt ? String(doc.publishedAt) : undefined,
     author: doc.author ? String(doc.author) : undefined,
-    imageUrl:
-      (doc.imageUrl ? String(doc.imageUrl) : undefined) || featuredImageUrl(media),
-    imageAlt: alt || String(doc.title ?? ''),
+    imageUrl: resolvePayloadMediaUrl(media, doc.imageUrl as string | undefined),
+    imageAlt: resolvePayloadMediaAlt(media, null, title),
   }
 }
 

@@ -1,6 +1,6 @@
 import { defaultMembershipPage } from '@/lib/membership-page-defaults'
 import { getMembershipCategories, getPayloadClient } from '@/lib/cms'
-import { resolveImageUrl } from '@/lib/image-url'
+import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import { wpUploadUrlToLocal } from '@/lib/wp-uploads'
 import type { MemberTestimonial, MembershipPageData } from '@/types/membership-page'
 
@@ -47,10 +47,18 @@ function mapGlobal(
       title: String(whyJoinRaw.title ?? fallback.whyJoin.title),
       body: String(whyJoinRaw.body ?? fallback.whyJoin.body),
       imageUrl:
-        wpUploadUrlToLocal(whyJoinRaw.imageUrl as string | undefined) ||
-        resolveImageUrl(whyJoinRaw.imageUrl as string | undefined, fallback.whyJoin.imageUrl) ||
-        fallback.whyJoin.imageUrl,
-      imageAlt: String(whyJoinRaw.imageAlt ?? fallback.whyJoin.imageAlt),
+        resolvePayloadMediaUrl(
+          whyJoinRaw.image,
+          wpUploadUrlToLocal(whyJoinRaw.imageUrl as string | undefined) ||
+            (whyJoinRaw.imageUrl as string | undefined),
+          fallback.whyJoin.imageUrl,
+        ) || fallback.whyJoin.imageUrl,
+      imageAlt:
+        resolvePayloadMediaAlt(
+          whyJoinRaw.image,
+          whyJoinRaw.imageAlt as string | undefined,
+          fallback.whyJoin.title,
+        ) || fallback.whyJoin.imageAlt,
       ctaLabel: String(whyJoinRaw.ctaLabel ?? fallback.whyJoin.ctaLabel),
       ctaHref: String(whyJoinRaw.ctaHref ?? fallback.whyJoin.ctaHref),
     },
@@ -58,10 +66,18 @@ function mapGlobal(
       title: String(benefitsRaw.title ?? fallback.benefits.title),
       intro: String(benefitsRaw.intro ?? fallback.benefits.intro),
       imageUrl:
-        wpUploadUrlToLocal(benefitsRaw.imageUrl as string | undefined) ||
-        resolveImageUrl(benefitsRaw.imageUrl as string | undefined, fallback.benefits.imageUrl) ||
-        fallback.benefits.imageUrl,
-      imageAlt: String(benefitsRaw.imageAlt ?? fallback.benefits.imageAlt),
+        resolvePayloadMediaUrl(
+          benefitsRaw.image,
+          wpUploadUrlToLocal(benefitsRaw.imageUrl as string | undefined) ||
+            (benefitsRaw.imageUrl as string | undefined),
+          fallback.benefits.imageUrl,
+        ) || fallback.benefits.imageUrl,
+      imageAlt:
+        resolvePayloadMediaAlt(
+          benefitsRaw.image,
+          benefitsRaw.imageAlt as string | undefined,
+          fallback.benefits.title,
+        ) || fallback.benefits.imageAlt,
       items: mapBenefitItems(
         benefitsRaw.items as Array<{ text?: string }> | undefined,
         fallback.benefits.items,
@@ -122,7 +138,7 @@ export async function getMembershipPageData(): Promise<MembershipPageData> {
     if (!payload) {
       return { ...fallback, categories, testimonials }
     }
-    const global = await payload.findGlobal({ slug: 'membership-page' })
+    const global = await payload.findGlobal({ slug: 'membership-page', depth: 1 })
     if (!global) {
       return { ...fallback, categories, testimonials }
     }

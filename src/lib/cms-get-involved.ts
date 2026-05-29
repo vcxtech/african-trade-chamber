@@ -1,13 +1,21 @@
 import { defaultGetInvolvedPage } from '@/lib/get-involved-defaults'
 import { getPayloadClient } from '@/lib/cms'
+import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import type { GetInvolvedCard, GetInvolvedPageData } from '@/types/get-involved-page'
 
 function mapCard(row: Record<string, unknown>, fallback?: GetInvolvedCard): GetInvolvedCard {
+  const title = String(row.title ?? fallback?.title ?? '')
   return {
-    title: String(row.title ?? fallback?.title ?? ''),
+    title,
     body: String(row.body ?? fallback?.body ?? ''),
-    imageUrl: String(row.imageUrl ?? fallback?.imageUrl ?? ''),
-    imageAlt: String(row.imageAlt ?? fallback?.imageAlt ?? ''),
+    imageUrl:
+      resolvePayloadMediaUrl(row.image, row.imageUrl as string | undefined, fallback?.imageUrl) ||
+      fallback?.imageUrl ||
+      '',
+    imageAlt:
+      resolvePayloadMediaAlt(row.image, row.imageAlt as string | undefined, title) ||
+      fallback?.imageAlt ||
+      '',
     ctaLabel: row.ctaLabel ? String(row.ctaLabel) : fallback?.ctaLabel,
     ctaHref: row.ctaHref ? String(row.ctaHref) : fallback?.ctaHref,
   }
@@ -25,7 +33,7 @@ export async function getGetInvolvedPage(): Promise<GetInvolvedPageData> {
   try {
     const payload = await getPayloadClient()
     if (!payload) return fallback
-    const global = await payload.findGlobal({ slug: 'get-involved-page' })
+    const global = await payload.findGlobal({ slug: 'get-involved-page', depth: 1 })
     if (!global) return fallback
     const raw = global as unknown as Record<string, unknown>
     const introRaw = (raw.intro as Record<string, unknown>) || {}
