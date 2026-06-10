@@ -69,5 +69,6 @@ Coolify webhooks redeploy on push. No extra CI required for basic deploys.
 - **Build fails:** Ensure Node 20 in Dockerfile (already set)
 - **Admin 500 / `users does not exist`:** Check `DATABASE_URI` points to `atc-postgres` and redeploy (seed runs on start)
 - **Seed skipped in logs:** `DATABASE_URI` or `PAYLOAD_SECRET` missing in Coolify env vars
+- **Seed fails / tables missing:** Seed runs with `NODE_ENV=development` so Payload can push schema (push is disabled in production). Check Postgres connectivity.
 - **Images broken:** Migrate media to Payload over time; `/uploads/` files are not in the repo by default
 - **Duplicate failed postgres:** Delete the red database resource; keep only `atc-postgres`
