@@ -38,7 +38,7 @@ import { ContactPage } from './payload/globals/ContactPage'
 import { AboutPage } from './payload/globals/AboutPage'
 import { TeamMembers } from './payload/collections/TeamMembers'
 import { FormSubmissions } from './payload/collections/FormSubmissions'
-import { getPrimaryServerURL, getServerURLs } from './lib/payload-server-url'
+import { getPayloadCookieSecure, getPrimaryServerURL, getServerURLs } from './lib/payload-server-url'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

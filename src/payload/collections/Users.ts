@@ -1,4 +1,5 @@
 import type { Access, CollectionConfig } from 'payload'
+import { getPayloadCookieSecure } from '@/lib/payload-server-url'
 
 function isAdmin({ req }: Parameters<Access>[0]): boolean {
   return req.user?.role === 'admin'
@@ -10,6 +11,10 @@ export const Users: CollectionConfig = {
     // Keep lock columns in the schema (maxLoginAttempts: 0 drops them and triggers interactive push prompts).
     maxLoginAttempts: process.env.NODE_ENV === 'development' ? 999 : 5,
     lockTime: 600 * 1000,
+    cookies: {
+      sameSite: 'Lax',
+      secure: getPayloadCookieSecure(),
+    },
   },
   admin: {
     useAsTitle: 'email',

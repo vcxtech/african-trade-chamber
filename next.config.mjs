@@ -22,6 +22,10 @@ const deployMediaPattern = serverMediaPattern()
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  // Required when running behind Coolify/Traefik/nginx so auth cookies and redirects use the public host.
+  experimental: {
+    trustHost: true,
+  },
   images: {
     remotePatterns: [
       ...(deployMediaPattern ? [deployMediaPattern] : []),
