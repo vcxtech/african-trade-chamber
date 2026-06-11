@@ -51,18 +51,6 @@ async function upsertAdminUser(payload: Payload, email: string, password: string
   return 'created' as const
 }
 
-async function unlockAdmin(payload: Payload, email: string) {
-  try {
-    await payload.unlock({
-      collection: 'users',
-      data: { email: normalizeEmail(email) },
-      overrideAccess: true,
-    })
-  } catch {
-    // unlock is best-effort; password reset also clears lock fields
-  }
-}
-
 async function verifyLogin(payload: Payload, email: string, password: string) {
   const login = await payload.login({
     collection: 'users',
@@ -78,7 +66,6 @@ async function verifyLogin(payload: Payload, email: string, password: string) {
 export async function syncAdminUser({ email, password, payload }: SyncAdminUserArgs) {
   const normalized = normalizeEmail(email)
   const action = await upsertAdminUser(payload, normalized, password)
-  await unlockAdmin(payload, normalized)
 
   try {
     const ok = await verifyLogin(payload, normalized, password)
@@ -107,7 +94,6 @@ export async function syncAdminUser({ email, password, payload }: SyncAdminUserA
     data: { email: normalized, password, role: 'admin' },
     overrideAccess: true,
   })
-  await unlockAdmin(payload, normalized)
 
   try {
     const ok = await verifyLogin(payload, normalized, password)
