@@ -1,24 +1,15 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
-import {
-  EmailField,
-  Form,
-  FormSubmit,
-  Link,
-  PasswordField,
-  useAuth,
-  useConfig,
-  useTranslation,
-} from '@payloadcms/ui'
+import React, { useState } from 'react'
+import Link from 'next/link'
+import { useAuth, useConfig, useTranslation } from '@payloadcms/ui'
 import { formatAdminURL, getSafeRedirect } from 'payload/shared'
 
 const baseClass = 'login__form'
 
 /**
- * Payload's default login uses router.push after success, which can skip the
- * auth cookie on the next RSC request in production behind a reverse proxy.
- * Full-page navigation ensures the cookie is sent before /admin loads.
+ * Login via JSON POST — production Payload only populates req.data from JSON
+ * on /api/users/login. The default Form multipart submit returns 400 in prod.
  */
 export function AtcLoginForm({
   prefillEmail,
@@ -41,65 +32,103 @@ export function AtcLoginForm({
   const { t } = useTranslation()
   const { setUser } = useAuth()
 
+  const [email, setEmail] = useState(prefillEmail ?? '')
+  const [password, setPassword] = useState(prefillPassword ?? '')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
   const redirectTarget = getSafeRedirect({
     fallbackTo: adminRoute,
     redirectTo: searchParams.redirect ?? '',
   })
 
-  const initialState = useMemo(
-    () => ({
-      email: {
-        initialValue: prefillEmail ?? '',
-        valid: true,
-        value: prefillEmail ?? '',
-      },
-      password: {
-        initialValue: prefillPassword ?? '',
-        valid: true,
-        value: prefillPassword ?? '',
-      },
-    }),
-    [prefillEmail, prefillPassword],
-  )
+  const loginUrl = formatAdminURL({
+    apiRoute,
+    path: `/${userSlug}/login`,
+  })
 
-  const [loginAction] = useState(() =>
-    formatAdminURL({
-      apiRoute,
-      path: `/${userSlug}/login`,
-    }),
-  )
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch(loginUrl, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': typeof navigator !== 'undefined' ? navigator.language : 'en',
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password,
+        }),
+      })
+
+      let body: { message?: string; errors?: Array<{ message?: string }> } = {}
+      try {
+        body = await response.json()
+      } catch {
+        body = {}
+      }
+
+      if (!response.ok) {
+        setError(
+          body.message ||
+            body.errors?.[0]?.message ||
+            'The email or password provided is incorrect.',
+        )
+        setLoading(false)
+        return
+      }
+
+      setUser(body as Parameters<typeof setUser>[0])
+      window.location.assign(redirectTarget)
+    } catch {
+      setError('Login failed. Please try again.')
+      setLoading(false)
+    }
+  }
 
   return (
-    <Form
-      action={loginAction}
-      className={baseClass}
-      disableSuccessStatus
-      initialState={initialState}
-      method="POST"
-      onSuccess={(data) => {
-        setUser(data as Parameters<typeof setUser>[0])
-        window.location.assign(redirectTarget)
-      }}
-      waitForAutocomplete
-    >
+    <form className={baseClass} onSubmit={handleSubmit}>
       <div className={`${baseClass}__inputWrap`}>
-        <EmailField
-          field={{
-            name: 'email',
-            label: t('general:email'),
-            required: true,
-          }}
-          path="email"
-        />
-        <PasswordField
-          field={{
-            name: 'password',
-            label: t('general:password'),
-            required: true,
-          }}
-          path="password"
-        />
+        <div className="field-type email">
+          <label className="field-label" htmlFor="atc-login-email">
+            {t('general:email')}
+            <span className="required">*</span>
+          </label>
+          <input
+            autoComplete="email"
+            className="field-input"
+            id="atc-login-email"
+            name="email"
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            type="email"
+            value={email}
+          />
+        </div>
+        <div className="field-type password">
+          <label className="field-label" htmlFor="atc-login-password">
+            {t('general:password')}
+            <span className="required">*</span>
+          </label>
+          <input
+            autoComplete="current-password"
+            className="field-input"
+            id="atc-login-password"
+            name="password"
+            onChange={(event) => setPassword(event.target.value)}
+            required
+            type="password"
+            value={password}
+          />
+        </div>
       </div>
+
+      {error ? <p className="atc-login-error">{error}</p> : null}
 
       <Link
         href={formatAdminURL({
@@ -111,7 +140,13 @@ export function AtcLoginForm({
         {t('authentication:forgotPasswordQuestion')}
       </Link>
 
-      <FormSubmit size="large">{t('authentication:login')}</FormSubmit>
-    </Form>
+      <button
+        className="btn btn--icon-style-without-border btn--size-large btn--style-primary"
+        disabled={loading}
+        type="submit"
+      >
+        {loading ? '…' : t('authentication:login')}
+      </button>
+    </form>
   )
 }
