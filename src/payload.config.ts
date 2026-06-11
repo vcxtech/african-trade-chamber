@@ -60,6 +60,9 @@ export default buildConfig({
     theme: 'light',
     components: {
       views: {
+        login: {
+          Component: '/components/admin/AtcLoginView#AtcLoginView',
+        },
         createFirstUser: {
           Component: '/components/admin/AtcCreateFirstUserBlocked#AtcCreateFirstUserBlocked',
         },

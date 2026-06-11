@@ -30,6 +30,7 @@ import { AtcAdminNavFooter as AtcAdminNavFooter_8af2cb8e1ccd974a742835ef34cbe9ee
 import { AtcLoginHeading as AtcLoginHeading_488357b3fa505d25367ca5581b8fd799 } from '../../../components/admin/AtcLoginHeading'
 import { AtcAdminOpenNav as AtcAdminOpenNav_62681b71b438623e0624c1f8fd2a5846 } from '../../../components/admin/AtcAdminOpenNav'
 import { AtcCreateFirstUserBlocked as AtcCreateFirstUserBlocked_17c84228c319c7378d62febbf1216571 } from '../../../components/admin/AtcCreateFirstUserBlocked'
+import { AtcLoginView as AtcLoginView_2f8b9c1a4d6e3b7f0a1c5d9e8b2f4a6c } from '../../../components/admin/AtcLoginView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -66,5 +67,6 @@ export const importMap = {
   "/components/admin/AtcLoginHeading#AtcLoginHeading": AtcLoginHeading_488357b3fa505d25367ca5581b8fd799,
   "/components/admin/AtcAdminOpenNav#AtcAdminOpenNav": AtcAdminOpenNav_62681b71b438623e0624c1f8fd2a5846,
   "/components/admin/AtcCreateFirstUserBlocked#AtcCreateFirstUserBlocked": AtcCreateFirstUserBlocked_17c84228c319c7378d62febbf1216571,
+  "/components/admin/AtcLoginView#AtcLoginView": AtcLoginView_2f8b9c1a4d6e3b7f0a1c5d9e8b2f4a6c,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
