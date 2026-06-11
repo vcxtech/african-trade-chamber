@@ -35,7 +35,8 @@ Add these in the app **Environment Variables** section. See [`coolify.env.exampl
 |-----|----------|---------|
 | `DATABASE_URI` | Yes | `postgresql://atc:PASSWORD@atc-postgres:5432/atc_website` |
 | `PAYLOAD_SECRET` | Yes | 32+ char random string |
-| `NEXT_PUBLIC_SERVER_URL` | Yes | `http://your-app.sslip.io` |
+| `NEXT_PUBLIC_SERVER_URL` | Yes | `http://your-app.sslip.io` (must match the URL in your browser exactly) |
+| `PAYLOAD_SERVER_URL` | Recommended | Same as `NEXT_PUBLIC_SERVER_URL` — used at runtime for Payload auth cookies (avoids build-time URL mismatch) |
 | `AUTO_SEED` | Yes | `true` (runs seed on every container start; idempotent) |
 | `SEED_ADMIN_EMAIL` | **Yes** | `admin@africantradechamber.org` — required when `AUTO_SEED=true` |
 | `SEED_ADMIN_PASSWORD` | **Yes** | strong admin login password — required when `AUTO_SEED=true` |
@@ -78,6 +79,7 @@ Coolify webhooks redeploy on push. No extra CI required for basic deploys.
 - **Seed fails / tables missing:** Seed runs with `NODE_ENV=development` so Payload can push schema (push is disabled in production). Check Postgres connectivity.
 - **`/admin/create-first-user` or "Admin access is restricted":** No admin user in the database. Set `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` in Coolify and redeploy. Check logs for `Created admin user`.
 - **Deploy fails at seed:** With `AUTO_SEED=true`, both `SEED_ADMIN_*` variables are required — add them and redeploy.
-- **Admin login 401 after deploy:** Check seed logs for `(login verified)`. If missing, change `SEED_ADMIN_PASSWORD` to a value without `'` or `"` and redeploy. Or run `reset-admin` in the app terminal (see below).
+- **Admin login 401 after deploy:** Check seed logs for `(login verified, password length N)`. If you set `AtcAdmin2026Secure`, N must be **18**. If N is 20, Coolify stored extra characters — delete `SEED_ADMIN_PASSWORD`, re-type the value manually (no paste), save, redeploy.
+- **Login page reloads with no dashboard:** Set `PAYLOAD_SERVER_URL` to the exact URL in your browser (same as `NEXT_PUBLIC_SERVER_URL`), e.g. `http://hdvom1zh14kizajj1r3qbfa4.31.97.57.75.sslip.io`, then redeploy.
 - **Images broken:** Migrate media to Payload over time; `/uploads/` files are not in the repo by default
 - **Duplicate failed postgres:** Delete the red database resource; keep only `atc-postgres`

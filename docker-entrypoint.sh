@@ -9,6 +9,9 @@ if [ "${AUTO_SEED:-true}" = "true" ]; then
       exit 1
     fi
     echo "Running database seed (AUTO_SEED=true)..."
+    echo "SEED_ADMIN_PASSWORD shell length: ${#SEED_ADMIN_PASSWORD}"
+    echo "PAYLOAD_SERVER_URL=${PAYLOAD_SERVER_URL:-<unset>}"
+    echo "NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-<unset>}"
     # Payload only runs Drizzle schema push in development mode (not production).
     AUTO_SEED="${AUTO_SEED:-true}" NODE_ENV=development PAYLOAD_DB_PUSH=true NODE_OPTIONS=--no-deprecation ./node_modules/.bin/tsx --tsconfig tsconfig.seed.json scripts/seed.ts || {
       echo "Error: database seed failed. See logs above (often missing SEED_ADMIN_* or DATABASE_URI)."

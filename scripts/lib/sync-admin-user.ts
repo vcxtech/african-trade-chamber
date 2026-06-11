@@ -1,5 +1,5 @@
 import type { Payload } from 'payload'
-import { sanitizeEnvValue } from './sanitize-env.js'
+import { describeSecretEnv, sanitizeEnvValue, warnIfPasswordHasExtraSuffix } from './sanitize-env.js'
 
 type SyncAdminUserArgs = {
   email: string
@@ -72,6 +72,8 @@ async function verifyLogin(payload: Payload, email: string, password: string) {
  */
 export async function syncAdminUser({ email, password, payload }: SyncAdminUserArgs) {
   const { normalizedEmail, normalizedPassword } = normalizeCredentials(email, password)
+  console.log(describeSecretEnv('SEED_ADMIN_PASSWORD', normalizedPassword))
+  warnIfPasswordHasExtraSuffix(normalizedPassword, 'AtcAdmin2026Secure')
   const rawPasswordLen = password.length
   if (rawPasswordLen !== normalizedPassword.length) {
     console.warn(
