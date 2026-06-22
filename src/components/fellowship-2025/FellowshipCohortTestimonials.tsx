@@ -1,17 +1,21 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import {
-  FELLOW_TESTIMONIALS,
-  RESOURCE_TESTIMONIALS,
-  type FellowTestimonial,
-  type ResourceTestimonial,
-} from '@/lib/fellowship-2025-testimonials'
+import type { FellowTestimonial, ResourceTestimonial } from '@/types/fellowship'
 
 type ModalState = {
   title: string
   subtitle: string
   body: string
+}
+
+type FellowshipCohortTestimonialsProps = {
+  fellowTestimonialsTitle: string
+  fellowTestimonialsIntro: string
+  resourceTestimonialsTitle: string
+  resourceTestimonialsIntro: string
+  fellowTestimonials: FellowTestimonial[]
+  resourceTestimonials: ResourceTestimonial[]
 }
 
 function ReadMoreButton({ onClick }: { onClick: () => void }) {
@@ -135,7 +139,14 @@ function TestimonialModal({
   )
 }
 
-export function Fellowship2025Testimonials() {
+export function FellowshipCohortTestimonials({
+  fellowTestimonialsTitle,
+  fellowTestimonialsIntro,
+  resourceTestimonialsTitle,
+  resourceTestimonialsIntro,
+  fellowTestimonials,
+  resourceTestimonials,
+}: FellowshipCohortTestimonialsProps) {
   const [modal, setModal] = useState<ModalState | null>(null)
 
   const openFellow = useCallback((item: FellowTestimonial) => {
@@ -150,6 +161,10 @@ export function Fellowship2025Testimonials() {
     })
   }, [])
 
+  const hasFellow = fellowTestimonials.length > 0
+  const hasResource = resourceTestimonials.length > 0
+  if (!hasFellow && !hasResource) return null
+
   return (
     <div className="bg-[#f8f9fa] pb-16 font-[family-name:var(--font-poppins,'Poppins',sans-serif)]">
       <div className="mx-auto max-w-[1200px] px-5">
@@ -158,34 +173,45 @@ export function Fellowship2025Testimonials() {
           <p className="text-base text-black">Voices from Fellowship</p>
         </header>
 
-        <section className="mb-[60px]" aria-labelledby="fellow-testimonials-title">
-          <h3 id="fellow-testimonials-title" className="mb-2 text-center text-[28px] font-bold text-black">
-            Fellow Testimonials
-          </h3>
-          <p className="mb-[30px] text-center text-base text-black">
-            Hear directly from fellowship graduates about their transformative experiences and career
-            impact.
-          </p>
-          <div className="grid grid-cols-1 gap-[25px] md:grid-cols-2 lg:grid-cols-3">
-            {FELLOW_TESTIMONIALS.map((item) => (
-              <FellowCard key={item.name} item={item} onReadMore={() => openFellow(item)} />
-            ))}
-          </div>
-        </section>
+        {hasFellow ? (
+          <section className="mb-[60px]" aria-labelledby="fellow-testimonials-title">
+            <h3
+              id="fellow-testimonials-title"
+              className="mb-2 text-center text-[28px] font-bold text-black"
+            >
+              {fellowTestimonialsTitle}
+            </h3>
+            {fellowTestimonialsIntro ? (
+              <p className="mb-[30px] text-center text-base text-black">{fellowTestimonialsIntro}</p>
+            ) : null}
+            <div className="grid grid-cols-1 gap-[25px] md:grid-cols-2 lg:grid-cols-3">
+              {fellowTestimonials.map((item) => (
+                <FellowCard key={item.name} item={item} onReadMore={() => openFellow(item)} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-        <section className="mb-[60px]" aria-labelledby="resource-testimonials-title">
-          <h3 id="resource-testimonials-title" className="mb-2 text-center text-[28px] font-bold text-black">
-            Resource Person Testimonials
-          </h3>
-          <p className="mb-[30px] text-center text-base text-black">
-            Insights from industry experts, mentors, and leaders who work closely with our fellows.
-          </p>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {RESOURCE_TESTIMONIALS.map((item) => (
-              <ResourceCard key={item.name} item={item} onReadMore={() => openResource(item)} />
-            ))}
-          </div>
-        </section>
+        {hasResource ? (
+          <section className="mb-[60px]" aria-labelledby="resource-testimonials-title">
+            <h3
+              id="resource-testimonials-title"
+              className="mb-2 text-center text-[28px] font-bold text-black"
+            >
+              {resourceTestimonialsTitle}
+            </h3>
+            {resourceTestimonialsIntro ? (
+              <p className="mb-[30px] text-center text-base text-black">
+                {resourceTestimonialsIntro}
+              </p>
+            ) : null}
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {resourceTestimonials.map((item) => (
+                <ResourceCard key={item.name} item={item} onReadMore={() => openResource(item)} />
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
 
       <TestimonialModal modal={modal} onClose={() => setModal(null)} />

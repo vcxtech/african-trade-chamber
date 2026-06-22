@@ -18,13 +18,26 @@ function serverMediaPattern() {
 }
 
 const deployMediaPattern = serverMediaPattern()
+const isDev = process.env.NODE_ENV !== 'production'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
   images: {
+    // When localPatterns is set, every optimized local src must match an entry
+    localPatterns: [
+      {
+        pathname: '/images/**',
+      },
+      {
+        pathname: '/api/media/file/**',
+      },
+      {
+        pathname: '/uploads/**',
+      },
+    ],
     remotePatterns: [
-      ...(deployMediaPattern ? [deployMediaPattern] : []),
+      ...(deployMediaPattern && !isDev ? [deployMediaPattern] : []),
       {
         protocol: 'https',
         hostname: 'africantradechamber.org',
@@ -45,12 +58,16 @@ const nextConfig = {
         hostname: 'flagcdn.com',
         pathname: '/**',
       },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3002',
-        pathname: '/api/media/file/**',
-      },
+      ...(!isDev
+        ? [
+            {
+              protocol: 'http',
+              hostname: 'localhost',
+              port: '3002',
+              pathname: '/api/media/file/**',
+            },
+          ]
+        : []),
       {
         protocol: 'https',
         hostname: 'africantradechamber.org',

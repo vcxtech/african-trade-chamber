@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { HomepageCta } from '@/components/homepage/HomepageCta'
-import { isLocalImage } from '@/lib/image-url'
+import { canOptimizeImage } from '@/lib/image-url'
 import type { HomepageCard } from '@/types/homepage'
 
 type Props = {
@@ -22,7 +22,7 @@ export function HomepageImageCard({ card, imageHeight = 'default', className = '
             src={card.imageUrl}
             alt={card.title}
             fill
-            unoptimized={!isLocalImage(card.imageUrl)}
+            unoptimized={!canOptimizeImage(card.imageUrl)}
             className="object-cover transition duration-500 hover:scale-[1.03]"
             sizes="(max-width: 768px) 100vw, 300px"
           />

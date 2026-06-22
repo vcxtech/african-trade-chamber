@@ -4,6 +4,7 @@ import { IndustryCouncilsHomepage } from '@/components/homepage/IndustryCouncils
 import { ThreeCardHomepageSection } from '@/components/homepage/ThreeCardHomepageSection'
 import { WhatWeDoHomepage } from '@/components/homepage/WhatWeDoHomepage'
 import { FellowshipPopup } from '@/components/FellowshipPopup'
+import { HeroPreload } from '@/components/HeroPreload'
 import { HeroSlider } from '@/components/HeroSlider'
 import { getHeroSlides, getSiteSettings } from '@/lib/cms'
 import { getHomepageSections } from '@/lib/cms-homepage'
@@ -15,8 +16,11 @@ export default async function HomePage() {
     getHomepageSections(),
   ])
 
+  const firstSlide = slides[0]
+
   return (
     <>
+      {firstSlide ? <HeroPreload slide={firstSlide} /> : null}
       <HeroSlider slides={slides} />
       <HeroFeatureCards cards={sections.featureCards} />
       <WhatWeDoHomepage data={sections.wwd} />

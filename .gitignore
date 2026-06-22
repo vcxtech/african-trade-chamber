@@ -50,6 +50,8 @@ next-env.d.ts
 # Payload CMS uploads (local dev)
 /media/*
 !/media/.gitkeep
+/form-attachments/*
+!/form-attachments/.gitkeep
 
 # WordPress media (~2GB) — see data/README.md for local setup
 /data/uploads/

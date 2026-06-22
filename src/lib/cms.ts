@@ -128,12 +128,14 @@ function mapHeroSlideDoc(doc: Record<string, unknown>, fallback?: HeroSlide): He
       doc.backgroundImage,
       doc.backgroundImageUrl as string | undefined,
       fallback?.backgroundImageUrl,
+      'heroBg',
     ) || ''
   const sideImageUrl =
     resolvePayloadMediaUrl(
       doc.sideImage,
       doc.sideImageUrl as string | undefined,
       fallback?.sideImageUrl,
+      'heroSide',
     ) || ''
   return {
     id: String(doc.id),
@@ -156,8 +158,9 @@ function mapNewsToHeroSlide(doc: Record<string, unknown>, fallback?: HeroSlide):
       doc.featuredImage,
       doc.imageUrl as string | undefined,
       fallback?.backgroundImageUrl,
+      'heroBg',
     ) || ''
-  const sideImageUrl = resolvePayloadMediaUrl(doc.heroSideImage) || ''
+  const sideImageUrl = resolvePayloadMediaUrl(doc.heroSideImage, undefined, undefined, 'heroSide') || ''
   return {
     id: `news-${doc.id}`,
     title: String(doc.title ?? ''),

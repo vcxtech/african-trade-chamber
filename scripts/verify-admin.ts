@@ -50,6 +50,8 @@ async function main() {
     'news',
     'insights',
     'team-members',
+    'team-member-categories',
+    'fellow-countries',
     'jobs',
     'form-submissions',
     'hero-slides',
@@ -399,19 +401,56 @@ async function main() {
     }
   }
 
-  // Team members category coverage
+  // Team member taxonomy + category coverage
+  try {
+    const categories = await payload.find({
+      collection: 'team-member-categories',
+      limit: 50,
+      overrideAccess: true,
+    })
+    record(
+      'Team member categories seeded',
+      categories.totalDocs >= 7,
+      `${categories.totalDocs} categor(ies)`,
+    )
+
+    const countries = await payload.find({
+      collection: 'fellow-countries',
+      limit: 50,
+      overrideAccess: true,
+    })
+    record(
+      'Fellow countries seeded',
+      countries.totalDocs >= 25,
+      `${countries.totalDocs} countr(ies)`,
+    )
+  } catch (err) {
+    record('Team taxonomies', false, err instanceof Error ? err.message : String(err))
+  }
+
   const teamCats = ['advisory', 'board', 'secretariat', 'fellow'] as const
-  for (const cat of teamCats) {
+  for (const catSlug of teamCats) {
     try {
+      const catDoc = await payload.find({
+        collection: 'team-member-categories',
+        where: { slug: { equals: catSlug } },
+        limit: 1,
+        overrideAccess: true,
+      })
+      const categoryId = catDoc.docs[0]?.id
+      if (!categoryId) {
+        record(`Team category ${catSlug}`, false, 'category slug missing — run migrate:team-taxonomies')
+        continue
+      }
       const result = await payload.find({
         collection: 'team-members',
         limit: 1,
         overrideAccess: true,
-        where: { category: { equals: cat } },
+        where: { category: { equals: categoryId } },
       })
-      record(`Team category ${cat}`, result.totalDocs > 0, `${result.totalDocs} member(s)`)
+      record(`Team category ${catSlug}`, result.totalDocs > 0, `${result.totalDocs} member(s)`)
     } catch (err) {
-      record(`Team category ${cat}`, false, err instanceof Error ? err.message : String(err))
+      record(`Team category ${catSlug}`, false, err instanceof Error ? err.message : String(err))
     }
   }
 
@@ -497,6 +536,57 @@ async function main() {
     }
   } catch (err) {
     record('HTTP form submit', false, err instanceof Error ? err.message : String(err))
+  }
+
+  try {
+    const testPng = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    )
+    const multipart = new FormData()
+    multipart.append('formType', 'membership')
+    multipart.append('email', 'verify-admin-multipart@test.local')
+    multipart.append('subject', 'Admin E2E membership multipart')
+    multipart.append(
+      'data',
+      JSON.stringify({
+        orgName: 'QA Multipart Org',
+        notifyEmail: 'info@africantradechamber.org',
+        summaryBody: 'Multipart membership test from verify-admin.ts',
+      }),
+    )
+    multipart.append('orgName', 'QA Multipart Org')
+    multipart.append(
+      'companyLogo',
+      new Blob([testPng], { type: 'image/png' }),
+      'verify-membership-logo.png',
+    )
+
+    const multipartRes = await fetch(`${baseUrl}/api/forms/submit`, {
+      method: 'POST',
+      body: multipart,
+      signal: AbortSignal.timeout(120_000),
+    })
+    const multipartOk = multipartRes.ok
+    record('HTTP membership multipart submit', multipartOk, multipartOk ? '200' : `status ${multipartRes.status}`)
+
+    if (multipartOk) {
+      const rows = await payload.find({
+        collection: 'form-submissions',
+        limit: 1,
+        overrideAccess: true,
+        where: { email: { equals: 'verify-admin-multipart@test.local' } },
+      })
+      const row = rows.docs[0] as { payload?: Record<string, unknown> } | undefined
+      const logo = row?.payload?.companyLogo as { filename?: string } | undefined
+      record(
+        'Membership multipart attachment ref',
+        Boolean(logo?.filename),
+        logo?.filename ?? 'missing companyLogo ref',
+      )
+    }
+  } catch (err) {
+    record('HTTP membership multipart submit', false, err instanceof Error ? err.message : String(err))
   }
 
   // Site settings + contact + wwd globals save

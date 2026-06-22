@@ -21,6 +21,21 @@ export const Media: CollectionConfig = {
         height: 300,
         position: 'centre',
       },
+      {
+        name: 'heroBg',
+        width: 1920,
+        withoutEnlargement: true,
+      },
+      {
+        name: 'heroSide',
+        width: 900,
+        withoutEnlargement: true,
+      },
+      {
+        name: 'card',
+        width: 600,
+        withoutEnlargement: true,
+      },
     ],
   },
   hooks: {

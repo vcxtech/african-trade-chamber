@@ -2,6 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import sharp from 'sharp'
 
@@ -36,8 +37,12 @@ import { VolunteerPage } from './payload/globals/VolunteerPage'
 import { NewsListingPage } from './payload/globals/NewsListingPage'
 import { ContactPage } from './payload/globals/ContactPage'
 import { AboutPage } from './payload/globals/AboutPage'
+import { FellowshipCohorts } from './payload/collections/FellowshipCohorts'
 import { TeamMembers } from './payload/collections/TeamMembers'
+import { TeamMemberCategories } from './payload/collections/TeamMemberCategories'
+import { FellowCountries } from './payload/collections/FellowCountries'
 import { FormSubmissions } from './payload/collections/FormSubmissions'
+import { FormAttachments } from './payload/collections/FormAttachments'
 import { getPayloadCookieSecure, getPrimaryServerURL, getServerURLs } from './lib/payload-server-url'
 
 const filename = fileURLToPath(import.meta.url)
@@ -91,8 +96,12 @@ export default buildConfig({
     HeroFeatureCards,
     MembershipCategories,
     MemberTestimonials,
+    FellowshipCohorts,
+    TeamMemberCategories,
+    FellowCountries,
     TeamMembers,
     FormSubmissions,
+    FormAttachments,
   ],
   globals: [
     SiteSettings,
@@ -124,9 +133,26 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
-    push: process.env.PAYLOAD_DB_PUSH === 'true' || process.env.NODE_ENV !== 'production',
+    push:
+      process.env.PAYLOAD_DB_PUSH === 'true' ||
+      (process.env.NODE_ENV !== 'production' && process.env.PAYLOAD_DB_PUSH !== 'false'),
   }),
   sharp,
+  email: process.env.SMTP_HOST
+    ? nodemailerAdapter({
+        defaultFromAddress:
+          process.env.SMTP_FROM_ADDRESS ?? 'noreply@africantradechamber.org',
+        defaultFromName: process.env.SMTP_FROM_NAME ?? 'African Trade Chamber',
+        transportOptions: {
+          host: process.env.SMTP_HOST,
+          port: Number(process.env.SMTP_PORT ?? 587),
+          secure: process.env.SMTP_SECURE === 'true',
+          auth: process.env.SMTP_USER
+            ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+            : undefined,
+        },
+      })
+    : undefined,
   routes: {
     admin: '/admin',
   },

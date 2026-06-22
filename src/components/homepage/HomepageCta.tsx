@@ -17,7 +17,7 @@ function ctaClass(variant: Props['variant'], className: string) {
   if (variant === 'card') {
     return `group absolute bottom-5 left-5 inline-flex items-center rounded px-3 py-1.5 text-sm font-semibold text-atc-navy transition hover:bg-atc-yellow ${className}`
   }
-  return `group mt-6 inline-flex items-center rounded px-3 py-1.5 text-sm font-semibold text-atc-navy transition hover:bg-atc-yellow ${className}`
+  return `group mt-6 inline-flex w-fit self-start items-center rounded px-3 py-1.5 text-sm font-semibold text-atc-navy transition hover:bg-atc-yellow ${className}`
 }
 
 function CtaContent({ children, variant }: { children: React.ReactNode; variant: Props['variant'] }) {

@@ -12,7 +12,7 @@ import {
   Step7Success,
 } from '@/components/membership/apply/MembershipApplyFormFields'
 import { buildMailtoBody, validateFormStep } from '@/components/membership/apply/membership-apply-form-utils'
-import { submitForm } from '@/lib/form-submit'
+import { submitFormMultipart, MEMBERSHIP_NOTIFY_EMAIL } from '@/lib/form-submit'
 
 const TOTAL_STEPS = 6
 const NAVY = '#002740'
@@ -22,6 +22,8 @@ export function MembershipApplicationForm() {
   const [currentStep, setCurrentStep] = useState(1)
   const [confirmEmail, setConfirmEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const progressPercent = submitted ? 100 : (currentStep / TOTAL_STEPS) * 100
   const currentStepMeta = FORM_STEPS[currentStep - 1]
@@ -117,20 +119,30 @@ export function MembershipApplicationForm() {
 
     const orgName = (form.querySelector('#orgName') as HTMLInputElement)?.value ?? 'Application'
     const body = buildMailtoBody(form)
+
+    setSubmitting(true)
+    setError(null)
+
     const fd = new FormData(form)
-    const data = Object.fromEntries(fd.entries()) as Record<string, unknown>
-    data.summaryBody = body
+    fd.set('formType', 'membership')
+    fd.set('email', email)
+    fd.set('subject', `ATC Membership Application - ${orgName}`)
+    fd.set(
+      'data',
+      JSON.stringify({
+        summaryBody: body,
+        notifyEmail: MEMBERSHIP_NOTIFY_EMAIL,
+      }),
+    )
 
-    const result = await submitForm({
-      formType: 'membership',
-      email,
-      subject: `ATC Membership Application - ${orgName}`,
-      data,
-    })
+    const result = await submitFormMultipart(fd)
 
+    setSubmitting(false)
     if (result.ok) {
       setSubmitted(true)
       showStep(7)
+    } else {
+      setError(result.error ?? 'Submission failed. Please try again.')
     }
   }
 
@@ -199,7 +211,11 @@ export function MembershipApplicationForm() {
         </div>
 
         {!submitted && (
-          <div className="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-5">
+          <div className="border-t border-slate-100 bg-slate-50/80 px-5 py-4 sm:px-8 sm:py-5">
+            {error ? (
+              <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p>
+            ) : null}
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
               onClick={handlePrev}
@@ -219,11 +235,13 @@ export function MembershipApplicationForm() {
             ) : (
               <button
                 type="submit"
-                className="rounded-lg bg-[#e6b14a] px-8 py-2.5 text-sm font-bold text-[#002740] shadow-md transition-colors hover:bg-[#d4a043] sm:ml-auto"
+                disabled={submitting}
+                className="rounded-lg bg-[#e6b14a] px-8 py-2.5 text-sm font-bold text-[#002740] shadow-md transition-colors hover:bg-[#d4a043] disabled:opacity-60 sm:ml-auto"
               >
-                Submit Application
+                {submitting ? 'Submitting…' : 'Submit Application'}
               </button>
             )}
+            </div>
           </div>
         )}
       </form>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { submitForm } from '@/lib/form-submit'
+import { submitForm, CAREERS_NOTIFY_EMAIL } from '@/lib/form-submit'
 import type { CareerJob } from '@/types/career-job'
 
 type Props = {
@@ -70,6 +70,7 @@ export function JobApplicationForm({ job }: Props) {
       data: {
         jobTitle: job.title,
         jobId: job.jobId,
+        notifyEmail: CAREERS_NOTIFY_EMAIL,
         ...merged,
       },
     })

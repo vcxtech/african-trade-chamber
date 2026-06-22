@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
+import { resolveCategoryIsFellow } from '../fields/resolveCategoryIsFellow'
+import { FELLOWSHIP_COLLAPSIBLE_FIELD, teamMemberShowWhen } from '../fields/teamMemberAdmin'
 
 export const TeamMembers: CollectionConfig = {
   slug: 'team-members',
@@ -12,33 +14,94 @@ export const TeamMembers: CollectionConfig = {
     defaultColumns: ['name', 'category', 'position', 'sortOrder'],
     group: 'Team',
   },
+  hooks: {
+    beforeChange: [
+      async ({ data, req }) => {
+        if (!data) return data
+
+        const isFellow = await resolveCategoryIsFellow(req, data.category)
+
+        if (isFellow) {
+          data.position = undefined
+          data.socialLinks = undefined
+        } else {
+          data.country = undefined
+          data.memberCode = undefined
+          data.cohortYear = undefined
+          data.postDate = undefined
+        }
+
+        return data
+      },
+    ],
+  },
   fields: [
     { name: 'name', type: 'text', required: true },
-    { name: 'slug', type: 'text', required: true, unique: true, index: true },
-    { name: 'position', type: 'text' },
     {
       name: 'category',
-      type: 'select',
+      type: 'relationship',
+      relationTo: 'team-member-categories',
       required: true,
-      options: [
-        { label: 'Advisory Board', value: 'advisory' },
-        { label: 'Board of Directors', value: 'board' },
-        { label: 'Secretariat Management', value: 'secretariat' },
-        { label: 'Fellow', value: 'fellow' },
-      ],
-      defaultValue: 'advisory',
+      admin: {
+        description: 'Choose the member type first — fellow-only fields appear below when Fellow is selected.',
+      },
     },
-    { name: 'country', type: 'text', admin: { condition: (_, s) => s?.category === 'fellow' } },
-    { name: 'memberCode', type: 'text', admin: { condition: (_, s) => s?.category === 'fellow' } },
+    { name: 'slug', type: 'text', required: true, unique: true, index: true },
     {
-      name: 'cohortYear',
-      type: 'number',
-      admin: { condition: (_, s) => s?.category === 'fellow' },
+      type: 'collapsible',
+      label: 'Fellowship details',
+      admin: {
+        initCollapsed: false,
+        components: {
+          Field: FELLOWSHIP_COLLAPSIBLE_FIELD,
+        },
+      },
+      fields: [
+        {
+          name: 'country',
+          type: 'relationship',
+          relationTo: 'fellow-countries',
+          admin: {
+            ...teamMemberShowWhen('fellow'),
+            description: 'Manage countries under Team → Fellow Countries.',
+          },
+        },
+        {
+          name: 'cohortYear',
+          type: 'select',
+          label: 'Cohort Year',
+          options: [
+            { label: '2025', value: '2025' },
+            { label: '2026', value: '2026' },
+          ],
+          admin: teamMemberShowWhen('fellow'),
+        },
+        {
+          name: 'memberCode',
+          type: 'text',
+          label: 'Member Code',
+          admin: teamMemberShowWhen('fellow'),
+        },
+        {
+          name: 'postDate',
+          type: 'text',
+          admin: {
+            ...teamMemberShowWhen('fellow'),
+            description: 'Original WordPress publish date (ISO) for fellow ordering',
+          },
+        },
+      ],
+    },
+    {
+      name: 'position',
+      type: 'text',
+      admin: teamMemberShowWhen('non-fellow'),
     },
     {
       name: 'socialLinks',
       type: 'group',
-      admin: { condition: (_, s) => s?.category === 'fellow' },
+      label: 'Social Links',
+      admin: teamMemberShowWhen('non-fellow'),
       fields: [
         { name: 'instagram', type: 'text' },
         { name: 'x', type: 'text' },
@@ -51,15 +114,16 @@ export const TeamMembers: CollectionConfig = {
     mediaImageField({ name: 'photo', label: 'Photo' }),
     legacyImageUrlField('imageUrl'),
     {
-      name: 'postDate',
-      type: 'text',
-      admin: { description: 'Original WordPress publish date (ISO) for fellow ordering' },
+      name: 'sortOrder',
+      type: 'number',
+      defaultValue: 0,
+      admin: { position: 'sidebar' },
     },
-    { name: 'sortOrder', type: 'number', defaultValue: 0 },
     {
       name: 'published',
       type: 'checkbox',
       defaultValue: true,
+      admin: { position: 'sidebar' },
     },
   ],
 }

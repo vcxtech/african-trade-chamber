@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { SiteSearchModal } from '@/components/search/SiteSearchModal'
+import { MobileNavDrawer } from '@/components/header/MobileNavDrawer'
 import { SiteLogo } from '@/components/SiteLogo'
 import { SocialIcons } from '@/components/SocialIcons'
 import type { NavChild, NavItem, NavLink, SiteSettingsData, SocialLink } from '@/types/content'
@@ -60,9 +61,9 @@ export function Header({ settings }: Props) {
   }
 
   return (
-    <header>
+    <>
       <SiteSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <div className="bg-atc-yellow text-atc-navy">
+      <div className="hidden bg-atc-yellow text-atc-navy lg:block">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-end gap-x-1 gap-y-1 px-3 py-2 text-xs sm:gap-x-3 sm:px-6 sm:text-[13px]">
           <nav className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1" aria-label="Utility">
             {utilityLinks.map((link) => (
@@ -73,7 +74,7 @@ export function Header({ settings }: Props) {
         </div>
       </div>
 
-      <div className="sticky top-0 z-50 bg-atc-navy text-atc-yellow shadow-md">
+      <header className="sticky top-0 z-50 bg-atc-navy text-atc-yellow shadow-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-3 sm:px-6 lg:py-3.5">
           <SiteLogo priority heightClass="h-9 sm:h-10 md:h-11" />
 
@@ -111,54 +112,24 @@ export function Header({ settings }: Props) {
               type="button"
               className="inline-flex h-10 w-10 items-center justify-center rounded border border-atc-yellow/40 text-atc-yellow lg:hidden"
               aria-expanded={mobileOpen}
-              aria-label="Toggle menu"
-              onClick={() => setMobileOpen((v) => !v)}
+              aria-label="Open menu"
+              onClick={() => setMobileOpen(true)}
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {mobileOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
           </div>
         </div>
+      </header>
 
-        {mobileOpen ? (
-          <nav className="border-t border-atc-yellow/20 px-4 py-4 lg:hidden" aria-label="Mobile">
-            <ul className="space-y-1">
-              {settings.headerNav.map((item) => (
-                <MobileNavItem key={item.href + item.label} item={item} onNavigate={closeMobile} />
-              ))}
-            </ul>
-            <div className="mt-4 border-t border-atc-yellow/20 pt-4">
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-atc-yellow/80">
-                Quick links
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-2 text-sm">
-                {utilityLinks.map((link) => (
-                  <li key={link.href + link.label}>
-                    <Link
-                      href={link.href}
-                      className={
-                        isUtilityLinkActive(link.href, pathname)
-                          ? 'font-semibold text-white'
-                          : 'text-white/90 hover:text-atc-yellow'
-                      }
-                      onClick={closeMobile}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <SocialIcons links={socialLinks} className="mt-3 [&_a]:text-atc-yellow" />
-            </div>
-          </nav>
-        ) : null}
-      </div>
-    </header>
+      <MobileNavDrawer
+        open={mobileOpen}
+        onClose={closeMobile}
+        onSearch={openSearch}
+        items={settings.headerNav}
+      />
+    </>
   )
 }
 
@@ -294,55 +265,5 @@ function NavDesktopChild({ child }: { child: NavChild }) {
         ))}
       </div>
     </div>
-  )
-}
-
-function MobileNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
-  return (
-    <li>
-      <Link
-        href={item.href}
-        className="flex items-center gap-1 py-2 font-semibold text-atc-yellow"
-        onClick={onNavigate}
-      >
-        {item.label}
-      </Link>
-      {item.children?.length ? (
-        <ul className="mb-2 ml-1 space-y-0.5 rounded bg-[#eceef1] py-2">
-          {item.children.map((child) => (
-            <MobileNavChild key={child.href + child.label} child={child} onNavigate={onNavigate} />
-          ))}
-        </ul>
-      ) : null}
-    </li>
-  )
-}
-
-function MobileNavChild({ child, onNavigate }: { child: NavChild; onNavigate: () => void }) {
-  return (
-    <li>
-      <NavHref
-        href={child.href}
-        className="block px-4 py-2.5 text-sm font-medium text-atc-navy"
-        onClick={onNavigate}
-      >
-        {child.label}
-      </NavHref>
-      {child.subItems?.length ? (
-        <ul className="mb-1 ml-4 border-l border-atc-navy/15 pl-3">
-          {child.subItems.map((sub) => (
-            <li key={sub.href + sub.label}>
-              <Link
-                href={sub.href}
-                className="block py-2 text-sm text-atc-navy/80"
-                onClick={onNavigate}
-              >
-                {sub.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </li>
   )
 }

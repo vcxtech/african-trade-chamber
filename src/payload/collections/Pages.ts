@@ -1,5 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
+const PAGES_FELLOWSHIP_HINT =
+  '/components/admin/pages/PagesFellowshipSearchHint#PagesFellowshipSearchHint'
+
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
@@ -7,7 +10,10 @@ export const Pages: CollectionConfig = {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     group: 'Content',
     description:
-      'Generic CMS pages served at /{slug}. Main site sections (About, Contact, etc.) are edited under Globals.',
+      'Generic CMS pages served at /{slug}. Main site sections (About, Contact, etc.) are edited under Globals. Fellowship hub is under Globals → Fellowship hub; cohort pages (/fellowship/{year}) are under Fellowship → Fellowship Cohorts.',
+    components: {
+      beforeList: [PAGES_FELLOWSHIP_HINT],
+    },
   },
   fields: [
     {

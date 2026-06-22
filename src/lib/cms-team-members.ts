@@ -3,22 +3,58 @@ import { getPayloadClient } from '@/lib/cms'
 import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import { resolveMemberImageUrl } from '@/lib/wp-uploads'
 import type { TeamMember, TeamMemberCategory } from '@/types/about-page'
-import type { Fellow, FellowSocialLinks } from '@/types/fellow'
+import type { Fellow } from '@/types/fellow'
 
-function mapSocialLinks(raw: unknown): FellowSocialLinks | undefined {
-  if (!raw || typeof raw !== 'object') return undefined
-  const row = raw as Record<string, unknown>
-  const links: FellowSocialLinks = {}
-  if (row.instagram) links.instagram = String(row.instagram)
-  if (row.x) links.x = String(row.x)
-  if (row.tiktok) links.tiktok = String(row.tiktok)
-  if (row.facebook) links.facebook = String(row.facebook)
-  if (row.linkedin) links.linkedin = String(row.linkedin)
-  return Object.keys(links).length ? links : undefined
+type CategoryDoc = {
+  id?: string | number
+  slug?: string
+  name?: string
+  showOnAbout?: boolean
+  isFellow?: boolean
+}
+
+type CountryDoc = {
+  id?: string | number
+  name?: string
+}
+
+function readCategory(doc: Record<string, unknown>): {
+  slug: string
+  label: string
+  isFellow: boolean
+} {
+  const raw = doc.category
+  if (raw && typeof raw === 'object') {
+    const cat = raw as CategoryDoc
+    const slug = cat.slug || 'advisory'
+    return {
+      slug,
+      label: cat.name || TEAM_CATEGORY_LABELS[slug as TeamMemberCategory] || slug,
+      isFellow: cat.isFellow === true || slug === 'fellow',
+    }
+  }
+  const legacy = String(raw ?? 'advisory')
+  return {
+    slug: legacy,
+    label: TEAM_CATEGORY_LABELS[legacy as TeamMemberCategory] ?? legacy,
+    isFellow: legacy === 'fellow',
+  }
+}
+
+function readCountryName(doc: Record<string, unknown>): string | undefined {
+  const raw = doc.country
+  if (raw == null) return undefined
+  if (typeof raw === 'object') {
+    const name = (raw as CountryDoc).name
+    return name ? String(name) : undefined
+  }
+  if (typeof raw === 'string' && raw.trim()) return raw.trim()
+  return undefined
 }
 
 function mapDoc(doc: Record<string, unknown>): TeamMember {
-  const category = (doc.category as TeamMemberCategory) || 'advisory'
+  const { slug: categorySlug, label: categoryLabel } = readCategory(doc)
+  const category = categorySlug as TeamMemberCategory
   const media = doc.photo
   const name = String(doc.name ?? '')
   const rawImage = resolvePayloadMediaUrl(media, doc.imageUrl as string | undefined)
@@ -29,7 +65,7 @@ function mapDoc(doc: Record<string, unknown>): TeamMember {
     slug: String(doc.slug ?? ''),
     position: doc.position ? String(doc.position) : undefined,
     category,
-    categoryLabel: TEAM_CATEGORY_LABELS[category] ?? category,
+    categoryLabel,
     bio: doc.bio ? String(doc.bio) : undefined,
     imageUrl: resolveMemberImageUrl(rawImage),
     imageAlt: resolvePayloadMediaAlt(media, null, name),
@@ -41,19 +77,25 @@ function mapFellowDoc(doc: Record<string, unknown>): Fellow {
   const media = doc.photo
   const name = String(doc.name ?? '')
   const rawImage = resolvePayloadMediaUrl(media, doc.imageUrl as string | undefined)
+  const cohortRaw = doc.cohortYear
+  const cohortYear =
+    cohortRaw === '2025' || cohortRaw === 2025
+      ? 2025
+      : cohortRaw === '2026' || cohortRaw === 2026
+        ? 2026
+        : undefined
 
   return {
     id: String(doc.id),
     name,
     slug: String(doc.slug ?? ''),
     position: doc.position ? String(doc.position) : undefined,
-    country: doc.country ? String(doc.country) : undefined,
+    country: readCountryName(doc),
     memberCode: doc.memberCode ? String(doc.memberCode) : undefined,
-    cohortYear: typeof doc.cohortYear === 'number' ? doc.cohortYear : undefined,
+    cohortYear,
     bio: doc.bio ? String(doc.bio) : undefined,
     imageUrl: resolveMemberImageUrl(rawImage),
     imageAlt: resolvePayloadMediaAlt(media, null, name),
-    socialLinks: mapSocialLinks(doc.socialLinks),
     postDate: doc.postDate ? String(doc.postDate) : undefined,
     sortOrder: typeof doc.sortOrder === 'number' ? doc.sortOrder : 0,
   }
@@ -63,13 +105,19 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
   try {
     const payload = await getPayloadClient()
     if (!payload) return []
+
+    const aboutCategories = await payload.find({
+      collection: 'team-member-categories',
+      where: { showOnAbout: { equals: true } },
+      limit: 50,
+    })
+    const categoryIds = aboutCategories.docs.map((doc) => doc.id)
+    if (!categoryIds.length) return []
+
     const result = await payload.find({
       collection: 'team-members',
       where: {
-        and: [
-          { published: { equals: true } },
-          { category: { in: ['advisory', 'board', 'secretariat'] } },
-        ],
+        and: [{ published: { equals: true } }, { category: { in: categoryIds } }],
       },
       sort: 'sortOrder',
       limit: 500,
@@ -86,13 +134,26 @@ export async function getFellows(options?: { year?: number }): Promise<Fellow[]>
     const payload = await getPayloadClient()
     if (!payload) return []
 
+    const fellowCategory = await payload.find({
+      collection: 'team-member-categories',
+      where: { slug: { equals: 'fellow' } },
+      limit: 1,
+    })
+    const fellowCategoryId = fellowCategory.docs[0]?.id
+    if (fellowCategoryId == null) return []
+
+    const yearFilter =
+      options?.year != null
+        ? [{ cohortYear: { equals: String(options.year) } }]
+        : []
+
     const result = await payload.find({
       collection: 'team-members',
       where: {
         and: [
           { published: { equals: true } },
-          { category: { equals: 'fellow' } },
-          ...(options?.year ? [{ cohortYear: { equals: options.year } }] : []),
+          { category: { equals: fellowCategoryId } },
+          ...yearFilter,
         ],
       },
       sort: '-postDate',

@@ -8,9 +8,10 @@ import { FtlfFellowCard } from './FtlfFellowCard'
 
 type Props = {
   members: Fellow[]
+  cohortYear?: number
 }
 
-export function FellowsGrid({ members }: Props) {
+export function FellowsGrid({ members, cohortYear = 2025 }: Props) {
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<Fellow | null>(null)
 
@@ -31,7 +32,7 @@ export function FellowsGrid({ members }: Props) {
   }
 
   return (
-    <section className="bg-[#f8f9fa] pb-12" aria-label="2025 Fellows">
+    <section className="bg-[#f8f9fa] pb-12" aria-label={`${cohortYear} Fellows`}>
       <div className="mx-auto max-w-[1200px] px-[18px] md:px-8">
         {members.length === 0 ? (
           <p className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">

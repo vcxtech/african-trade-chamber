@@ -31,7 +31,7 @@ function mapCard(
     title: strOrFallback(row.title, fallback?.title) || '',
     description: strOrFallback(row.description, fallback?.description),
     imageUrl:
-      resolvePayloadMediaUrl(row.image, row.imageUrl, fallback?.imageUrl) ||
+      resolvePayloadMediaUrl(row.image, row.imageUrl, fallback?.imageUrl, 'card') ||
       fallback?.imageUrl ||
       '',
     buttonText: strOrFallback(row.buttonText, fallback?.buttonText),

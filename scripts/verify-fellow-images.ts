@@ -20,9 +20,23 @@ async function main() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = await getPayload({ config })
+
+  const fellowCategory = await payload.find({
+    collection: 'team-member-categories',
+    where: { slug: { equals: 'fellow' } },
+    limit: 1,
+  })
+  const fellowCategoryId = fellowCategory.docs[0]?.id
+  if (!fellowCategoryId) {
+    console.error('Fellow category not found — run npm run migrate:team-taxonomies')
+    process.exit(1)
+  }
+
   const result = await payload.find({
     collection: 'team-members',
-    where: { and: [{ category: { equals: 'fellow' } }, { published: { equals: true } }] },
+    where: {
+      and: [{ category: { equals: fellowCategoryId } }, { published: { equals: true } }],
+    },
     limit: 10,
     sort: '-postDate',
   })
@@ -58,7 +72,7 @@ async function main() {
 
   const all = await payload.find({
     collection: 'team-members',
-    where: { category: { equals: 'fellow' } },
+    where: { category: { equals: fellowCategoryId } },
     limit: 0,
   })
 

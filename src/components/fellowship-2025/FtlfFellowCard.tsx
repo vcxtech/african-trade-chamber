@@ -28,7 +28,9 @@ function BuiltCardGraphic({ fellow }: { fellow: Fellow }) {
           <div className="flex h-9 w-9 shrink-0 items-center justify-center border-2 border-[#fece00] bg-[#002740]">
             <span className="text-[6px] font-bold leading-tight text-[#fece00]">ATC</span>
           </div>
-          <span className="text-lg font-bold tracking-tight text-[#fece00]">FTLF 2025</span>
+          <span className="text-lg font-bold tracking-tight text-[#fece00]">
+            FTLF {fellow.cohortYear ?? 2025}
+          </span>
         </div>
         {flagIso ? (
           <div className="shrink-0 text-center">
@@ -68,7 +70,8 @@ function BuiltCardGraphic({ fellow }: { fellow: Fellow }) {
         {fellow.name}
       </h3>
       <p className="mt-0.5 text-center text-[10px] text-white/90">
-        {fellow.position || '2025 Future Trade Leaders Fellow'}
+        {fellow.position ||
+          `${fellow.cohortYear ?? 2025} Future Trade Leaders Fellow`}
       </p>
       <p className="mt-2 text-center text-[8px] text-white/60">www.africantradechamber.org</p>
     </div>

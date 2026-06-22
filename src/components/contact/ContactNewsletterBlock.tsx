@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { submitForm } from '@/lib/form-submit'
+import { submitForm, NEWSLETTER_NOTIFY_EMAIL } from '@/lib/form-submit'
 
 type Props = {
   title: string
@@ -25,7 +25,10 @@ export function ContactNewsletterBlock({ title, body, submitLabel, successMessag
       formType: 'newsletter',
       email: String(fd.get('email') ?? ''),
       subject: 'Newsletter signup',
-      data: Object.fromEntries(fd.entries()) as Record<string, unknown>,
+      data: {
+        ...(Object.fromEntries(fd.entries()) as Record<string, unknown>),
+        notifyEmail: NEWSLETTER_NOTIFY_EMAIL,
+      },
     })
 
     setSubmitting(false)

@@ -4,6 +4,7 @@ import { defaultCareerJobs } from '@/lib/careers-defaults'
 import { defaultCountryOfficesPage } from '@/lib/country-offices-defaults'
 import { INSIGHT_CATEGORY_TO_ROUTE } from '@/lib/insight-categories'
 import { getPayloadClient } from '@/lib/cms'
+import { getFellowshipCohortYears } from '@/lib/cms-fellowship'
 
 const BASE = (process.env.NEXT_PUBLIC_SERVER_URL || 'https://africantradechamber.org').replace(/\/$/, '')
 
@@ -37,8 +38,6 @@ const STATIC_PATHS = [
   '/country-offices',
   '/fellowship',
   '/fellowship/apply',
-  '/fellowship/2025',
-  '/fellowship/2026',
   '/get-involved',
   '/partnerships',
   '/partnerships/why-partner',
@@ -92,6 +91,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.5,
+    })
+  }
+
+  const fellowshipYears = await getFellowshipCohortYears()
+  for (const year of fellowshipYears) {
+    entries.push({
+      url: `${BASE}/fellowship/${year}`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
     })
   }
 

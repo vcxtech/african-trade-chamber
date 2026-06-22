@@ -22,7 +22,14 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { PagesFellowshipSearchHint as PagesFellowshipSearchHint_4642c803e6e0da727211c4da72b65d62 } from '../../../components/admin/pages/PagesFellowshipSearchHint'
 import { HeroSlidesListBanner as HeroSlidesListBanner_4cd280be2fa9604eac7db519b57fd2ac } from '../../../components/admin/hero/HeroSlidesListBanner'
+import { FellowshipCohortViewLive as FellowshipCohortViewLive_fa48e5cbc929eacbc44d00ab78b83917 } from '../../../components/admin/fellowship/FellowshipCohortViewLive'
+import { FellowshipCohortTestimonialsNote as FellowshipCohortTestimonialsNote_6d78eb9bc918cdcdd3f431d15897eb1a } from '../../../components/admin/fellowship/FellowshipCohortTestimonialsNote'
+import { FellowshipCohortListGuide as FellowshipCohortListGuide_115abe58406062e3cb62caed932e682b } from '../../../components/admin/fellowship/FellowshipCohortListGuide'
+import { ConditionalTeamMemberField as ConditionalTeamMemberField_18bc1faa3c6d60a2627bfd849a3e07a1 } from '../../../components/admin/team/ConditionalTeamMemberField'
+import { FellowshipDetailsCollapsible as FellowshipDetailsCollapsible_246c5d5e1303c43b680f5fab3bdf13d5 } from '../../../components/admin/team/FellowshipDetailsCollapsible'
+import { FellowshipAdminGuide as FellowshipAdminGuide_dc892980b2932f38abfb2841e449e463 } from '../../../components/admin/fellowship/FellowshipAdminGuide'
 import { AtcAdminTopBar as AtcAdminTopBar_943d05340a32fa3afb2704eddccf030f } from '../../../components/admin/AtcAdminTopBar'
 import { AtcAdminIcon as AtcAdminIcon_50e90f84ee6d282880be6dc12321f61e } from '../../../components/admin/AtcAdminIcon'
 import { AtcAdminLogo as AtcAdminLogo_904234d73253aed64c18d7b2d4ff68e4 } from '../../../components/admin/AtcAdminLogo'
@@ -59,7 +66,14 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/components/admin/pages/PagesFellowshipSearchHint#PagesFellowshipSearchHint": PagesFellowshipSearchHint_4642c803e6e0da727211c4da72b65d62,
   "/components/admin/hero/HeroSlidesListBanner#HeroSlidesListBanner": HeroSlidesListBanner_4cd280be2fa9604eac7db519b57fd2ac,
+  "/components/admin/fellowship/FellowshipCohortViewLive#FellowshipCohortViewLive": FellowshipCohortViewLive_fa48e5cbc929eacbc44d00ab78b83917,
+  "/components/admin/fellowship/FellowshipCohortTestimonialsNote#FellowshipCohortTestimonialsNote": FellowshipCohortTestimonialsNote_6d78eb9bc918cdcdd3f431d15897eb1a,
+  "/components/admin/fellowship/FellowshipCohortListGuide#FellowshipCohortListGuide": FellowshipCohortListGuide_115abe58406062e3cb62caed932e682b,
+  "/components/admin/team/ConditionalTeamMemberField#ConditionalTeamMemberField": ConditionalTeamMemberField_18bc1faa3c6d60a2627bfd849a3e07a1,
+  "/components/admin/team/FellowshipDetailsCollapsible#FellowshipDetailsCollapsible": FellowshipDetailsCollapsible_246c5d5e1303c43b680f5fab3bdf13d5,
+  "/components/admin/fellowship/FellowshipAdminGuide#FellowshipAdminGuide": FellowshipAdminGuide_dc892980b2932f38abfb2841e449e463,
   "/components/admin/AtcAdminTopBar#AtcAdminTopBar": AtcAdminTopBar_943d05340a32fa3afb2704eddccf030f,
   "/components/admin/AtcAdminIcon#AtcAdminIcon": AtcAdminIcon_50e90f84ee6d282880be6dc12321f61e,
   "/components/admin/AtcAdminLogo#AtcAdminLogo": AtcAdminLogo_904234d73253aed64c18d7b2d4ff68e4,

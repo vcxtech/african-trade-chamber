@@ -14,7 +14,11 @@ import {
 import { defaultHomepageSections } from '../src/lib/homepage-defaults'
 import { defaultCountryOfficesPage } from '../src/lib/country-offices-defaults'
 import { defaultFellowshipPage } from '../src/lib/fellowship-defaults'
-import { fellowshipPageToSeedData } from '../src/lib/cms-fellowship'
+import {
+  fellowshipCohortToSeedData,
+  fellowshipHubToSeedData,
+} from '../src/lib/cms-fellowship'
+import { mergeFellowshipCohortSeedData } from '../src/lib/fellowship-cohort-utils'
 import { defaultMembershipPage } from '../src/lib/membership-page-defaults'
 import { membershipPageToSeedData } from '../src/lib/cms-membership-page'
 import { defaultGetInvolvedPage } from '../src/lib/get-involved-defaults'
@@ -262,9 +266,39 @@ async function main() {
 
   await payload.updateGlobal({
     slug: 'fellowship-page',
-    data: fellowshipPageToSeedData(defaultFellowshipPage),
+    data: fellowshipHubToSeedData(defaultFellowshipPage),
   })
-  console.log('Updated fellowship-page global')
+  console.log('Updated fellowship-page global (hub)')
+
+  for (const cohort of defaultFellowshipPage.cohorts) {
+    const year = String(cohort.cohortYear)
+    const existing = await payload.find({
+      collection: 'fellowship-cohorts',
+      where: { cohortYear: { equals: year } },
+      limit: 1,
+      depth: 0,
+    })
+    const seedData = fellowshipCohortToSeedData(cohort)
+    if (existing.docs[0]) {
+      const merged = mergeFellowshipCohortSeedData(
+        existing.docs[0] as unknown as Record<string, unknown>,
+        seedData,
+      )
+      await payload.update({
+        collection: 'fellowship-cohorts',
+        id: existing.docs[0].id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data: merged as any,
+      })
+    } else {
+      await payload.create({
+        collection: 'fellowship-cohorts',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data: seedData as any,
+      })
+    }
+  }
+  console.log('Synced fellowship-cohorts collection')
 
   await payload.updateGlobal({
     slug: 'membership-page',

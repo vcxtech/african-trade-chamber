@@ -1,36 +1,31 @@
 import type { GlobalConfig } from 'payload'
-import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
+import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
+
+const FELLOWSHIP_GUIDE = '/components/admin/fellowship/FellowshipAdminGuide#FellowshipAdminGuide'
 
 export const FellowshipPage: GlobalConfig = {
   slug: 'fellowship-page',
-  label: 'Fellowship Page',
+  label: 'Fellowship hub',
+  admin: {
+    description:
+      'Hub at /fellowship — intro, hero, and call for applications. Cohort pages are edited under Fellowship → Fellowship Cohorts.',
+  },
   fields: [
+    {
+      name: 'adminGuide',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: FELLOWSHIP_GUIDE,
+        },
+      },
+    },
     mediaImageField({ name: 'heroImage', label: 'Hero background image' }),
     legacyImageUrlField('heroImageUrl'),
     {
       name: 'introText',
       type: 'textarea',
       required: true,
-    },
-    {
-      name: 'cohorts',
-      type: 'array',
-      label: 'Cohort cards',
-      minRows: 1,
-      fields: [
-        { name: 'yearLabel', type: 'text', required: true },
-        { name: 'title', type: 'text', required: true },
-        { name: 'description', type: 'textarea', required: true },
-        mediaImageField({ name: 'image', label: 'Image' }),
-        imageAltField(),
-        legacyImageUrlField('imageUrl'),
-        { name: 'exploreUrl', type: 'text', required: true },
-        {
-          name: 'exploreExternal',
-          type: 'checkbox',
-          defaultValue: false,
-        },
-      ],
     },
     {
       name: 'cta',

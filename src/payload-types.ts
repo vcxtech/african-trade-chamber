@@ -77,8 +77,12 @@ export interface Config {
     'hero-feature-cards': HeroFeatureCard;
     'membership-categories': MembershipCategory;
     'member-testimonials': MemberTestimonial;
+    'fellowship-cohorts': FellowshipCohort;
+    'team-member-categories': TeamMemberCategory;
+    'fellow-countries': FellowCountry;
     'team-members': TeamMember;
     'form-submissions': FormSubmission;
+    'form-attachments': FormAttachment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,8 +100,12 @@ export interface Config {
     'hero-feature-cards': HeroFeatureCardsSelect<false> | HeroFeatureCardsSelect<true>;
     'membership-categories': MembershipCategoriesSelect<false> | MembershipCategoriesSelect<true>;
     'member-testimonials': MemberTestimonialsSelect<false> | MemberTestimonialsSelect<true>;
+    'fellowship-cohorts': FellowshipCohortsSelect<false> | FellowshipCohortsSelect<true>;
+    'team-member-categories': TeamMemberCategoriesSelect<false> | TeamMemberCategoriesSelect<true>;
+    'fellow-countries': FellowCountriesSelect<false> | FellowCountriesSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
+    'form-attachments': FormAttachmentsSelect<false> | FormAttachmentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -250,10 +258,34 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    heroBg?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    heroSide?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
 }
 /**
- * Generic CMS pages served at /{slug}. Main site sections (About, Contact, etc.) are edited under Globals.
+ * Generic CMS pages served at /{slug}. Main site sections (About, Contact, etc.) are edited under Globals. Fellowship hub is under Globals → Fellowship hub; cohort pages (/fellowship/{year}) are under Fellowship → Fellowship Cohorts.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
@@ -509,18 +541,126 @@ export interface MemberTestimonial {
   createdAt: string;
 }
 /**
+ * One entry per cohort year (/fellowship/2025, /fellowship/2026). Hub card + cohort page hero, SEO, and testimonials.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fellowship-cohorts".
+ */
+export interface FellowshipCohort {
+  id: number;
+  cohortYear: '2025' | '2026';
+  yearLabel: string;
+  title: string;
+  description: string;
+  image?: (number | null) | Media;
+  /**
+   * Describe the image for accessibility. Defaults from filename if empty.
+   */
+  imageAlt?: string | null;
+  /**
+   * Legacy import URL; used when no Media item is selected.
+   */
+  imageUrl?: string | null;
+  /**
+   * Auto-set to /fellowship/{cohort year} when saved.
+   */
+  exploreUrl?: string | null;
+  exploreExternal?: boolean | null;
+  pageHeroTitle: string;
+  pageHeroSubtitle: string;
+  pageHeroImage?: (number | null) | Media;
+  pageHeroImageAlt?: string | null;
+  /**
+   * Legacy import URL; used when no Media item is selected.
+   */
+  pageHeroImageUrl?: string | null;
+  seoTitle: string;
+  seoDescription: string;
+  /**
+   * When off, the entire testimonials block is hidden on /fellowship/{year} — even if rows exist below.
+   */
+  showTestimonials?: boolean | null;
+  fellowTestimonialsTitle?: string | null;
+  fellowTestimonialsIntro?: string | null;
+  fellowTestimonials?:
+    | {
+        quote: string;
+        name: string;
+        subtitle: string;
+        initials: string;
+        id?: string | null;
+      }[]
+    | null;
+  resourceTestimonialsTitle?: string | null;
+  resourceTestimonialsIntro?: string | null;
+  resourceTestimonials?:
+    | {
+        quote: string;
+        name: string;
+        role: string;
+        organization?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Categories for team members. Toggle “Show on About” to publish on the About page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-member-categories".
+ */
+export interface TeamMemberCategory {
+  id: number;
+  name: string;
+  slug: string;
+  showOnAbout?: boolean | null;
+  /**
+   * When checked, members use fellow fields (country, cohort year) and appear on fellowship cohort pages.
+   */
+  isFellow?: boolean | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Countries aligned with the organization. Used for fellowship cohort members.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fellow-countries".
+ */
+export interface FellowCountry {
+  id: number;
+  name: string;
+  slug: string;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "team-members".
  */
 export interface TeamMember {
   id: number;
   name: string;
+  /**
+   * Choose the member type first — fellow-only fields appear below when Fellow is selected.
+   */
+  category: number | TeamMemberCategory;
   slug: string;
-  position?: string | null;
-  category: 'advisory' | 'board' | 'secretariat' | 'fellow';
-  country?: string | null;
+  /**
+   * Manage countries under Team → Fellow Countries.
+   */
+  country?: (number | null) | FellowCountry;
+  cohortYear?: ('2025' | '2026') | null;
   memberCode?: string | null;
-  cohortYear?: number | null;
+  /**
+   * Original WordPress publish date (ISO) for fellow ordering
+   */
+  postDate?: string | null;
+  position?: string | null;
   socialLinks?: {
     instagram?: string | null;
     x?: string | null;
@@ -534,10 +674,6 @@ export interface TeamMember {
    * Legacy import URL; used when no Media item is selected.
    */
   imageUrl?: string | null;
-  /**
-   * Original WordPress publish date (ISO) for fellow ordering
-   */
-  postDate?: string | null;
   sortOrder?: number | null;
   published?: boolean | null;
   updatedAt: string;
@@ -575,6 +711,30 @@ export interface FormSubmission {
   status?: ('new' | 'reviewed' | 'archived') | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Files uploaded with public form submissions (membership applications, etc.)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-attachments".
+ */
+export interface FormAttachment {
+  id: number;
+  /**
+   * Original filename or description from the form upload.
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -641,12 +801,28 @@ export interface PayloadLockedDocument {
         value: number | MemberTestimonial;
       } | null)
     | ({
+        relationTo: 'fellowship-cohorts';
+        value: number | FellowshipCohort;
+      } | null)
+    | ({
+        relationTo: 'team-member-categories';
+        value: number | TeamMemberCategory;
+      } | null)
+    | ({
+        relationTo: 'fellow-countries';
+        value: number | FellowCountry;
+      } | null)
+    | ({
         relationTo: 'team-members';
         value: number | TeamMember;
       } | null)
     | ({
         relationTo: 'form-submissions';
         value: number | FormSubmission;
+      } | null)
+    | ({
+        relationTo: 'form-attachments';
+        value: number | FormAttachment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -741,6 +917,36 @@ export interface MediaSelect<T extends boolean = true> {
     | T
     | {
         thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        heroBg?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        heroSide?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
           | T
           | {
               url?: T;
@@ -904,16 +1110,88 @@ export interface MemberTestimonialsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fellowship-cohorts_select".
+ */
+export interface FellowshipCohortsSelect<T extends boolean = true> {
+  cohortYear?: T;
+  yearLabel?: T;
+  title?: T;
+  description?: T;
+  image?: T;
+  imageAlt?: T;
+  imageUrl?: T;
+  exploreUrl?: T;
+  exploreExternal?: T;
+  pageHeroTitle?: T;
+  pageHeroSubtitle?: T;
+  pageHeroImage?: T;
+  pageHeroImageAlt?: T;
+  pageHeroImageUrl?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  showTestimonials?: T;
+  fellowTestimonialsTitle?: T;
+  fellowTestimonialsIntro?: T;
+  fellowTestimonials?:
+    | T
+    | {
+        quote?: T;
+        name?: T;
+        subtitle?: T;
+        initials?: T;
+        id?: T;
+      };
+  resourceTestimonialsTitle?: T;
+  resourceTestimonialsIntro?: T;
+  resourceTestimonials?:
+    | T
+    | {
+        quote?: T;
+        name?: T;
+        role?: T;
+        organization?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-member-categories_select".
+ */
+export interface TeamMemberCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  showOnAbout?: T;
+  isFellow?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fellow-countries_select".
+ */
+export interface FellowCountriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "team-members_select".
  */
 export interface TeamMembersSelect<T extends boolean = true> {
   name?: T;
-  slug?: T;
-  position?: T;
   category?: T;
+  slug?: T;
   country?: T;
-  memberCode?: T;
   cohortYear?: T;
+  memberCode?: T;
+  postDate?: T;
+  position?: T;
   socialLinks?:
     | T
     | {
@@ -926,7 +1204,6 @@ export interface TeamMembersSelect<T extends boolean = true> {
   bio?: T;
   photo?: T;
   imageUrl?: T;
-  postDate?: T;
   sortOrder?: T;
   published?: T;
   updatedAt?: T;
@@ -945,6 +1222,24 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
   status?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-attachments_select".
+ */
+export interface FormAttachmentsSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1391,6 +1686,8 @@ export interface CountryOfficesPage {
   createdAt?: string | null;
 }
 /**
+ * Hub at /fellowship — intro, hero, and call for applications. Cohort pages are edited under Fellowship → Fellowship Cohorts.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "fellowship-page".
  */
@@ -1402,25 +1699,6 @@ export interface FellowshipPage {
    */
   heroImageUrl?: string | null;
   introText: string;
-  cohorts?:
-    | {
-        yearLabel: string;
-        title: string;
-        description: string;
-        image?: (number | null) | Media;
-        /**
-         * Describe the image for accessibility. Defaults from filename if empty.
-         */
-        imageAlt?: string | null;
-        /**
-         * Legacy import URL; used when no Media item is selected.
-         */
-        imageUrl?: string | null;
-        exploreUrl: string;
-        exploreExternal?: boolean | null;
-        id?: string | null;
-      }[]
-    | null;
   cta: {
     eyebrow: string;
     title: string;
@@ -2132,19 +2410,6 @@ export interface FellowshipPageSelect<T extends boolean = true> {
   heroImage?: T;
   heroImageUrl?: T;
   introText?: T;
-  cohorts?:
-    | T
-    | {
-        yearLabel?: T;
-        title?: T;
-        description?: T;
-        image?: T;
-        imageAlt?: T;
-        imageUrl?: T;
-        exploreUrl?: T;
-        exploreExternal?: T;
-        id?: T;
-      };
   cta?:
     | T
     | {

@@ -1,13 +1,56 @@
-import { defaultFellowshipPage } from '@/lib/fellowship-defaults'
+import {
+  defaultFellowshipCohorts,
+  defaultFellowshipPage,
+} from '@/lib/fellowship-defaults'
 import { getPayloadClient } from '@/lib/cms'
 import { resolvePayloadMediaAlt, resolvePayloadMediaUrl } from '@/lib/payload-media'
 import type {
+  FellowTestimonial,
   FellowshipCohort,
   FellowshipCtaBlock,
   FellowshipCtaData,
   FellowshipCtaListItem,
   FellowshipPageData,
+  ResourceTestimonial,
 } from '@/types/fellowship'
+
+function parseCohortYear(value: unknown, fallback?: number): number {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  const parsed = Number.parseInt(String(value ?? ''), 10)
+  if (Number.isFinite(parsed)) return parsed
+  return fallback ?? 0
+}
+
+function mapFellowTestimonial(
+  row: Record<string, unknown>,
+  fallback?: FellowTestimonial,
+): FellowTestimonial | null {
+  const quote = String(row.quote ?? fallback?.quote ?? '').trim()
+  const name = String(row.name ?? fallback?.name ?? '').trim()
+  if (!quote || !name) return null
+  return {
+    quote,
+    name,
+    subtitle: String(row.subtitle ?? fallback?.subtitle ?? ''),
+    initials: String(row.initials ?? fallback?.initials ?? ''),
+  }
+}
+
+function mapResourceTestimonial(
+  row: Record<string, unknown>,
+  fallback?: ResourceTestimonial,
+): ResourceTestimonial | null {
+  const quote = String(row.quote ?? fallback?.quote ?? '').trim()
+  const name = String(row.name ?? fallback?.name ?? '').trim()
+  if (!quote || !name) return null
+  const organization = String(row.organization ?? fallback?.organization ?? '').trim()
+  return {
+    quote,
+    name,
+    role: String(row.role ?? fallback?.role ?? ''),
+    organization: organization || undefined,
+  }
+}
 
 function mapListItem(row: Record<string, unknown>): FellowshipCtaListItem | null {
   const text = row.text as string | undefined
@@ -49,7 +92,25 @@ function mapCtaBlock(
 }
 
 function mapCohort(row: Record<string, unknown>, fallback?: FellowshipCohort): FellowshipCohort {
+  const cohortYear = parseCohortYear(row.cohortYear, fallback?.cohortYear)
+  const yearKey = cohortYear || fallback?.cohortYear || 0
+
+  const fellowRaw = (row.fellowTestimonials as Array<Record<string, unknown>> | undefined) || []
+  const resourceRaw =
+    (row.resourceTestimonials as Array<Record<string, unknown>> | undefined) || []
+
+  const fellowTestimonials = fellowRaw
+    .map((item, i) => mapFellowTestimonial(item, fallback?.fellowTestimonials[i]))
+    .filter((item): item is FellowTestimonial => item != null)
+
+  const resourceTestimonials = resourceRaw
+    .map((item, i) => mapResourceTestimonial(item, fallback?.resourceTestimonials[i]))
+    .filter((item): item is ResourceTestimonial => item != null)
+
+  const defaultExploreUrl = yearKey ? `/fellowship/${yearKey}` : '#'
+
   return {
+    cohortYear: yearKey,
     yearLabel: String(row.yearLabel ?? fallback?.yearLabel ?? ''),
     title: String(row.title ?? fallback?.title ?? ''),
     description: String(row.description ?? fallback?.description ?? ''),
@@ -65,8 +126,51 @@ function mapCohort(row: Record<string, unknown>, fallback?: FellowshipCohort): F
       ) ||
       fallback?.imageAlt ||
       '',
-    exploreUrl: String(row.exploreUrl ?? fallback?.exploreUrl ?? '#'),
+    exploreUrl: String(row.exploreUrl ?? fallback?.exploreUrl ?? defaultExploreUrl),
     exploreExternal: Boolean(row.exploreExternal ?? fallback?.exploreExternal),
+    pageHeroTitle: String(row.pageHeroTitle ?? fallback?.pageHeroTitle ?? ''),
+    pageHeroSubtitle: String(row.pageHeroSubtitle ?? fallback?.pageHeroSubtitle ?? ''),
+    pageHeroImageUrl:
+      resolvePayloadMediaUrl(
+        row.pageHeroImage,
+        row.pageHeroImageUrl as string | undefined,
+        fallback?.pageHeroImageUrl,
+      ) ||
+      fallback?.pageHeroImageUrl ||
+      '',
+    pageHeroImageAlt: String(
+      row.pageHeroImageAlt ??
+        resolvePayloadMediaAlt(
+          row.pageHeroImage,
+          row.pageHeroImageAlt as string | undefined,
+          fallback?.pageHeroImageAlt,
+        ) ??
+        fallback?.pageHeroImageAlt ??
+        '',
+    ),
+    seoTitle: String(row.seoTitle ?? fallback?.seoTitle ?? ''),
+    seoDescription: String(row.seoDescription ?? fallback?.seoDescription ?? ''),
+    showTestimonials: Boolean(row.showTestimonials ?? fallback?.showTestimonials ?? true),
+    fellowTestimonialsTitle: String(
+      row.fellowTestimonialsTitle ?? fallback?.fellowTestimonialsTitle ?? 'Fellow Testimonials',
+    ),
+    fellowTestimonialsIntro: String(
+      row.fellowTestimonialsIntro ?? fallback?.fellowTestimonialsIntro ?? '',
+    ),
+    resourceTestimonialsTitle: String(
+      row.resourceTestimonialsTitle ??
+        fallback?.resourceTestimonialsTitle ??
+        'Resource Person Testimonials',
+    ),
+    resourceTestimonialsIntro: String(
+      row.resourceTestimonialsIntro ?? fallback?.resourceTestimonialsIntro ?? '',
+    ),
+    fellowTestimonials: fellowTestimonials.length
+      ? fellowTestimonials
+      : (fallback?.fellowTestimonials ?? []),
+    resourceTestimonials: resourceTestimonials.length
+      ? resourceTestimonials
+      : (fallback?.resourceTestimonials ?? []),
   }
 }
 
@@ -94,12 +198,41 @@ function mapCta(
   }
 }
 
-/** Shape CMS fellowship-page global into seed-friendly JSON (paragraphs as string arrays). */
-export function fellowshipPageToSeedData(data: FellowshipPageData) {
+function findCohortFallback(year: number): FellowshipCohort | undefined {
+  return defaultFellowshipCohorts.find((c) => c.cohortYear === year)
+}
+
+export function fellowshipCohortToSeedData(cohort: FellowshipCohort) {
+  return {
+    cohortYear: String(cohort.cohortYear) as '2025' | '2026',
+    yearLabel: cohort.yearLabel,
+    title: cohort.title,
+    description: cohort.description,
+    imageUrl: cohort.imageUrl,
+    imageAlt: cohort.imageAlt,
+    exploreUrl: cohort.exploreUrl,
+    exploreExternal: cohort.exploreExternal,
+    pageHeroTitle: cohort.pageHeroTitle,
+    pageHeroSubtitle: cohort.pageHeroSubtitle,
+    pageHeroImageUrl: cohort.pageHeroImageUrl,
+    pageHeroImageAlt: cohort.pageHeroImageAlt,
+    seoTitle: cohort.seoTitle,
+    seoDescription: cohort.seoDescription,
+    showTestimonials: cohort.showTestimonials,
+    fellowTestimonialsTitle: cohort.fellowTestimonialsTitle,
+    fellowTestimonialsIntro: cohort.fellowTestimonialsIntro,
+    fellowTestimonials: cohort.fellowTestimonials,
+    resourceTestimonialsTitle: cohort.resourceTestimonialsTitle,
+    resourceTestimonialsIntro: cohort.resourceTestimonialsIntro,
+    resourceTestimonials: cohort.resourceTestimonials,
+  }
+}
+
+/** Shape fellowship hub global into seed-friendly JSON (no cohorts — those live in the collection). */
+export function fellowshipHubToSeedData(data: FellowshipPageData) {
   return {
     heroImageUrl: data.heroImageUrl,
     introText: data.introText,
-    cohorts: data.cohorts,
     cta: {
       ...data.cta,
       sections: data.cta.sections.map((s) => ({
@@ -107,9 +240,7 @@ export function fellowshipPageToSeedData(data: FellowshipPageData) {
         paragraphs: s.paragraphs?.map((text) => ({ text })),
         labeledParagraphs: s.labeledParagraphs,
         listItems: s.listItems?.map((item) =>
-          typeof item === 'string'
-            ? { text: item }
-            : { title: item.title, body: item.body },
+          typeof item === 'string' ? { text: item } : { title: item.title, body: item.body },
         ),
       })),
       footerParagraphs: data.cta.footerParagraphs.map((text) => ({ text })),
@@ -117,38 +248,17 @@ export function fellowshipPageToSeedData(data: FellowshipPageData) {
   }
 }
 
-export function fellowshipPageFromSeedShape(raw: Record<string, unknown>): FellowshipPageData {
-  const fallback = defaultFellowshipPage
-  const cohortsRaw = (raw.cohorts as Array<Record<string, unknown>> | undefined) || []
-  const ctaRaw = raw.cta as Record<string, unknown> | undefined
-
-  const ctaSectionsRaw = (ctaRaw?.sections as Array<Record<string, unknown>> | undefined) || []
-  const cta: FellowshipCtaData = {
-    eyebrow: String(ctaRaw?.eyebrow ?? fallback.cta.eyebrow),
-    title: String(ctaRaw?.title ?? fallback.cta.title),
-    tagline: String(ctaRaw?.tagline ?? fallback.cta.tagline),
-    sections: ctaSectionsRaw.map((row, i) => {
-      const paragraphsRaw = (row.paragraphs as Array<{ text?: string }> | undefined) || []
-      const listRaw = (row.listItems as Array<Record<string, unknown>> | undefined) || []
-      return mapCtaBlock(
-        {
-          ...row,
-          paragraphs: paragraphsRaw.map((p) => ({ text: p.text })),
-          listItems: listRaw,
-        },
-        fallback.cta.sections[i],
-      )
-    }),
-    footerParagraphs:
-      ((ctaRaw?.footerParagraphs as Array<{ text?: string }> | undefined) || []).map(
-        (p) => p.text || '',
-      ).filter(Boolean).length > 0
-        ? ((ctaRaw?.footerParagraphs as Array<{ text?: string }>) || []).map((p) => p.text || '')
-        : fallback.cta.footerParagraphs,
-    applyUrl: String(ctaRaw?.applyUrl ?? fallback.cta.applyUrl),
-    contactPhone: String(ctaRaw?.contactPhone ?? fallback.cta.contactPhone),
-    contactEmail: String(ctaRaw?.contactEmail ?? fallback.cta.contactEmail),
+/** @deprecated Use fellowshipHubToSeedData for global; fellowshipCohortToSeedData for collection. */
+export function fellowshipPageToSeedData(data: FellowshipPageData) {
+  return {
+    ...fellowshipHubToSeedData(data),
+    cohorts: data.cohorts.map((cohort) => fellowshipCohortToSeedData(cohort)),
   }
+}
+
+function mapHubFromRaw(raw: Record<string, unknown>): Omit<FellowshipPageData, 'cohorts'> {
+  const fallback = defaultFellowshipPage
+  const ctaRaw = raw.cta as Record<string, unknown> | undefined
 
   return {
     heroImageUrl:
@@ -158,11 +268,45 @@ export function fellowshipPageFromSeedShape(raw: Record<string, unknown>): Fello
         fallback.heroImageUrl,
       ) || fallback.heroImageUrl,
     introText: String(raw.introText ?? fallback.introText),
-    cohorts: cohortsRaw.length
-      ? cohortsRaw.map((row, i) => mapCohort(row, fallback.cohorts[i]))
-      : fallback.cohorts,
-    cta,
+    cta: mapCta(ctaRaw, fallback.cta),
   }
+}
+
+async function loadCohortsFromCollection(
+  payload: NonNullable<Awaited<ReturnType<typeof getPayloadClient>>>,
+): Promise<FellowshipCohort[]> {
+  const result = await payload.find({
+    collection: 'fellowship-cohorts',
+    sort: 'cohortYear',
+    limit: 50,
+    depth: 1,
+  })
+
+  if (result.docs.length === 0) return defaultFellowshipCohorts
+
+  return result.docs.map((doc) => {
+    const row = doc as unknown as Record<string, unknown>
+    const year = parseCohortYear(row.cohortYear)
+    const fallback = findCohortFallback(year)
+    return mapCohort(row, fallback)
+  })
+}
+
+export function fellowshipPageFromSeedShape(raw: Record<string, unknown>): FellowshipPageData {
+  const hub = mapHubFromRaw(raw)
+  const cohortsRaw = (raw.cohorts as Array<Record<string, unknown>> | undefined) || []
+
+  const cohorts = cohortsRaw.length
+    ? cohortsRaw.map((row, i) => {
+        const year = parseCohortYear(row.cohortYear, defaultFellowshipCohorts[i]?.cohortYear)
+        const cohortFallback =
+          defaultFellowshipCohorts.find((c) => c.cohortYear === year) ??
+          defaultFellowshipCohorts[i]
+        return mapCohort(row, cohortFallback)
+      })
+    : defaultFellowshipCohorts
+
+  return { ...hub, cohorts }
 }
 
 export async function getFellowshipPage(): Promise<FellowshipPageData> {
@@ -170,10 +314,67 @@ export async function getFellowshipPage(): Promise<FellowshipPageData> {
   try {
     const payload = await getPayloadClient()
     if (!payload) return fallback
+
     const global = await payload.findGlobal({ slug: 'fellowship-page', depth: 1 })
-    if (!global) return fallback
-    return fellowshipPageFromSeedShape(global as unknown as Record<string, unknown>)
+    const hub = global
+      ? mapHubFromRaw(global as unknown as Record<string, unknown>)
+      : {
+          heroImageUrl: fallback.heroImageUrl,
+          introText: fallback.introText,
+          cta: fallback.cta,
+        }
+
+    const cohorts = await loadCohortsFromCollection(payload)
+    return { ...hub, cohorts }
   } catch {
     return fallback
+  }
+}
+
+export async function getFellowshipCohortYears(): Promise<number[]> {
+  try {
+    const payload = await getPayloadClient()
+    if (!payload) {
+      return defaultFellowshipCohorts.map((c) => c.cohortYear).filter(Boolean)
+    }
+
+    const result = await payload.find({
+      collection: 'fellowship-cohorts',
+      sort: 'cohortYear',
+      limit: 50,
+      depth: 0,
+    })
+
+    if (result.docs.length === 0) {
+      return defaultFellowshipCohorts.map((c) => c.cohortYear).filter(Boolean)
+    }
+
+    return result.docs
+      .map((doc) => parseCohortYear((doc as { cohortYear?: unknown }).cohortYear))
+      .filter(Boolean)
+  } catch {
+    return defaultFellowshipCohorts.map((c) => c.cohortYear).filter(Boolean)
+  }
+}
+
+export async function getFellowshipCohortByYear(year: number): Promise<FellowshipCohort | null> {
+  const fallback = findCohortFallback(year)
+  try {
+    const payload = await getPayloadClient()
+    if (!payload) return fallback ?? null
+
+    const result = await payload.find({
+      collection: 'fellowship-cohorts',
+      where: { cohortYear: { equals: String(year) } },
+      limit: 1,
+      depth: 1,
+    })
+
+    const doc = result.docs[0]
+    if (!doc) return fallback ?? null
+
+    return mapCohort(doc as unknown as Record<string, unknown>, fallback)
+  } catch {
+    return fallback ?? null
   }
 }

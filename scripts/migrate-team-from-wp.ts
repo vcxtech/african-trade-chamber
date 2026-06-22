@@ -17,6 +17,7 @@ import { getPayload } from 'payload'
 import config from '../src/payload.config'
 import { requireEnv } from './load-env.js'
 import { wpUploadUrlToLocal } from '../src/lib/wp-uploads.js'
+import { normalizeCountryKey, resolveCountrySeedName, upsertTeamTaxonomies } from '../src/lib/team-taxonomy-seeds.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA_DIR = path.resolve(__dirname, '../data')
@@ -47,11 +48,13 @@ function resolveExportPath(): string {
   return path.join(DATA_DIR, 'wp-export.xml')
 }
 
+type LeadershipCategorySlug = 'advisory' | 'board' | 'secretariat'
+
 type LeadershipRow = {
   name: string
   slug: string
   position?: string
-  category: 'advisory' | 'board' | 'secretariat'
+  categorySlug: LeadershipCategorySlug
   bio?: string
   imageUrl?: string
   sortOrder: number
@@ -61,21 +64,14 @@ type FellowRow = {
   name: string
   slug: string
   position?: string
-  category: 'fellow'
+  categorySlug: 'fellow'
   country?: string
   memberCode?: string
-  cohortYear: number
+  cohortYear: '2025' | '2026'
   bio?: string
   imageUrl?: string
   postDate: string
   sortOrder: number
-  socialLinks?: {
-    instagram?: string
-    x?: string
-    tiktok?: string
-    facebook?: string
-    linkedin?: string
-  }
 }
 
 function asArray<T>(value: T | T[] | undefined | null): T[] {
@@ -100,7 +96,7 @@ function getMeta(item: Record<string, unknown>, key: string): string {
   return ''
 }
 
-const BOARD_CATEGORY_RULES: { category: LeadershipRow['category']; match: (hay: string) => boolean }[] = [
+const BOARD_CATEGORY_RULES: { category: LeadershipCategorySlug; match: (hay: string) => boolean }[] = [
   { category: 'secretariat', match: (h) => h.includes('secretariat') },
   { category: 'board', match: (h) => h.includes('board of director') || h.includes('board-of-director') },
   { category: 'advisory', match: (h) => h.includes('advisory board') || h.includes('advisory-board') },
@@ -128,7 +124,7 @@ function isFellowOnly(item: Record<string, unknown>): boolean {
   return hasFellows && !hasLeadership
 }
 
-function mapTeamCategory(item: Record<string, unknown>): LeadershipRow['category'] | null {
+function mapTeamCategory(item: Record<string, unknown>): LeadershipCategorySlug | null {
   for (const rule of BOARD_CATEGORY_RULES) {
     for (const hay of categoryHaystack(item)) {
       if (rule.match(hay)) return rule.category
@@ -156,19 +152,6 @@ function slugToMemberCode(slug: string): string {
     code = code.replace(/^atc-/, 'ATC-')
   }
   return code
-}
-
-function parseSocialLinks(item: Record<string, unknown>) {
-  const instagram = getMeta(item, 'extp_instagram') || getMeta(item, 'extp_ins')
-  const x = getMeta(item, 'extp_twitter') || getMeta(item, 'extp_x')
-  const tiktok = getMeta(item, 'extp_tiktok')
-  const facebook = getMeta(item, 'extp_facebook')
-  const linkedin = getMeta(item, 'extp_linkedin')
-  const links = { instagram, x, tiktok, facebook, linkedin }
-  const filtered = Object.fromEntries(
-    Object.entries(links).filter(([, v]) => v && v.length > 0),
-  )
-  return Object.keys(filtered).length ? filtered : undefined
 }
 
 function parseLeadership(xml: string): { team: LeadershipRow[] } {
@@ -217,7 +200,7 @@ function parseLeadership(xml: string): { team: LeadershipRow[] } {
       name,
       slug,
       position: getMeta(item, 'extp_position') || undefined,
-      category,
+      categorySlug: category,
       bio: textVal(item['content:encoded']) || textVal(item['excerpt:encoded']) || undefined,
       imageUrl: wpUploadUrlToLocal(rawImage),
       sortOrder: Number.isFinite(extpOrder) ? extpOrder : team.length,
@@ -270,15 +253,14 @@ function parseFellows(xml: string): { fellows: FellowRow[] } {
       name,
       slug,
       position: getMeta(item, 'extp_position') || DEFAULT_FELLOW_POSITION,
-      category: 'fellow',
+      categorySlug: 'fellow',
       country: parseCountry(item),
       memberCode: slugToMemberCode(slug),
-      cohortYear: 2025,
+      cohortYear: '2025',
       bio: textVal(item['content:encoded']) || textVal(item['excerpt:encoded']) || undefined,
       imageUrl: wpUploadUrlToLocal(rawImage),
       postDate,
       sortOrder: fellows.length,
-      socialLinks: parseSocialLinks(item),
     })
   }
 
@@ -302,6 +284,10 @@ async function main() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = await getPayload({ config })
 
+  console.log('Ensuring team taxonomies…')
+  const taxonomyMaps = await upsertTeamTaxonomies(payload)
+  const fellowCategoryId = taxonomyMaps.categoryBySlug.get('fellow')
+
   if (FELLOWS_ONLY) {
     const { fellows } = parseFellows(xml)
     console.log(`Parsed ${fellows.length} fellows`)
@@ -315,19 +301,24 @@ async function main() {
     let updated = 0
 
     for (const row of fellows) {
+      const categoryId = taxonomyMaps.categoryBySlug.get(row.categorySlug)
+      const countryName = row.country ? resolveCountrySeedName(row.country) ?? row.country : undefined
+      const countryId = countryName
+        ? taxonomyMaps.countryByName.get(normalizeCountryKey(countryName))
+        : undefined
+
       const data = {
         name: row.name,
         slug: row.slug,
         position: row.position,
-        category: row.category,
-        country: row.country,
+        category: categoryId ?? fellowCategoryId,
+        country: countryId,
         memberCode: row.memberCode,
         cohortYear: row.cohortYear,
         bio: row.bio,
         imageUrl: row.imageUrl,
         postDate: row.postDate,
         sortOrder: row.sortOrder,
-        socialLinks: row.socialLinks,
         published: true,
       }
 
@@ -367,11 +358,12 @@ async function main() {
   let updated = 0
 
   for (const row of team) {
+    const categoryId = taxonomyMaps.categoryBySlug.get(row.categorySlug)
     const data = {
       name: row.name,
       slug: row.slug,
       position: row.position,
-      category: row.category,
+      category: categoryId,
       bio: row.bio,
       imageUrl: row.imageUrl,
       sortOrder: row.sortOrder,
@@ -398,10 +390,16 @@ async function main() {
   }
 
   const importedSlugs = new Set(team.map((row) => row.slug))
-  const all = await payload.find({ collection: 'team-members', limit: 500 })
+  const all = await payload.find({ collection: 'team-members', limit: 500, depth: 1 })
   let unpublished = 0
   for (const doc of all.docs) {
-    if (doc.category === 'fellow') continue
+    const cat = doc.category
+    const isFellow =
+      typeof cat === 'object' &&
+      cat !== null &&
+      ((cat as { slug?: string; isFellow?: boolean }).slug === 'fellow' ||
+        (cat as { isFellow?: boolean }).isFellow === true)
+    if (isFellow) continue
     if (importedSlugs.has(doc.slug) || !doc.published) continue
     await payload.update({
       collection: 'team-members',

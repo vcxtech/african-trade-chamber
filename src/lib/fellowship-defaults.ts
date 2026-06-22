@@ -1,11 +1,50 @@
+import {
+  FELLOW_TESTIMONIALS,
+  RESOURCE_TESTIMONIALS,
+} from '@/lib/fellowship-2025-testimonials'
 import type { FellowshipPageData } from '@/types/fellowship'
 
-export const defaultFellowshipPage: FellowshipPageData = {
-  heroImageUrl: '/images/fellowship/hero.png',
-  introText:
-    'The Future Trade Leaders Fellowship is a flagship initiative of the African Trade Chamber designed to develop a new generation of trade leaders across Africa and the Caribbean. Positioned at the intersection of policy, markets, and global trade systems, the program equips participants with practical knowledge of international trade, regional integration, and opportunities under the AfCFTA, while fostering collaboration, peer exchange, and access to key stakeholders. Through this, the Fellowship builds a strong network of individuals prepared to contribute meaningfully to Africa’s evolving trade landscape and economic transformation.',
-  cohorts: [
+const COHORT_2025_PAGE = {
+  pageHeroTitle: 'Future Trade Leaders Fellowship Community 2025',
+  pageHeroSubtitle:
+    "Meet the inspiring individuals and expert minds shaping Africa and the Caribbean's future in trade.",
+  pageHeroImageUrl: '/uploads/2025/04/Young-ent-2.jpg',
+  pageHeroImageAlt: 'Future Trade Leaders Fellowship 2025 cohort',
+  seoTitle: 'Future Trade Leaders Fellowship Community 2025',
+  seoDescription:
+    "Meet the 2025 Future Trade Leaders Fellowship cohort — professionals shaping Africa and the Caribbean's future in trade.",
+  showTestimonials: true,
+  fellowTestimonialsTitle: 'Fellow Testimonials',
+  fellowTestimonialsIntro:
+    'Hear directly from fellowship graduates about their transformative experiences and career impact.',
+  resourceTestimonialsTitle: 'Resource Person Testimonials',
+  resourceTestimonialsIntro:
+    'Insights from industry experts, mentors, and leaders who work closely with our fellows.',
+  fellowTestimonials: FELLOW_TESTIMONIALS,
+  resourceTestimonials: RESOURCE_TESTIMONIALS,
+} as const
+
+const COHORT_2026_PAGE = {
+  pageHeroTitle: 'Future Trade Leaders Fellowship Community 2026',
+  pageHeroSubtitle:
+    "Meet the inspiring individuals and expert minds shaping Africa and the Caribbean's future in trade.",
+  pageHeroImageUrl: '/images/fellowship/cohort-2026.jpg',
+  pageHeroImageAlt: 'Future Trade Leaders Fellowship 2026 cohort',
+  seoTitle: 'Future Trade Leaders Fellowship Community 2026',
+  seoDescription:
+    "Meet the 2026 Future Trade Leaders Fellowship cohort — professionals shaping Africa and the Caribbean's future in trade.",
+  showTestimonials: true,
+  fellowTestimonialsTitle: 'Fellow Testimonials',
+  fellowTestimonialsIntro: '',
+  resourceTestimonialsTitle: 'Resource Person Testimonials',
+  resourceTestimonialsIntro: '',
+  fellowTestimonials: [] as typeof FELLOW_TESTIMONIALS,
+  resourceTestimonials: [] as typeof RESOURCE_TESTIMONIALS,
+} as const
+
+export const defaultFellowshipCohorts: FellowshipPageData['cohorts'] = [
     {
+      cohortYear: 2025,
       yearLabel: '2025 cohort',
       title: 'Future Trade Leaders Fellowship (2025)',
       description:
@@ -14,8 +53,10 @@ export const defaultFellowshipPage: FellowshipPageData = {
       imageAlt: 'Future Trade Leaders Fellowship 2025 cohort',
       exploreUrl: '/fellowship/2025',
       exploreExternal: false,
+      ...COHORT_2025_PAGE,
     },
     {
+      cohortYear: 2026,
       yearLabel: '2026 cohort',
       title: 'Future Trade Leaders Fellowship (2026)',
       description:
@@ -24,8 +65,15 @@ export const defaultFellowshipPage: FellowshipPageData = {
       imageAlt: 'Future Trade Leaders Fellowship 2026 cohort',
       exploreUrl: '/fellowship/2026',
       exploreExternal: false,
+      ...COHORT_2026_PAGE,
     },
-  ],
+  ]
+
+export const defaultFellowshipPage: FellowshipPageData = {
+  heroImageUrl: '/images/fellowship/hero.png',
+  introText:
+    'The Future Trade Leaders Fellowship is a flagship initiative of the African Trade Chamber designed to develop a new generation of trade leaders across Africa and the Caribbean. Positioned at the intersection of policy, markets, and global trade systems, the program equips participants with practical knowledge of international trade, regional integration, and opportunities under the AfCFTA, while fostering collaboration, peer exchange, and access to key stakeholders. Through this, the Fellowship builds a strong network of individuals prepared to contribute meaningfully to Africa’s evolving trade landscape and economic transformation.',
+  cohorts: defaultFellowshipCohorts,
   cta: {
     eyebrow: 'Call for Applications',
     title: '2026 Future Trade Leaders Fellowship Program',

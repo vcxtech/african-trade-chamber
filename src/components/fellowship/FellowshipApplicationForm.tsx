@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { submitForm } from '@/lib/form-submit'
+import { submitForm, FELLOWSHIP_NOTIFY_EMAIL } from '@/lib/form-submit'
 
 const inputClass =
   'w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:border-[#002740] focus:outline-none focus:ring-2 focus:ring-[#002740]/15'
@@ -23,7 +23,7 @@ export function FellowshipApplicationForm() {
       formType: 'fellowship',
       email: String(fd.get('email') ?? ''),
       subject: '2026 Future Trade Leaders Fellowship Application',
-      data,
+      data: { ...data, notifyEmail: FELLOWSHIP_NOTIFY_EMAIL },
     })
 
     setSubmitting(false)
