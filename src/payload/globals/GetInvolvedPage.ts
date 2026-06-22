@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 const cardFields = [
@@ -14,6 +15,8 @@ const cardFields = [
 export const GetInvolvedPage: GlobalConfig = {
   slug: 'get-involved-page',
   label: 'Get Involved Page',
+  access: contentGlobalAccess('careers'),
+  admin: { group: 'Pages', hidden: hideUnlessArea('careers') },
   fields: [
     { name: 'intro', type: 'group', fields: cardFields },
     { name: 'cards', type: 'array', fields: cardFields },

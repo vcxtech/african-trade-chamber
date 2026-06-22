@@ -34,6 +34,7 @@ import { AtcAdminTopBar as AtcAdminTopBar_943d05340a32fa3afb2704eddccf030f } fro
 import { AtcAdminIcon as AtcAdminIcon_50e90f84ee6d282880be6dc12321f61e } from '../../../components/admin/AtcAdminIcon'
 import { AtcAdminLogo as AtcAdminLogo_904234d73253aed64c18d7b2d4ff68e4 } from '../../../components/admin/AtcAdminLogo'
 import { AtcAdminNavFooter as AtcAdminNavFooter_8af2cb8e1ccd974a742835ef34cbe9ee } from '../../../components/admin/AtcAdminNavFooter'
+import { AtcDashboardWelcome as AtcDashboardWelcome_c26b1f0603e7d1a732566b012fad69e3 } from '../../../components/admin/AtcDashboardWelcome'
 import { AtcLoginHeading as AtcLoginHeading_488357b3fa505d25367ca5581b8fd799 } from '../../../components/admin/AtcLoginHeading'
 import { AtcAdminOpenNav as AtcAdminOpenNav_62681b71b438623e0624c1f8fd2a5846 } from '../../../components/admin/AtcAdminOpenNav'
 import { AtcLoginView as AtcLoginView_49e92ad9159634cf15f44a0f46e502b2 } from '../../../components/admin/AtcLoginView'
@@ -78,6 +79,7 @@ export const importMap = {
   "/components/admin/AtcAdminIcon#AtcAdminIcon": AtcAdminIcon_50e90f84ee6d282880be6dc12321f61e,
   "/components/admin/AtcAdminLogo#AtcAdminLogo": AtcAdminLogo_904234d73253aed64c18d7b2d4ff68e4,
   "/components/admin/AtcAdminNavFooter#AtcAdminNavFooter": AtcAdminNavFooter_8af2cb8e1ccd974a742835ef34cbe9ee,
+  "/components/admin/AtcDashboardWelcome#AtcDashboardWelcome": AtcDashboardWelcome_c26b1f0603e7d1a732566b012fad69e3,
   "/components/admin/AtcLoginHeading#AtcLoginHeading": AtcLoginHeading_488357b3fa505d25367ca5581b8fd799,
   "/components/admin/AtcAdminOpenNav#AtcAdminOpenNav": AtcAdminOpenNav_62681b71b438623e0624c1f8fd2a5846,
   "/components/admin/AtcLoginView#AtcLoginView": AtcLoginView_49e92ad9159634cf15f44a0f46e502b2,

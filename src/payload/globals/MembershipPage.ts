@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 const imageFields = [
@@ -10,6 +11,8 @@ const imageFields = [
 export const MembershipPage: GlobalConfig = {
   slug: 'membership-page',
   label: 'Membership Page',
+  access: contentGlobalAccess('membership'),
+  admin: { group: 'Pages', hidden: hideUnlessArea('membership') },
   fields: [
     { name: 'headerTitle', type: 'text', required: true },
     { name: 'headerSubtitle', type: 'textarea', required: true },

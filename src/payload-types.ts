@@ -186,7 +186,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * CMS administrators and editors for africantradechamber.org
+ * CMS staff accounts. Administrators manage all content and settings. Editors can change content in assigned areas.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
@@ -202,6 +202,10 @@ export interface User {
   jobTitle?: string | null;
   phone?: string | null;
   role?: ('admin' | 'editor') | null;
+  /**
+   * Leave empty to grant all content areas (except Site Settings and Users). Restrict editors to specific teams.
+   */
+  contentAreas?: ('communications' | 'homepage' | 'programs' | 'membership' | 'careers')[] | null;
   /**
    * Optional — visible on your account page only.
    */
@@ -695,7 +699,8 @@ export interface FormSubmission {
     | 'service-request'
     | 'newsletter'
     | 'job-application'
-    | 'fellowship';
+    | 'fellowship'
+    | 'sme-council';
   email?: string | null;
   subject?: string | null;
   payload:
@@ -877,6 +882,7 @@ export interface UsersSelect<T extends boolean = true> {
   jobTitle?: T;
   phone?: T;
   role?: T;
+  contentAreas?: T;
   bio?: T;
   updatedAt?: T;
   createdAt?: T;

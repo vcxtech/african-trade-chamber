@@ -1,9 +1,11 @@
-import type { Access, CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 import { getPayloadCookieSecure } from '@/lib/payload-server-url'
-
-function isAdmin({ req }: Parameters<Access>[0]): boolean {
-  return req.user?.role === 'admin'
-}
+import {
+  adminFieldUpdate,
+  hideUnlessAdmin,
+  isAdmin,
+  type AtcUser,
+} from '@/lib/payload-access'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -19,15 +21,22 @@ export const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
     defaultColumns: ['email', 'firstName', 'lastName', 'role'],
-    description: 'CMS administrators and editors for africantradechamber.org',
+    description:
+      'CMS staff accounts. Administrators manage all content and settings. Editors can change content in assigned areas.',
+    group: 'Administration',
+    hidden: hideUnlessAdmin(),
   },
   access: {
     create: isAdmin,
     delete: isAdmin,
-    read: ({ req }) => Boolean(req.user),
+    read: ({ req }) => {
+      if (!req.user) return false
+      if ((req.user as AtcUser).role === 'admin') return true
+      return { id: { equals: req.user.id } }
+    },
     update: ({ req, id }) => {
       if (!req.user) return false
-      if (req.user.role === 'admin') return true
+      if ((req.user as AtcUser).role === 'admin') return true
       return req.user.id === id
     },
   },
@@ -67,13 +76,39 @@ export const Users: CollectionConfig = {
       name: 'role',
       type: 'select',
       label: 'Role',
-      defaultValue: 'admin',
+      defaultValue: 'editor',
       options: [
         { label: 'Administrator', value: 'admin' },
         { label: 'Editor', value: 'editor' },
       ],
+      access: {
+        update: adminFieldUpdate,
+      },
       admin: {
         position: 'sidebar',
+        condition: (_, __, { user }) => (user as AtcUser | undefined)?.role === 'admin',
+      },
+    },
+    {
+      name: 'contentAreas',
+      type: 'select',
+      label: 'Content areas',
+      hasMany: true,
+      options: [
+        { label: 'Communications', value: 'communications' },
+        { label: 'Homepage', value: 'homepage' },
+        { label: 'Programs', value: 'programs' },
+        { label: 'Membership', value: 'membership' },
+        { label: 'Careers', value: 'careers' },
+      ],
+      access: {
+        update: adminFieldUpdate,
+      },
+      admin: {
+        position: 'sidebar',
+        condition: (_, __, { user }) => (user as AtcUser | undefined)?.role === 'admin',
+        description:
+          'Leave empty to grant all content areas (except Site Settings and Users). Restrict editors to specific teams.',
       },
     },
     {
@@ -87,7 +122,7 @@ export const Users: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [
-      ({ data }) => {
+      ({ data, req }) => {
         if (!data) return data
         const first = typeof data.firstName === 'string' ? data.firstName.trim() : ''
         const last = typeof data.lastName === 'string' ? data.lastName.trim() : ''
@@ -96,6 +131,12 @@ export const Users: CollectionConfig = {
         if (!display && (first || last)) {
           data.displayName = [first, last].filter(Boolean).join(' ')
         }
+
+        if (req.user && (req.user as AtcUser).role !== 'admin') {
+          delete data.role
+          delete data.contentAreas
+        }
+
         return data
       },
     ],

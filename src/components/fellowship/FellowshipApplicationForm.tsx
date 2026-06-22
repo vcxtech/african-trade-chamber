@@ -7,7 +7,11 @@ import { submitForm, FELLOWSHIP_NOTIFY_EMAIL } from '@/lib/form-submit'
 const inputClass =
   'w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:border-[#002740] focus:outline-none focus:ring-2 focus:ring-[#002740]/15'
 
-export function FellowshipApplicationForm() {
+type Props = {
+  applicationTitle: string
+}
+
+export function FellowshipApplicationForm({ applicationTitle }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -22,7 +26,7 @@ export function FellowshipApplicationForm() {
     const result = await submitForm({
       formType: 'fellowship',
       email: String(fd.get('email') ?? ''),
-      subject: '2026 Future Trade Leaders Fellowship Application',
+      subject: `${applicationTitle} — Application`,
       data: { ...data, notifyEmail: FELLOWSHIP_NOTIFY_EMAIL },
     })
 
@@ -39,8 +43,8 @@ export function FellowshipApplicationForm() {
       <div className="rounded-xl border border-green-200 bg-green-50 p-8">
         <h2 className="text-xl font-bold text-atc-navy">Application received</h2>
         <p className="mt-2 text-atc-navy/80">
-          Thank you for applying to the 2026 Future Trade Leaders Fellowship. We will review your
-          application and contact you.
+          Thank you for applying to the {applicationTitle}. We will review your application and
+          contact you.
         </p>
         <Link href="/fellowship" className="mt-4 inline-block font-semibold text-atc-navy underline">
           Back to Fellowship

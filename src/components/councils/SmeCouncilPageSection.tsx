@@ -1,3 +1,4 @@
+import { SmeCouncilParticipationForm } from '@/components/councils/SmeCouncilParticipationForm'
 import { AtcCardImage } from '@/components/shared/AtcCardImage'
 import { CouncilPageHeader } from '@/components/councils/CouncilPageHeader'
 import type { SmeCouncilPageData } from '@/types/council-page'
@@ -81,11 +82,11 @@ export function SmeCouncilPageSection({ data }: Props) {
           </div>
         </div>
 
-        <div className="mb-7 rounded-xl border border-dashed border-[#002740]/20 bg-white p-8 text-center shadow-[0_6px_20px_rgba(0,0,0,0.08)]">
-          <p className="mb-2 text-lg font-semibold text-[#002740]">SME Council Participation Request</p>
-          <p className="text-base text-[#374151]">
-            Online participation request form — coming soon. Contact us in the meantime to express interest.
+        <div className="mb-7 rounded-xl border border-dashed border-[#002740]/20 bg-white p-8 shadow-[0_6px_20px_rgba(0,0,0,0.08)]">
+          <p className="mb-6 text-center text-lg font-semibold text-[#002740]">
+            SME Council Participation Request
           </p>
+          <SmeCouncilParticipationForm />
         </div>
 
         <div className="rounded-xl bg-white p-7 text-center shadow-[0_6px_20px_rgba(0,0,0,0.08)]">

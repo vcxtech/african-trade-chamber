@@ -1,10 +1,14 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 
 export const Jobs: CollectionConfig = {
   slug: 'jobs',
+  access: contentCollectionAccess('careers'),
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'department', 'location', 'status'],
+    group: 'Careers',
+    hidden: hideUnlessArea('careers'),
   },
   fields: [
     { name: 'title', type: 'text', required: true },

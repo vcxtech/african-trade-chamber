@@ -1,10 +1,13 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { homepageCardFields } from '../fields/homepageCardFields'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const WwdHomepage: GlobalConfig = {
   slug: 'wwd-homepage',
   label: 'Homepage — What We Do',
+  access: contentGlobalAccess('homepage'),
+  admin: { group: 'Homepage', hidden: hideUnlessArea('homepage') },
   fields: [
     {
       name: 'headerTitle',

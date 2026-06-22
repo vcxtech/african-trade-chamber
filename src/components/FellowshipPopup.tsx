@@ -16,7 +16,20 @@ type Props = {
   >
 }
 
-const KICKER = 'Call for Applications'
+function formatPhoneDisplay(phone: string): string {
+  const digits = phone.replace(/\D/g, '')
+  if (digits.startsWith('233') && digits.length >= 12) {
+    return `+233 ${digits.slice(3, 6)} ${digits.slice(6, 9)} ${digits.slice(9)}`
+  }
+  return phone
+}
+
+function popupKicker(title: string): string {
+  const firstLine = title.split('\n')[0]?.trim()
+  if (!firstLine) return 'Call for Applications'
+  const words = firstLine.split(/\s+/)
+  return words.length > 6 ? 'Call for Applications' : firstLine
+}
 
 export function FellowshipPopup({ settings }: Props) {
   const [open, setOpen] = useState(false)
@@ -82,7 +95,7 @@ export function FellowshipPopup({ settings }: Props) {
                 aria-hidden
               />
               <p className="mb-2 text-[11px] font-extrabold uppercase tracking-[0.19em] text-[#dbeafe]">
-                {KICKER}
+                {popupKicker(settings.fellowshipPopupTitle ?? '')}
               </p>
               <h2
                 id="fellowship-popup-title"

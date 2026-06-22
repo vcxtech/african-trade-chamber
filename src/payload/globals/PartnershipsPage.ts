@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 const listItemFields = [{ name: 'text', type: 'text' as const, required: true }]
@@ -6,6 +7,8 @@ const listItemFields = [{ name: 'text', type: 'text' as const, required: true }]
 export const PartnershipsPage: GlobalConfig = {
   slug: 'partnerships-page',
   label: 'Partnerships Page',
+  access: contentGlobalAccess('communications'),
+  admin: { group: 'Pages', hidden: hideUnlessArea('communications') },
   fields: [
     { name: 'headerTitle', type: 'text', required: true },
     { name: 'introText', type: 'textarea', required: true },

@@ -32,17 +32,7 @@ function CtaList({ items }: { items: FellowshipCtaListItem[] }) {
   )
 }
 
-function formatPhoneDisplay(phone: string): string {
-  const digits = phone.replace(/\D/g, '')
-  if (digits.startsWith('233') && digits.length >= 12) {
-    return `+233 ${digits.slice(3, 6)} ${digits.slice(6, 9)} ${digits.slice(9)}`
-  }
-  return phone
-}
-
 export function FellowshipCtaSection({ cta }: Props) {
-  const phoneDisplay = formatPhoneDisplay(cta.contactPhone)
-
   return (
     <section
       className="rounded-[18px] border border-slate-200 bg-white px-6 py-9 shadow-[0_24px_48px_rgba(2,6,23,0.1)] sm:px-11 sm:py-11"
@@ -66,29 +56,7 @@ export function FellowshipCtaSection({ cta }: Props) {
           </h3>
           {section.paragraphs?.map((p, i) => (
             <p key={i} className="mb-3.5 text-slate-900 last:mb-4">
-              {section.heading === 'Deadline' ? (
-                <>
-                  Applications must be submitted by <strong>30th May, 2026</strong>
-                </>
-              ) : section.heading === 'Contact Information' ? (
-                <>
-                  For inquiries or further information about the Future Trade Leaders Fellowship
-                  Program, please contact the African Trade Chamber on{' '}
-                  <a href={`tel:${cta.contactPhone}`} className="font-semibold text-[#002740] hover:text-[#004a6e]">
-                    {phoneDisplay}
-                  </a>{' '}
-                  or email us at{' '}
-                  <a
-                    href={`mailto:${cta.contactEmail}`}
-                    className="font-semibold text-[#002740] hover:text-[#004a6e]"
-                  >
-                    {cta.contactEmail}
-                  </a>
-                  .
-                </>
-              ) : (
-                p
-              )}
+              {p}
             </p>
           ))}
           {section.labeledParagraphs?.map((block, i) => (

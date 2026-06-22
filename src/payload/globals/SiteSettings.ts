@@ -1,8 +1,11 @@
 import type { GlobalConfig } from 'payload'
+import { adminOnlyAccess, hideUnlessAdmin } from '@/lib/payload-access'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Site Settings',
+  admin: { group: 'Site', hidden: hideUnlessAdmin() },
+  access: adminOnlyAccess(),
   fields: [
     {
       name: 'siteName',

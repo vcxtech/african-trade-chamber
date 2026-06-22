@@ -1,9 +1,12 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { imageAltField, legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const ContactPage: GlobalConfig = {
   slug: 'contact-page',
   label: 'Contact Page',
+  access: contentGlobalAccess('communications'),
+  admin: { group: 'Pages', hidden: hideUnlessArea('communications') },
   fields: [
     { name: 'introTitle', type: 'text', required: true },
     { name: 'introBody', type: 'textarea', required: true },

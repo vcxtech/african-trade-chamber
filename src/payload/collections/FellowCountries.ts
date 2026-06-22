@@ -1,7 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 
 export const FellowCountries: CollectionConfig = {
   slug: 'fellow-countries',
+  access: contentCollectionAccess('programs'),
   labels: {
     singular: 'Fellow Country',
     plural: 'Fellow Countries',
@@ -10,6 +12,7 @@ export const FellowCountries: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'sortOrder'],
     group: 'Team',
+    hidden: hideUnlessArea('programs'),
     description: 'Countries aligned with the organization. Used for fellowship cohort members.',
   },
   fields: [

@@ -132,47 +132,88 @@
 
   /* ATC admin chrome */
   .atc-admin-top-bar {
-    background: var(--atc-navy);
-    border-bottom: 3px solid var(--atc-yellow);
-    color: #fff;
+    background: var(--atc-yellow);
+    border-bottom: 2px solid var(--atc-navy);
+    color: var(--atc-navy);
     width: 100%;
     z-index: 10;
   }
 
   .atc-admin-top-bar__utility {
     align-items: center;
-    background: var(--atc-yellow);
-    color: var(--atc-navy);
     display: flex;
     flex-wrap: wrap;
     font-size: 0.8125rem;
     font-weight: 600;
-    gap: 0.75rem 1.25rem;
+    gap: 0.75rem 1rem;
     justify-content: space-between;
-    padding: 0.4rem 1.25rem;
+    padding: 0.5rem 1.25rem;
+  }
+
+  .atc-admin-top-bar__brand {
+    flex-shrink: 0;
+  }
+
+  .atc-admin-top-bar__right {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem 0.875rem;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+
+  .atc-admin-top-bar__pills {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .atc-admin-top-bar__pill {
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 0.2rem 0.55rem;
+    white-space: nowrap;
+  }
+
+  .atc-admin-top-bar__pill--name {
+    background: rgba(0, 39, 64, 0.08);
+    color: var(--atc-navy);
+  }
+
+  .atc-admin-top-bar__pill--admin {
+    background: var(--atc-navy);
+    color: #fff;
+  }
+
+  .atc-admin-top-bar__pill--editor {
+    background: #fff;
+    border: 1px solid var(--atc-navy);
+    color: var(--atc-navy);
+  }
+
+  .atc-admin-top-bar__pill--areas {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px dashed rgba(0, 39, 64, 0.35);
+    color: var(--atc-navy);
+    font-weight: 500;
+    max-width: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .atc-admin-top-bar__utility-link {
     color: var(--atc-navy);
+    font-weight: 700;
     text-decoration: underline;
   }
 
-  .atc-admin-top-bar__nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 1.5rem;
-    padding: 0.65rem 1.25rem;
-  }
-
-  .atc-admin-top-bar__nav-link {
-    color: #fff;
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  .atc-admin-top-bar__nav-link:hover {
-    color: var(--atc-yellow);
+  .atc-admin-top-bar__utility-link:hover {
+    color: #003d5c;
   }
 
   .atc-admin-nav-footer {
@@ -214,5 +255,119 @@
       pointer-events: auto;
       visibility: visible;
     }
+  }
+
+  /* Logged-in admin polish */
+  html[data-theme='light'] .nav {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border-right: 1px solid var(--theme-elevation-150);
+  }
+
+  html[data-theme='light'] .nav__link {
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    margin: 0 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  html[data-theme='light'] .nav__link--active,
+  html[data-theme='light'] .nav__link[aria-current='page'] {
+    background: rgba(0, 39, 64, 0.08);
+    border-left: 3px solid var(--atc-gold);
+    color: var(--atc-navy);
+    font-weight: 600;
+  }
+
+  html[data-theme='light'] .nav-group__label {
+    color: var(--atc-navy);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  html[data-theme='light'] .collection-list__tables .table thead th {
+    background: #f8fafc;
+    color: var(--atc-navy);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  html[data-theme='light'] .collection-list__tables .table tbody tr:hover {
+    background: rgba(0, 39, 64, 0.03);
+  }
+
+  html[data-theme='light'] .field-type input.field-input,
+  html[data-theme='light'] .field-type textarea.field-input,
+  html[data-theme='light'] .field-type select.field-input {
+    border-radius: 0.5rem;
+  }
+
+  html[data-theme='light'] .field-type input.field-input:focus,
+  html[data-theme='light'] .field-type textarea.field-input:focus,
+  html[data-theme='light'] .field-type select.field-input:focus {
+    border-color: var(--atc-navy);
+    box-shadow: 0 0 0 2px rgba(0, 39, 64, 0.12);
+  }
+
+  html[data-theme='light'] .collapsible__content {
+    background: #fafbfc;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Dashboard welcome panel */
+  .atc-dashboard-welcome {
+    background: #fff;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.06);
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .atc-dashboard-welcome__title {
+    color: var(--atc-navy);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem;
+  }
+
+  .atc-dashboard-welcome__subtitle {
+    color: var(--theme-elevation-600);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0 0 1.25rem;
+  }
+
+  .atc-dashboard-welcome__grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  }
+
+  .atc-dashboard-welcome__link {
+    background: #f8fafc;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 0.625rem;
+    color: var(--atc-navy);
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .atc-dashboard-welcome__link:hover {
+    background: #fff;
+    border-color: var(--atc-gold);
+    transform: translateY(-1px);
   }
 }

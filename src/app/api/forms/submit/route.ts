@@ -21,6 +21,7 @@ const VALID_TYPES = new Set<FormSubmissionType>([
   'newsletter',
   'job-application',
   'fellowship',
+  'sme-council',
 ])
 
 const MEMBERSHIP_FILE_FIELDS = ['companyLogo', 'supportingDocs'] as const
@@ -57,9 +58,8 @@ async function uploadFormFile(
   }
 }
 
-function isUploadBlob(value: FormDataEntryValue | null): value is File | Blob {
-  if (!(value instanceof File || value instanceof Blob)) return false
-  return value.size > 0
+function isUploadFile(value: FormDataEntryValue | null): value is File {
+  return value instanceof File && value.size > 0
 }
 
 async function parseMultipartRequest(request: Request): Promise<Body> {
@@ -102,13 +102,11 @@ async function parseMultipartRequest(request: Request): Promise<Body> {
   const payload = await getPayload({ config })
 
   const logo = formData.get('companyLogo')
-  if (isUploadBlob(logo)) {
+  if (isUploadFile(logo)) {
     data.companyLogo = await uploadFormFile(payload, logo, 'company-logo')
   }
 
-  const supportingDocs = formData
-    .getAll('supportingDocs')
-    .filter(isUploadBlob)
+  const supportingDocs = formData.getAll('supportingDocs').filter(isUploadFile)
   if (supportingDocs.length > 0) {
     data.supportingDocs = await Promise.all(
       supportingDocs.map((file, index) =>
@@ -168,6 +166,7 @@ export async function POST(request: Request) {
         payload: body.data,
         status: 'new',
       },
+      overrideAccess: true,
     })
     return Response.json({ ok: true })
   } catch (err) {

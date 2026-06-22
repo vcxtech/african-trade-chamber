@@ -1,11 +1,15 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const Insights: CollectionConfig = {
   slug: 'insights',
+  access: contentCollectionAccess('communications', { editorCanDelete: false }),
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'publishedAt'],
+    group: 'Content',
+    hidden: hideUnlessArea('communications'),
   },
   fields: [
     { name: 'title', type: 'text', required: true },

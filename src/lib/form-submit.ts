@@ -7,6 +7,7 @@ export type FormSubmissionType =
   | 'newsletter'
   | 'job-application'
   | 'fellowship'
+  | 'sme-council'
 
 export type SubmitFormPayload = {
   formType: FormSubmissionType
@@ -62,3 +63,6 @@ export const CAREERS_NOTIFY_EMAIL =
 
 export const NEWSLETTER_NOTIFY_EMAIL =
   process.env.NEXT_PUBLIC_NEWSLETTER_NOTIFY_EMAIL ?? 'info@africantradechamber.org'
+
+export const SME_COUNCIL_NOTIFY_EMAIL =
+  process.env.NEXT_PUBLIC_SME_COUNCIL_NOTIFY_EMAIL ?? 'info@africantradechamber.org'

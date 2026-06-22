@@ -1,7 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 
 export const TeamMemberCategories: CollectionConfig = {
   slug: 'team-member-categories',
+  access: contentCollectionAccess('programs'),
   labels: {
     singular: 'Team Member Category',
     plural: 'Team Member Categories',
@@ -10,6 +12,7 @@ export const TeamMemberCategories: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'slug', 'showOnAbout', 'isFellow', 'sortOrder'],
     group: 'Team',
+    hidden: hideUnlessArea('programs'),
     description: 'Categories for team members. Toggle “Show on About” to publish on the About page.',
   },
   fields: [

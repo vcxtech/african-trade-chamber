@@ -1,6 +1,7 @@
 import { revalidatePath } from 'next/cache'
 import type { CollectionConfig } from 'payload'
 import { applyFellowshipCohortBeforeChange } from '@/lib/fellowship-cohort-utils'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 import { fellowshipCohortFields } from '../fields/fellowshipCohortFields'
 
 const COHORT_LIST_GUIDE =
@@ -8,12 +9,14 @@ const COHORT_LIST_GUIDE =
 
 export const FellowshipCohorts: CollectionConfig = {
   slug: 'fellowship-cohorts',
+  access: contentCollectionAccess('programs'),
   labels: {
     singular: 'Fellowship Cohort',
     plural: 'Fellowship Cohorts',
   },
   admin: {
     group: 'Fellowship',
+    hidden: hideUnlessArea('programs'),
     useAsTitle: 'title',
     defaultColumns: ['cohortYear', 'title', 'updatedAt'],
     description:

@@ -64,6 +64,7 @@ export default buildConfig({
     },
     theme: 'light',
     components: {
+      beforeDashboard: ['/components/admin/AtcDashboardWelcome#AtcDashboardWelcome'],
       views: {
         login: {
           Component: '/components/admin/AtcLoginView#AtcLoginView',

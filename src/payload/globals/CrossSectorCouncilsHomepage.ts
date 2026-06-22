@@ -1,10 +1,13 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { homepageCardFields } from '../fields/homepageCardFields'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const CrossSectorCouncilsHomepage: GlobalConfig = {
   slug: 'cross-sector-councils-homepage',
   label: 'Homepage — Cross-Sector Councils',
+  access: contentGlobalAccess('homepage'),
+  admin: { group: 'Homepage', hidden: hideUnlessArea('homepage') },
   fields: [
     {
       type: 'group',

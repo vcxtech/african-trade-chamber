@@ -1,8 +1,11 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 
 export const VolunteerPage: GlobalConfig = {
   slug: 'volunteer-page',
   label: 'Volunteer Page',
+  access: contentGlobalAccess('careers'),
+  admin: { group: 'Pages', hidden: hideUnlessArea('careers') },
   fields: [
     { name: 'headerTitle', type: 'text', required: true },
     { name: 'headerTagline', type: 'text', required: true },

@@ -12,6 +12,7 @@ const FORM_TYPE_DEFAULTS: Partial<Record<FormSubmissionType, string>> = {
   newsletter: 'info@africantradechamber.org',
   'job-application': 'info@africantradechamber.org',
   fellowship: 'info@africantradechamber.org',
+  'sme-council': 'info@africantradechamber.org',
 }
 
 type AttachmentRef = {

@@ -1,12 +1,15 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const HeroSlides: CollectionConfig = {
   slug: 'hero-slides',
+  access: contentCollectionAccess('homepage'),
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'order', 'enabled'],
     group: 'Homepage',
+    hidden: hideUnlessArea('homepage'),
     description:
       'Order 0 = fallback slide 1 when no news story is pinned to the homepage hero. Order 1+ = carousel slides 2, 3, and so on.',
     components: {

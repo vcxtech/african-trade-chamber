@@ -1,11 +1,15 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 
 export const HeroFeatureCards: CollectionConfig = {
   slug: 'hero-feature-cards',
+  access: contentCollectionAccess('homepage'),
   labels: { singular: 'Hero feature card', plural: 'Hero feature cards' },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'order', 'enabled', 'updatedAt'],
+    group: 'Homepage',
+    hidden: hideUnlessArea('homepage'),
   },
   fields: [
     { name: 'title', type: 'text', required: true },

@@ -1,10 +1,12 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 import { resolveCategoryIsFellow } from '../fields/resolveCategoryIsFellow'
 import { FELLOWSHIP_COLLAPSIBLE_FIELD, teamMemberShowWhen } from '../fields/teamMemberAdmin'
 
 export const TeamMembers: CollectionConfig = {
   slug: 'team-members',
+  access: contentCollectionAccess('programs'),
   labels: {
     singular: 'Team Member',
     plural: 'Team Members',
@@ -13,6 +15,7 @@ export const TeamMembers: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'category', 'position', 'sortOrder'],
     group: 'Team',
+    hidden: hideUnlessArea('programs'),
   },
   hooks: {
     beforeChange: [

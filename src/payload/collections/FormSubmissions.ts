@@ -1,18 +1,16 @@
 import type { CollectionConfig } from 'payload'
 import { sendFormSubmissionNotification } from '@/lib/form-notification'
+import { formSubmissionAccess, hideUnlessAdminOrArea } from '@/lib/payload-access'
 
 export const FormSubmissions: CollectionConfig = {
   slug: 'form-submissions',
+  access: formSubmissionAccess(),
   admin: {
     useAsTitle: 'formType',
     defaultColumns: ['formType', 'email', 'createdAt'],
     description: 'Form submissions from the public website',
-  },
-  access: {
-    read: ({ req }) => Boolean(req.user),
-    create: () => true,
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    group: 'Forms',
+    hidden: hideUnlessAdminOrArea('membership'),
   },
   fields: [
     {
@@ -28,6 +26,7 @@ export const FormSubmissions: CollectionConfig = {
         { label: 'Newsletter', value: 'newsletter' },
         { label: 'Job Application', value: 'job-application' },
         { label: 'Fellowship Application', value: 'fellowship' },
+        { label: 'SME Council Participation', value: 'sme-council' },
       ],
     },
     { name: 'email', type: 'email' },

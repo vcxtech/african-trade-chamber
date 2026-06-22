@@ -5,7 +5,10 @@ import { useEffect } from 'react'
 const GTRANSLATE_SETTINGS = {
   default_language: 'en',
   detect_browser_language: true,
-  languages: ['en', 'fr', 'es', 'pt', 'ar', 'sw', 'ha', 'yo', 'ig', 'zu', 'am'],
+  languages: ['en', 'fr', 'es'],
+  alt_flags: {
+    en: 'https://cdn.gtranslate.net/flags/svg/countries/us.svg',
+  },
   wrapper_selector: '.gtranslate_wrapper',
   switcher_horizontal_position: 'left',
   switcher_vertical_position: 'bottom',
@@ -35,5 +38,5 @@ export function GTranslateWidget() {
     }
   }, [])
 
-  return <div className="gtranslate_wrapper pointer-events-none fixed bottom-0 left-0 z-[9990] h-0 w-0" aria-hidden />
+  return <div className="gtranslate_wrapper" />
 }

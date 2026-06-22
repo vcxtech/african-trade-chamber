@@ -1,11 +1,10 @@
 import type { CollectionConfig } from 'payload'
+import { hideUnlessArea, mediaCollectionAccess } from '@/lib/payload-access'
 import { isHiddenMediaVariant } from '@/lib/media-filename-utils'
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  access: {
-    read: () => true,
-  },
+  access: mediaCollectionAccess(),
   upload: {
     staticDir: 'media',
     mimeTypes: ['image/*', 'video/*'],
@@ -56,6 +55,7 @@ export const Media: CollectionConfig = {
     useAsTitle: 'filename',
     defaultColumns: ['filename', 'alt', 'updatedAt'],
     group: 'Content',
+    hidden: hideUnlessArea('communications'),
     description:
       'Site media library — select or upload images used across pages and posts. Grid view hides WordPress size variants by default; search by filename to find a specific size if needed.',
     pagination: {

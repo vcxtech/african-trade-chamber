@@ -41,3 +41,18 @@ body {
   display: block;
   animation: membership-form-fade-in-up 0.6s ease;
 }
+
+/* GTranslate float switcher — do not use pointer-events:none on .gtranslate_wrapper */
+#gt_float_wrapper {
+  z-index: 9990;
+}
+
+div#gt_float_wrapper {
+  bottom: 1.5rem;
+  left: 1.5rem;
+}
+
+.gt_float_switcher .gt_options,
+.gt_float_switcher .gt_options.gt-open {
+  z-index: 9991;
+}

@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 const FELLOWSHIP_GUIDE = '/components/admin/fellowship/FellowshipAdminGuide#FellowshipAdminGuide'
@@ -6,9 +7,12 @@ const FELLOWSHIP_GUIDE = '/components/admin/fellowship/FellowshipAdminGuide#Fell
 export const FellowshipPage: GlobalConfig = {
   slug: 'fellowship-page',
   label: 'Fellowship hub',
+  access: contentGlobalAccess('programs'),
   admin: {
     description:
       'Hub at /fellowship — intro, hero, and call for applications. Cohort pages are edited under Fellowship → Fellowship Cohorts.',
+    group: 'Fellowship',
+    hidden: hideUnlessArea('programs'),
   },
   fields: [
     {

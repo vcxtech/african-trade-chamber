@@ -36,8 +36,7 @@ export function FellowsGrid({ members, cohortYear = 2025 }: Props) {
       <div className="mx-auto max-w-[1200px] px-[18px] md:px-8">
         {members.length === 0 ? (
           <p className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
-            No fellows loaded. Run{' '}
-            <code className="text-sm">npm run migrate:team -- data/*.xml --fellows-only</code>
+            Fellow profiles for the {cohortYear} cohort will appear here soon.
           </p>
         ) : (
           <>

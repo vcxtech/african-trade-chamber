@@ -1,18 +1,15 @@
 import type { CollectionConfig } from 'payload'
+import { formAttachmentAccess, hideUnlessAdminOrArea } from '@/lib/payload-access'
 
 export const FormAttachments: CollectionConfig = {
   slug: 'form-attachments',
+  access: formAttachmentAccess(),
   admin: {
     useAsTitle: 'filename',
     defaultColumns: ['filename', 'mimeType', 'createdAt'],
     group: 'Forms',
     description: 'Files uploaded with public form submissions (membership applications, etc.)',
-  },
-  access: {
-    read: ({ req }) => Boolean(req.user),
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    hidden: hideUnlessAdminOrArea('membership'),
   },
   upload: {
     staticDir: 'form-attachments',

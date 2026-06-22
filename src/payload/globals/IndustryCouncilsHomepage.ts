@@ -1,10 +1,13 @@
 import type { GlobalConfig } from 'payload'
+import { contentGlobalAccess, hideUnlessArea } from '@/lib/payload-access'
 import { homepageCardFields } from '../fields/homepageCardFields'
 import { legacyImageUrlField, mediaImageField } from '../fields/mediaImage'
 
 export const IndustryCouncilsHomepage: GlobalConfig = {
   slug: 'industry-councils-homepage',
   label: 'Homepage — Industry Councils',
+  access: contentGlobalAccess('homepage'),
+  admin: { group: 'Homepage', hidden: hideUnlessArea('homepage') },
   fields: [
     { name: 'headerTitle', type: 'text', required: true },
     { name: 'headerDescription', type: 'textarea' },

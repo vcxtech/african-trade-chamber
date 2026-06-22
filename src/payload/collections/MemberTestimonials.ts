@@ -1,7 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import { contentCollectionAccess, hideUnlessArea } from '@/lib/payload-access'
 
 export const MemberTestimonials: CollectionConfig = {
   slug: 'member-testimonials',
+  access: contentCollectionAccess('membership'),
   labels: {
     singular: 'Member Testimonial',
     plural: 'Member Testimonials',
@@ -9,6 +11,8 @@ export const MemberTestimonials: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'position', 'sortOrder'],
+    group: 'Membership',
+    hidden: hideUnlessArea('membership'),
   },
   fields: [
     { name: 'name', type: 'text', required: true },

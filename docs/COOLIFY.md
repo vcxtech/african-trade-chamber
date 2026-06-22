@@ -41,6 +41,12 @@ Add these in the app **Environment Variables** section. See [`coolify.env.exampl
 | `AUTO_SEED` | Yes | `true` (runs seed on every container start; idempotent) |
 | `SEED_ADMIN_EMAIL` | **Yes** | `admin@africantradechamber.org` — required when `AUTO_SEED=true` |
 | `SEED_ADMIN_PASSWORD` | **Yes** | strong admin login password — required when `AUTO_SEED=true` |
+| `SMTP_HOST` | For form emails | SMTP server hostname — without this, forms save to admin but no email is sent |
+| `SMTP_PORT` | For form emails | Usually `587` |
+| `SMTP_USER` / `SMTP_PASS` | For form emails | SMTP credentials |
+| `SMTP_FROM_ADDRESS` | For form emails | e.g. `noreply@africantradechamber.org` |
+| `SMTP_FROM_NAME` | Optional | e.g. `African Trade Chamber` |
+| `FORM_DEFAULT_NOTIFY_EMAIL` | Optional | Fallback inbox for form notifications (default: `info@africantradechamber.org`) |
 
 **Never commit real passwords to git.** Set secrets only in Coolify.
 
@@ -60,6 +66,23 @@ Add these in the app **Environment Variables** section. See [`coolify.env.exampl
 New CMS users are created only by logged-in administrators (Admin → Users). Public self-registration is disabled.
 
 To skip seeding on a deploy, set `AUTO_SEED=false`.
+
+**After your first successful deploy**, set `AUTO_SEED=false` in Coolify. This speeds up restarts and avoids re-running seed on every container start. Schema and content are already in Postgres.
+
+### Persistent file storage
+
+CMS uploads and form attachments are stored on disk inside the container:
+
+| Path | Purpose |
+|------|---------|
+| `/app/media` | Site images (Payload Media collection) |
+| `/app/form-attachments` | Membership application uploads |
+
+**Without persistent volumes, uploaded files are lost when the container is redeployed.** In Coolify, add storage mounts for both paths on the application resource.
+
+### Form email notifications
+
+Public forms (contact, membership, SME Council, etc.) save to **Form Submissions** in admin. Staff also receive email when SMTP is configured. Add the `SMTP_*` variables from [`coolify.env.example`](../coolify.env.example). Without SMTP, check the admin panel for new submissions.
 
 ## 5. Staging → production
 
