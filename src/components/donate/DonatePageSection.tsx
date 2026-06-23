@@ -1,11 +1,13 @@
 'use client'
 
 import { DonateForm } from '@/components/donate/DonateForm'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import type { DonatePageData } from '@/types/donate-page'
 
 type Props = { data: DonatePageData }
 
 export function DonatePageSection({ data }: Props) {
+  const reducedMotion = usePrefersReducedMotion()
   const scrollToForm = () => {
     document.getElementById('donation-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -71,7 +73,10 @@ export function DonatePageSection({ data }: Props) {
           >
             Scroll to Donation Form
           </button>
-          <p className="mt-4 text-2xl text-[#002740] animate-bounce" aria-hidden>
+          <p
+            className={`mt-4 text-2xl text-[#002740] ${reducedMotion ? '' : 'animate-bounce'}`}
+            aria-hidden
+          >
             ↓
           </p>
           <div className="mt-4 rounded-lg bg-[rgba(0,39,64,0.05)] p-3.5 text-sm">

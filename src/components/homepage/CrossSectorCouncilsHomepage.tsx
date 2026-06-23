@@ -12,7 +12,7 @@ export function CrossSectorCouncilsHomepage({ data }: Props) {
           <article className="flex flex-col items-center rounded-xl bg-white p-8 text-center shadow-[0_15px_30px_rgba(0,39,64,0.1)] md:col-span-3">
             <h2 className="text-2xl font-bold text-atc-navy">{data.intro.title}</h2>
             {data.intro.description ? (
-              <p className="mt-4 max-w-3xl text-base leading-relaxed text-[#4a4a4a]">
+              <p className="mt-4 max-w-3xl text-base leading-relaxed text-atc-muted">
                 {data.intro.description}
               </p>
             ) : null}

@@ -1,4 +1,5 @@
 import type { ContactPageData } from '@/types/contact-page'
+import { defaultContactSocialLinks } from '@/lib/social-links-defaults'
 
 const WP = 'https://africantradechamber.org/wp-content/uploads'
 
@@ -35,28 +36,7 @@ export const defaultContactPage: ContactPageData = {
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.51217520653!2d-0.1968324854337!3d5.6041670959789565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9a8a60a8041d%3A0x8988d43663e2fd0a!2sDzorwulu%2C%20Accra!5e0!3m2!1sen!2sgh!4v1619443437703!5m2!1sen!2sgh',
   socialTitle: 'Connect With Us',
   socialIntro: 'Follow us for the latest news and updates:',
-  socialLinks: [
-    {
-      platform: 'linkedin',
-      label: 'LinkedIn',
-      url: 'https://www.linkedin.com/company/atc-african-trade-chamber/',
-    },
-    {
-      platform: 'twitter',
-      label: 'Twitter',
-      url: 'https://x.com/ATC_Chamber?s=20',
-    },
-    {
-      platform: 'facebook',
-      label: 'Facebook',
-      url: 'https://web.facebook.com/africantradechamber',
-    },
-    {
-      platform: 'youtube',
-      label: 'YouTube',
-      url: 'https://www.youtube.com/channel/UClXYhsa3V-MllfWHnz2VGOQ',
-    },
-  ],
+  socialLinks: defaultContactSocialLinks,
   newsletterTitle: 'Newsletter Signup',
   newsletterBody:
     'Stay informed with ATC updates, trade insights, event announcements, and member news. Subscribe to our newsletter and receive curated content directly in your inbox.',

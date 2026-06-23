@@ -30,11 +30,7 @@ type SubmissionDoc = {
   payload: Record<string, unknown>
 }
 
-function resolveNotifyEmail(formType: FormSubmissionType, data: Record<string, unknown>): string {
-  const fromPayload = data.notifyEmail
-  if (typeof fromPayload === 'string' && fromPayload.includes('@')) {
-    return fromPayload
-  }
+function resolveNotifyEmail(formType: FormSubmissionType): string {
   const envDefault = process.env.FORM_DEFAULT_NOTIFY_EMAIL
   if (envDefault?.includes('@')) {
     return envDefault
@@ -135,7 +131,7 @@ export async function sendFormSubmissionNotification(
   }
 
   const data = doc.payload ?? {}
-  const to = resolveNotifyEmail(doc.formType, data)
+  const to = resolveNotifyEmail(doc.formType)
   const serverURL = process.env.PAYLOAD_SERVER_URL ?? process.env.NEXT_PUBLIC_SERVER_URL ?? ''
   const adminUrl = serverURL
     ? `${serverURL.replace(/\/$/, '')}/admin/collections/form-submissions/${doc.id}`

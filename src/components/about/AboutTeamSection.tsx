@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { TEAM_CATEGORY_LABELS } from '@/lib/about-defaults'
 import type { TeamMember, TeamMemberCategory } from '@/types/about-page'
 
@@ -21,6 +22,7 @@ export function AboutTeamSection({ members }: Props) {
   const [category, setCategory] = useState<'' | TeamMemberCategory>('advisory')
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<TeamMember | null>(null)
+  const trapRef = useFocusTrap(Boolean(selected), () => setSelected(null))
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -131,6 +133,7 @@ export function AboutTeamSection({ members }: Props) {
           onClick={() => setSelected(null)}
         >
           <div
+            ref={trapRef}
             className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >

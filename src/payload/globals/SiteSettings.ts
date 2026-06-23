@@ -120,29 +120,5 @@ export const SiteSettings: GlobalConfig = {
       label: 'WhatsApp help button label',
       defaultValue: 'Need Help? Chat with us',
     },
-    {
-      name: 'fellowshipPopupEnabled',
-      type: 'checkbox',
-      defaultValue: true,
-    },
-    {
-      name: 'fellowshipPopupTitle',
-      type: 'text',
-      defaultValue: '2026 Future Trade Leaders Fellowship',
-    },
-    {
-      name: 'fellowshipPopupBody',
-      type: 'textarea',
-    },
-    {
-      name: 'fellowshipPopupDeadline',
-      type: 'text',
-      defaultValue: '30th May, 2026',
-    },
-    {
-      name: 'fellowshipPopupApplyUrl',
-      type: 'text',
-      defaultValue: '/fellowship/apply',
-    },
   ],
 }

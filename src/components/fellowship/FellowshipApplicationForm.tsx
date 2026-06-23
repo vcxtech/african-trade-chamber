@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { submitForm, FELLOWSHIP_NOTIFY_EMAIL } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 
 const inputClass =
   'w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:border-[#002740] focus:outline-none focus:ring-2 focus:ring-[#002740]/15'
@@ -27,7 +28,8 @@ export function FellowshipApplicationForm({ applicationTitle }: Props) {
       formType: 'fellowship',
       email: String(fd.get('email') ?? ''),
       subject: `${applicationTitle} — Application`,
-      data: { ...data, notifyEmail: FELLOWSHIP_NOTIFY_EMAIL },
+      _website: getHoneypotValue(e.currentTarget),
+      data,
     })
 
     setSubmitting(false)
@@ -54,37 +56,52 @@ export function FellowshipApplicationForm({ applicationTitle }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="relative space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <FormHoneypot />
       {error ? <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-semibold">Full Name *</label>
-          <input name="fullName" required className={inputClass} />
+          <label htmlFor="fellowship-fullName" className="mb-1 block text-sm font-semibold">
+            Full Name *
+          </label>
+          <input id="fellowship-fullName" name="fullName" required className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Email *</label>
-          <input name="email" type="email" required className={inputClass} />
+          <label htmlFor="fellowship-email" className="mb-1 block text-sm font-semibold">
+            Email *
+          </label>
+          <input id="fellowship-email" name="email" type="email" required className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Phone *</label>
-          <input name="phone" type="tel" required className={inputClass} />
+          <label htmlFor="fellowship-phone" className="mb-1 block text-sm font-semibold">
+            Phone *
+          </label>
+          <input id="fellowship-phone" name="phone" type="tel" required className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Country *</label>
-          <input name="country" required className={inputClass} />
+          <label htmlFor="fellowship-country" className="mb-1 block text-sm font-semibold">
+            Country *
+          </label>
+          <input id="fellowship-country" name="country" required className={inputClass} />
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-sm font-semibold">Organization / Business *</label>
-        <input name="organization" required className={inputClass} />
+        <label htmlFor="fellowship-organization" className="mb-1 block text-sm font-semibold">
+          Organization / Business *
+        </label>
+        <input id="fellowship-organization" name="organization" required className={inputClass} />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-semibold">Why do you want to join the fellowship? *</label>
-        <textarea name="motivation" required rows={5} className={inputClass} />
+        <label htmlFor="fellowship-motivation" className="mb-1 block text-sm font-semibold">
+          Why do you want to join the fellowship? *
+        </label>
+        <textarea id="fellowship-motivation" name="motivation" required rows={5} className={inputClass} />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-semibold">LinkedIn or portfolio URL</label>
-        <input name="linkedin" type="url" className={inputClass} />
+        <label htmlFor="fellowship-linkedin" className="mb-1 block text-sm font-semibold">
+          LinkedIn or portfolio URL
+        </label>
+        <input id="fellowship-linkedin" name="linkedin" type="url" className={inputClass} />
       </div>
       <button
         type="submit"

@@ -23,11 +23,6 @@ export type SiteSettingsData = {
   showTranslator?: boolean
   showWhatsappHelp?: boolean
   whatsappHelpLabel?: string
-  fellowshipPopupEnabled?: boolean
-  fellowshipPopupTitle?: string
-  fellowshipPopupBody?: string
-  fellowshipPopupDeadline?: string
-  fellowshipPopupApplyUrl?: string
 }
 
 export type HeroSlide = {

@@ -18,7 +18,7 @@ export function WhatsAppHelpButton({ phone, label = 'Need Help? Chat with us' }:
   const href = toWhatsAppUrl(phone)
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9990] flex items-center gap-2">
+    <div className="fixed bottom-6 right-6 z-[9985] flex items-center gap-2">
       <span className="hidden rounded-lg bg-white px-3 py-2 text-sm font-medium text-atc-navy shadow-[0_4px_14px_rgba(0,0,0,0.15)] sm:inline-block">
         {label}
       </span>

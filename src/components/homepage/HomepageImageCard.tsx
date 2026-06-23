@@ -31,7 +31,7 @@ export function HomepageImageCard({ card, imageHeight = 'default', className = '
       <div className="relative flex flex-1 flex-col p-5 pb-16">
         <h3 className="text-lg font-bold text-atc-navy">{card.title}</h3>
         {card.description ? (
-          <p className="mt-3 text-sm leading-relaxed text-[#4a4a4a]">{card.description}</p>
+          <p className="mt-3 text-sm leading-relaxed text-atc-muted">{card.description}</p>
         ) : null}
         {card.buttonText && card.buttonUrl ? (
           <HomepageCta href={card.buttonUrl} variant="card">

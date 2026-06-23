@@ -1,6 +1,7 @@
 'use client'
 
 import { fellowCategoriesLabel } from '@/lib/fellow-card'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import type { Fellow } from '@/types/fellow'
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export function FellowBioModal({ fellow, onClose }: Props) {
+  const trapRef = useFocusTrap(Boolean(fellow), onClose)
   if (!fellow) return null
 
   const memberCode =
@@ -23,6 +25,7 @@ export function FellowBioModal({ fellow, onClose }: Props) {
       onClick={onClose}
     >
       <div
+        ref={trapRef}
         className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >

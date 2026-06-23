@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { submitForm } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 
 type Props = { financeEmail: string }
 
@@ -29,7 +30,8 @@ export function DonateForm({ financeEmail }: Props) {
       formType: 'donate',
       email: String(fd.get('donor_email') ?? ''),
       subject: `ATC Donation - ${fd.get('donor_name')}`,
-      data: { ...data, notifyEmail: financeEmail },
+      _website: getHoneypotValue(e.currentTarget),
+      data,
     })
 
     setSubmitting(false)
@@ -56,6 +58,7 @@ export function DonateForm({ financeEmail }: Props) {
       ) : (
       <>
       {error ? <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
+      <FormHoneypot />
       <div className="space-y-4">
         <div>
           <label htmlFor="donor_name" className="mb-1 block text-sm font-semibold">

@@ -52,7 +52,25 @@ div#gt_float_wrapper {
   left: 1.5rem;
 }
 
+@media (max-width: 640px) {
+  div#gt_float_wrapper {
+    bottom: 5.5rem;
+  }
+}
+
 .gt_float_switcher .gt_options,
 .gt_float_switcher .gt_options.gt-open {
   z-index: 9991;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

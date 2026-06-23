@@ -13,9 +13,9 @@ export function WhatWeDoHomepage({ data }: Props) {
     <section className="bg-white py-12 sm:py-16" aria-label="What we do">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <header className="mb-10 text-center">
-          <p className="mx-auto max-w-3xl text-xl font-semibold text-atc-navy">{data.headerTitle}</p>
+          <h2 className="mx-auto max-w-3xl text-xl font-semibold text-atc-navy">{data.headerTitle}</h2>
           {paragraphs.map((p, i) => (
-            <p key={i} className="mx-auto mt-3 max-w-3xl text-base text-[#4a4a4a]">
+            <p key={i} className="mx-auto mt-3 max-w-3xl text-base text-atc-muted">
               {p.trim()}
             </p>
           ))}
@@ -38,7 +38,7 @@ export function WhatWeDoHomepage({ data }: Props) {
             <div className="relative flex flex-1 flex-col p-6 sm:p-8">
               <h3 className="text-2xl font-bold text-atc-navy">{data.intro.title}</h3>
               {data.intro.description ? (
-                <p className="mt-3 text-base leading-relaxed text-[#4a4a4a]">
+                <p className="mt-3 text-base leading-relaxed text-atc-muted">
                   {data.intro.description}
                 </p>
               ) : null}

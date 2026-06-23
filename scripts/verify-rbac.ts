@@ -113,7 +113,10 @@ async function main() {
   })
   record('Admin login', Boolean(adminLogin.token), adminLogin.user?.email ?? 'no user')
 
-  const editorId = await upsertUser(payload, editorEmail, editorPassword, 'editor')
+  const editorId = await upsertUser(payload, editorEmail, editorPassword, 'editor', [
+    'communications',
+    'membership',
+  ])
 
   const editorLogin = await payload.login({
     collection: 'users',

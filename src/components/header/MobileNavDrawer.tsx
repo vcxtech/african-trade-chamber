@@ -14,6 +14,7 @@ type Props = {
   onClose: () => void
   onSearch: () => void
   items: NavItem[]
+  utilityLinks?: NavLink[]
 }
 
 function ChevronRight({ className = '' }: { className?: string }) {
@@ -117,6 +118,7 @@ function MobileNavPanel({
   onDrillChild,
   onNavigate,
   onSearch,
+  utilityLinks = [],
 }: {
   panel: MobilePanel
   index: number
@@ -127,6 +129,7 @@ function MobileNavPanel({
   onDrillChild: (child: NavChild) => void
   onNavigate: () => void
   onSearch: () => void
+  utilityLinks?: NavLink[]
 }) {
   const isRoot = panel.kind === 'root'
   const [entered, setEntered] = useState(false)
@@ -224,6 +227,20 @@ function MobileNavPanel({
 
       {isRoot ? (
         <div className="shrink-0 border-t border-atc-navy/20 p-4">
+          {utilityLinks.length > 0 ? (
+            <nav className="mb-3 flex flex-wrap gap-x-3 gap-y-2" aria-label="Quick links">
+              {utilityLinks.map((link) => (
+                <NavHref
+                  key={link.href + link.label}
+                  href={link.href}
+                  className="text-[11px] font-semibold text-atc-navy underline-offset-2 hover:underline"
+                  onClick={onNavigate}
+                >
+                  {link.label}
+                </NavHref>
+              ))}
+            </nav>
+          ) : null}
           <button
             type="button"
             onClick={onSearch}
@@ -238,7 +255,7 @@ function MobileNavPanel({
   )
 }
 
-export function MobileNavDrawer({ open, onClose, onSearch, items }: Props) {
+export function MobileNavDrawer({ open, onClose, onSearch, items, utilityLinks = [] }: Props) {
   const [stack, setStack] = useState<MobilePanel[]>([{ kind: 'root' }])
   const [visible, setVisible] = useState(false)
 
@@ -317,6 +334,7 @@ export function MobileNavDrawer({ open, onClose, onSearch, items }: Props) {
           }
           onNavigate={handleNavigate}
           onSearch={handleSearch}
+          utilityLinks={utilityLinks}
         />
       ))}
     </div>

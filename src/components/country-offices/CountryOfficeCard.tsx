@@ -1,14 +1,29 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { HEADER_GRADIENTS } from '@/components/country-offices/country-header-gradients'
+import {
+  IconBuilding,
+  IconComment,
+  IconEnvelope,
+  IconPhone,
+} from '@/components/contact/ContactIcons'
 import { getCountryFlagUrl } from '@/lib/country-flag'
 import type { CountryOffice, EventStatusType, OfficeStatusType } from '@/types/country-offices'
 
-const CONTACT_ICONS: Record<string, string> = {
-  location: '📍',
-  phone: '📞',
-  email: '✉️',
-  note: '📋',
+function ContactTypeIcon({ type }: { type: string }) {
+  const className = 'h-4 w-4 shrink-0 text-atc-navy'
+  switch (type) {
+    case 'location':
+      return <IconBuilding className={className} />
+    case 'phone':
+      return <IconPhone className={className} />
+    case 'email':
+      return <IconEnvelope className={className} />
+    case 'note':
+      return <IconComment className={className} />
+    default:
+      return <span className="w-4 shrink-0 text-center text-xs">•</span>
+  }
 }
 
 function officeBadgeClass(status: OfficeStatusType): string {
@@ -49,7 +64,7 @@ export function CountryOfficeCard({ office }: Props) {
         <div className="absolute left-3 top-3 z-10 overflow-hidden rounded shadow-md ring-1 ring-white/30">
           <Image
             src={flagUrl}
-            alt=""
+            alt={`${office.countryName} flag`}
             width={40}
             height={28}
             className="block h-7 w-10 object-cover"
@@ -72,8 +87,8 @@ export function CountryOfficeCard({ office }: Props) {
         <div className="mb-3 rounded-lg bg-slate-50 p-3">
           {office.contacts.map((contact, i) => (
             <p key={i} className="mb-1.5 flex items-start gap-2 text-xs text-slate-700 last:mb-0">
-              <span className="mt-0.5 w-4 shrink-0 text-center text-sm leading-none">
-                {CONTACT_ICONS[contact.type] || '•'}
+              <span className="mt-0.5">
+                <ContactTypeIcon type={contact.type} />
               </span>
               {contact.type === 'email' ? (
                 <a href={`mailto:${contact.value}`} className="break-all hover:text-atc-navy hover:underline">

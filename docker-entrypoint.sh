@@ -12,7 +12,7 @@ if [ -z "$NEXT_PUBLIC_SERVER_URL" ]; then
   exit 1
 fi
 
-if [ "${AUTO_SEED:-true}" = "true" ]; then
+if [ "${AUTO_SEED:-false}" = "true" ]; then
   if [ -n "$DATABASE_URI" ] && [ -n "$PAYLOAD_SECRET" ]; then
     if [ -z "$SEED_ADMIN_EMAIL" ] || [ -z "$SEED_ADMIN_PASSWORD" ]; then
       echo "Error: AUTO_SEED=true requires SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD."

@@ -209,13 +209,6 @@ export async function getSiteSettings(): Promise<SiteSettingsData> {
       showWhatsappHelp: global.showWhatsappHelp ?? defaultSiteSettings.showWhatsappHelp,
       whatsappHelpLabel:
         global.whatsappHelpLabel || defaultSiteSettings.whatsappHelpLabel,
-      fellowshipPopupEnabled: global.fellowshipPopupEnabled ?? true,
-      fellowshipPopupTitle: global.fellowshipPopupTitle || defaultSiteSettings.fellowshipPopupTitle,
-      fellowshipPopupBody: global.fellowshipPopupBody || defaultSiteSettings.fellowshipPopupBody,
-      fellowshipPopupDeadline:
-        global.fellowshipPopupDeadline || defaultSiteSettings.fellowshipPopupDeadline,
-      fellowshipPopupApplyUrl:
-        global.fellowshipPopupApplyUrl || defaultSiteSettings.fellowshipPopupApplyUrl,
     }
   } catch {
     return defaultSiteSettings

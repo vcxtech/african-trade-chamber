@@ -48,6 +48,13 @@ import { getPayloadCookieSecure, getPrimaryServerURL, getServerURLs } from './li
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const DEV_PAYLOAD_SECRET = 'dev-secret-change-me'
+const payloadSecret = process.env.PAYLOAD_SECRET || (process.env.NODE_ENV === 'production' ? '' : DEV_PAYLOAD_SECRET)
+
+if (process.env.NODE_ENV === 'production' && (!payloadSecret || payloadSecret === DEV_PAYLOAD_SECRET)) {
+  throw new Error('PAYLOAD_SECRET must be set to a strong value in production')
+}
+
 const serverURLs = getServerURLs()
 const serverURL = getPrimaryServerURL()
 
@@ -126,7 +133,7 @@ export default buildConfig({
     AboutPage,
   ],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || 'dev-secret-change-me',
+  secret: payloadSecret,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

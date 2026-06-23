@@ -61,11 +61,6 @@ async function main() {
       showTranslator: defaultSiteSettings.showTranslator,
       showWhatsappHelp: defaultSiteSettings.showWhatsappHelp,
       whatsappHelpLabel: defaultSiteSettings.whatsappHelpLabel,
-      fellowshipPopupEnabled: defaultSiteSettings.fellowshipPopupEnabled,
-      fellowshipPopupTitle: defaultSiteSettings.fellowshipPopupTitle,
-      fellowshipPopupBody: defaultSiteSettings.fellowshipPopupBody,
-      fellowshipPopupDeadline: defaultSiteSettings.fellowshipPopupDeadline,
-      fellowshipPopupApplyUrl: defaultSiteSettings.fellowshipPopupApplyUrl,
     },
   })
   console.log('Updated site-settings global')

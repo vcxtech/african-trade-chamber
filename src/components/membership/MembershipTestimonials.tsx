@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import type { MemberTestimonial } from '@/types/membership-page'
 
 type Props = {
@@ -32,6 +33,7 @@ export function MembershipTestimonials({
   standalone = false,
 }: Props) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const reducedMotion = usePrefersReducedMotion()
   const count = testimonials.length
 
   const goTo = useCallback(
@@ -46,12 +48,12 @@ export function MembershipTestimonials({
   const goPrev = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo])
 
   useEffect(() => {
-    if (!count) return
+    if (!count || reducedMotion) return
     const timer = window.setInterval(() => {
       setActiveIndex((i) => (i + 1) % count)
     }, INTERVAL_MS)
     return () => window.clearInterval(timer)
-  }, [count])
+  }, [count, reducedMotion])
 
   if (!count) return null
 

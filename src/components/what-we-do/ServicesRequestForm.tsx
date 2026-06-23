@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { AFRICAN_COUNTRIES } from '@/lib/african-countries'
-import { submitForm } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 
 const SERVICE_OPTIONS = [
   'Market Entry Support',
@@ -29,9 +30,6 @@ const BUSINESS_SIZES = [
   'SME',
   'Startup',
 ] as const
-
-const REQUEST_EMAIL =
-  process.env.NEXT_PUBLIC_SERVICE_REQUEST_EMAIL || 'info@africantradechamber.org'
 
 type FormState = {
   fullName: string
@@ -141,7 +139,7 @@ export function ServicesRequestForm({
     return Object.keys(next).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setFormError(null)
     setSuccess(null)
@@ -155,7 +153,8 @@ export function ServicesRequestForm({
       formType: 'service-request',
       email: form.email,
       subject: `New Service Request - ${form.companyName} (${contextLabel})`,
-      data: { ...form, contextLabel, notifyEmail: REQUEST_EMAIL },
+      _website: getHoneypotValue(e.currentTarget),
+      data: { ...form, contextLabel },
     })
 
     if (result.ok) {
@@ -202,9 +201,10 @@ export function ServicesRequestForm({
 
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl bg-white p-6 shadow-lg sm:p-10"
+          className="relative rounded-2xl bg-white p-6 shadow-lg sm:p-10"
           noValidate
         >
+          <FormHoneypot />
           <fieldset className="mb-8 border-b-2 border-slate-100 pb-8">
             <legend className="mb-5 inline-block border-b-2 border-amber-400 pb-1 text-sm font-bold text-black">
               Contact Information

@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { submitForm, CAREERS_NOTIFY_EMAIL } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 import type { CareerJob } from '@/types/career-job'
 
 type Props = {
@@ -67,10 +68,10 @@ export function JobApplicationForm({ job }: Props) {
       email: email || undefined,
       subject: `Job Application — ${job.title} (${job.jobId})`,
       jobSlug: job.slug,
+      _website: getHoneypotValue(e.currentTarget),
       data: {
         jobTitle: job.title,
         jobId: job.jobId,
-        notifyEmail: CAREERS_NOTIFY_EMAIL,
         ...merged,
       },
     })
@@ -131,8 +132,9 @@ export function JobApplicationForm({ job }: Props) {
 
       <form
         onSubmit={step === STEPS.length - 1 ? handleSubmit : handleNext}
-        className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg md:p-8"
+        className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-lg md:p-8"
       >
+        <FormHoneypot />
         <h2 className="section-title mb-6 text-xl font-bold text-[#002740]">
           Step {step + 1} of {STEPS.length} — {STEPS[step]}
         </h2>

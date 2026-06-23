@@ -10,9 +10,9 @@ export function IndustryCouncilsHomepage({ data }: Props) {
   return (
     <section className="bg-white py-12 sm:py-16" aria-label="Industry councils">
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <header className="mb-10 hidden text-center">
+        <header className="mb-10 text-center">
           <h2 className="text-3xl font-bold text-atc-navy">{data.headerTitle}</h2>
-          <p className="mx-auto mt-3 max-w-3xl text-[#4a4a4a]">{data.headerDescription}</p>
+          <p className="mx-auto mt-3 max-w-3xl text-atc-muted">{data.headerDescription}</p>
           {data.headerButtonText && data.headerButtonUrl ? (
             <HomepageCta href={data.headerButtonUrl} variant="header">
               {data.headerButtonText}
@@ -37,7 +37,7 @@ export function IndustryCouncilsHomepage({ data }: Props) {
             <div className="relative flex flex-1 flex-col p-6 sm:p-8">
               <h3 className="text-2xl font-bold text-atc-navy">{data.intro.title}</h3>
               {data.intro.text ? (
-                <p className="mt-3 text-base leading-relaxed text-[#4a4a4a]">{data.intro.text}</p>
+                <p className="mt-3 text-base leading-relaxed text-atc-muted">{data.intro.text}</p>
               ) : null}
               {data.intro.buttonText && data.intro.buttonUrl ? (
                 <HomepageCta href={data.intro.buttonUrl}>{data.intro.buttonText}</HomepageCta>

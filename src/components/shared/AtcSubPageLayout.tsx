@@ -12,7 +12,7 @@ type Props = {
 export function AtcSubPageLayout({ title, subtitle, backHref, backLabel, children }: Props) {
   return (
     <div className="bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] py-6 text-black">
-      <div className="mx-auto max-w-[1200px] px-5 py-6">
+      <div className="mx-auto max-w-7xl px-5 py-6">
         <nav className="mb-6">
           <Link
             href={backHref}

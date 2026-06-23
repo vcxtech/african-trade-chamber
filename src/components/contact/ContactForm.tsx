@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { submitForm } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 
 type Props = {
   formTitle: string
@@ -34,7 +35,8 @@ export function ContactForm({
       formType: 'contact',
       email: String(fd.get('email') ?? ''),
       subject,
-      data: { ...data, notifyEmail: formEmail },
+      _website: getHoneypotValue(e.currentTarget),
+      data,
     })
 
     setSubmitting(false)
@@ -58,7 +60,8 @@ export function ContactForm({
       ) : (
       <>
       {error ? <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="relative space-y-4">
+        <FormHoneypot />
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="contact-fullName" className="mb-1 block text-sm font-semibold text-[#002740]">

@@ -12,7 +12,8 @@ import {
   Step7Success,
 } from '@/components/membership/apply/MembershipApplyFormFields'
 import { buildMailtoBody, validateFormStep } from '@/components/membership/apply/membership-apply-form-utils'
-import { submitFormMultipart, MEMBERSHIP_NOTIFY_EMAIL } from '@/lib/form-submit'
+import { submitFormMultipart } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
 
 const TOTAL_STEPS = 6
 const NAVY = '#002740'
@@ -131,7 +132,6 @@ export function MembershipApplicationForm() {
       'data',
       JSON.stringify({
         summaryBody: body,
-        notifyEmail: MEMBERSHIP_NOTIFY_EMAIL,
       }),
     )
 
@@ -199,7 +199,8 @@ export function MembershipApplicationForm() {
         </div>
       )}
 
-      <form ref={formRef} id="membershipForm" onSubmit={handleSubmit}>
+      <form ref={formRef} id="membershipForm" onSubmit={handleSubmit} className="relative">
+        <FormHoneypot />
         <div className="px-5 py-6 sm:px-8 sm:py-8 [&_.input-error]:!border-red-500 [&_.input-error]:!ring-red-500/20">
           <Step1Organization />
           <Step2Contact />

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { submitForm, SME_COUNCIL_NOTIFY_EMAIL } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 
 const inputClass =
   'w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:border-[#002740] focus:outline-none focus:ring-2 focus:ring-[#002740]/15'
@@ -23,7 +24,8 @@ export function SmeCouncilParticipationForm() {
       formType: 'sme-council',
       email: String(fd.get('email') ?? ''),
       subject: `SME Council Participation Request — ${orgName}`,
-      data: { ...data, notifyEmail: SME_COUNCIL_NOTIFY_EMAIL },
+      _website: getHoneypotValue(e.currentTarget),
+      data,
     })
 
     setSubmitting(false)
@@ -45,7 +47,8 @@ export function SmeCouncilParticipationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-4 text-left">
+    <form onSubmit={handleSubmit} className="relative mx-auto max-w-xl space-y-4 text-left">
+      <FormHoneypot />
       {error ? <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">

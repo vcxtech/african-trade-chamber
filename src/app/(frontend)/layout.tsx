@@ -40,6 +40,12 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   return (
     <html lang="en">
       <body className={`${poppins.variable} font-sans`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[10000] focus:rounded-md focus:bg-atc-yellow focus:px-4 focus:py-2 focus:font-semibold focus:text-atc-navy"
+        >
+          Skip to content
+        </a>
         <div className="flex min-h-screen flex-col">
           <Header
             settings={{
@@ -49,7 +55,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
               headerNav: settings.headerNav,
             }}
           />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">{children}</main>
           <Footer
             settings={{
               siteName: settings.siteName,

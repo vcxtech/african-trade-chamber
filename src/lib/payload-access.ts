@@ -43,7 +43,7 @@ export function hasContentArea(user: AtcUser | null | undefined, area: ContentAr
   if (!user) return false
   if (user.role === 'admin') return true
   const areas = user.contentAreas
-  if (!areas || areas.length === 0) return true
+  if (!areas || areas.length === 0) return false
   return areas.includes(area)
 }
 

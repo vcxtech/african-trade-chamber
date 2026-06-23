@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { SEARCH_MIN_QUERY_LENGTH } from '@/types/site-search'
 
 type Props = {
@@ -20,6 +21,7 @@ function SearchIcon() {
 export function SiteSearchModal({ open, onClose }: Props) {
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
+  const trapRef = useFocusTrap(open, onClose)
   const [query, setQuery] = useState('')
 
   useEffect(() => {
@@ -60,6 +62,7 @@ export function SiteSearchModal({ open, onClose }: Props) {
         onClick={onClose}
       />
       <div
+        ref={trapRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="site-search-title"
@@ -97,14 +100,14 @@ export function SiteSearchModal({ open, onClose }: Props) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search the site…"
-              className="w-full rounded-lg border border-white/20 bg-white py-3 pl-10 pr-3 text-sm text-[#002740] placeholder:text-slate-400 focus:border-[#fbbf24] focus:outline-none focus:ring-2 focus:ring-[#fbbf24]/30"
+              className="w-full rounded-lg border border-white/20 bg-white py-3 pl-10 pr-3 text-sm text-[#002740] placeholder:text-slate-400 focus:border-atc-yellow focus:outline-none focus:ring-2 focus:ring-atc-yellow/30"
               autoComplete="off"
             />
           </div>
           <button
             type="submit"
             disabled={query.trim().length < SEARCH_MIN_QUERY_LENGTH}
-            className="shrink-0 rounded-lg bg-[#fbbf24] px-5 py-3 text-sm font-semibold text-[#002740] transition hover:bg-[#f59e0b] disabled:cursor-not-allowed disabled:opacity-50"
+            className="shrink-0 rounded-lg bg-atc-yellow px-5 py-3 text-sm font-semibold text-[#002740] transition hover:bg-atc-gold disabled:cursor-not-allowed disabled:opacity-50"
           >
             Search
           </button>

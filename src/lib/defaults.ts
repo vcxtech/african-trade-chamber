@@ -1,5 +1,6 @@
 import type { HeroSlide, MembershipCategory, SiteSettingsData } from '@/types/content'
 import { defaultHeaderNav } from '@/lib/nav-header'
+import { defaultSiteSocialLinks } from '@/lib/social-links-defaults'
 
 export const defaultSiteSettings: SiteSettingsData = {
   siteName: 'African Trade Chamber',
@@ -12,21 +13,15 @@ export const defaultSiteSettings: SiteSettingsData = {
     { label: 'Latest News', href: '/news' },
     { label: 'Contact Us', href: '/contact-us' },
   ],
-  socialLinks: [
-    { platform: 'facebook', url: 'https://www.facebook.com/africantradechamber' },
-    { platform: 'linkedin', url: 'https://www.linkedin.com/company/african-trade-chamber' },
-    { platform: 'twitter', url: 'https://twitter.com/africantradechamber' },
-    { platform: 'youtube', url: 'https://www.youtube.com/@africantradechamber' },
-    { platform: 'instagram', url: 'https://www.instagram.com/africantradechamber' },
-  ],
+  socialLinks: defaultSiteSocialLinks,
   headerNav: defaultHeaderNav,
   footerColumns: [
     {
       title: 'About & Organization',
       links: [
         { label: 'Country Offices', href: '/country-offices' },
-        { label: 'Industry Councils', href: '/councils' },
-        { label: 'Cross-Sector Councils', href: '/councils' },
+        { label: 'Industry Councils', href: '/councils/industry' },
+        { label: 'Cross-Sector Councils', href: '/councils/cross-sector' },
       ],
     },
     {
@@ -56,12 +51,6 @@ export const defaultSiteSettings: SiteSettingsData = {
   showTranslator: true,
   showWhatsappHelp: true,
   whatsappHelpLabel: 'Need Help? Chat with us',
-  fellowshipPopupEnabled: true,
-  fellowshipPopupTitle: '2026 Future Trade Leaders Fellowship',
-  fellowshipPopupBody:
-    'Applications are now open for the 2026 Future Trade Leaders Fellowship Program. Join a 6-month experience designed to equip young entrepreneurs with enterprise skills, trade knowledge, mentorship, and high-impact networks.',
-  fellowshipPopupDeadline: '30th May, 2026',
-  fellowshipPopupApplyUrl: '/fellowship/apply',
 }
 
 export const defaultHeroSlides: HeroSlide[] = [

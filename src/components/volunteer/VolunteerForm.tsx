@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { AFRICAN_COUNTRIES } from '@/lib/membership-apply-data'
-import { submitForm } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 
 const ROLE_OPTIONS = [
   'Event Support',
@@ -31,7 +32,8 @@ export function VolunteerForm({ formEmail, submitLabel }: Props) {
       formType: 'volunteer',
       email: String(fd.get('email') ?? ''),
       subject: `ATC Volunteer Application - ${fd.get('fullName')}`,
-      data: { ...data, notifyEmail: formEmail },
+      _website: getHoneypotValue(e.currentTarget),
+      data,
     })
 
     setSubmitting(false)
@@ -53,25 +55,34 @@ export function VolunteerForm({ formEmail, submitLabel }: Props) {
         Thank you for your volunteer application. We will be in touch.
       </p>
     ) : (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="relative rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <FormHoneypot />
       {error ? <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
       <h3 className="mb-2 text-lg font-bold text-[#002740]">Personal Information</h3>
       <div className="mb-6 grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-semibold">Full Name *</label>
-          <input name="fullName" required className={inputClass} />
+          <label htmlFor="volunteer-fullName" className="mb-1 block text-sm font-semibold">
+            Full Name *
+          </label>
+          <input id="volunteer-fullName" name="fullName" required className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Email *</label>
-          <input name="email" type="email" required className={inputClass} />
+          <label htmlFor="volunteer-email" className="mb-1 block text-sm font-semibold">
+            Email *
+          </label>
+          <input id="volunteer-email" name="email" type="email" required className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Phone</label>
-          <input name="phone" type="tel" className={inputClass} />
+          <label htmlFor="volunteer-phone" className="mb-1 block text-sm font-semibold">
+            Phone
+          </label>
+          <input id="volunteer-phone" name="phone" type="tel" className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Country of Residence *</label>
-          <select name="country" required className={inputClass}>
+          <label htmlFor="volunteer-country" className="mb-1 block text-sm font-semibold">
+            Country of Residence *
+          </label>
+          <select id="volunteer-country" name="country" required className={inputClass}>
             <option value="">Select country</option>
             {AFRICAN_COUNTRIES.map((c) => (
               <option key={c} value={c}>
@@ -81,8 +92,10 @@ export function VolunteerForm({ formEmail, submitLabel }: Props) {
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Occupation/Status *</label>
-          <select name="status" required className={inputClass}>
+          <label htmlFor="volunteer-status" className="mb-1 block text-sm font-semibold">
+            Occupation/Status *
+          </label>
+          <select id="volunteer-status" name="status" required className={inputClass}>
             <option value="">Select</option>
             <option>Student</option>
             <option>Graduate</option>
@@ -92,8 +105,10 @@ export function VolunteerForm({ formEmail, submitLabel }: Props) {
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Area(s) of Expertise</label>
-          <input name="expertise" className={inputClass} />
+          <label htmlFor="volunteer-expertise" className="mb-1 block text-sm font-semibold">
+            Area(s) of Expertise
+          </label>
+          <input id="volunteer-expertise" name="expertise" className={inputClass} />
         </div>
       </div>
 
@@ -109,12 +124,16 @@ export function VolunteerForm({ formEmail, submitLabel }: Props) {
       </div>
       <div className="mb-4 grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-semibold">Hours per week</label>
-          <input name="availability" type="number" min={1} max={40} className={inputClass} />
+          <label htmlFor="volunteer-availability" className="mb-1 block text-sm font-semibold">
+            Hours per week
+          </label>
+          <input id="volunteer-availability" name="availability" type="number" min={1} max={40} className={inputClass} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-semibold">Preferred Duration</label>
-          <select name="duration" className={inputClass}>
+          <label htmlFor="volunteer-duration" className="mb-1 block text-sm font-semibold">
+            Preferred Duration
+          </label>
+          <select id="volunteer-duration" name="duration" className={inputClass}>
             <option value="">Select duration</option>
             <option>1 month</option>
             <option>2-3 months</option>
@@ -124,8 +143,10 @@ export function VolunteerForm({ formEmail, submitLabel }: Props) {
         </div>
       </div>
       <div className="mb-4">
-        <label className="mb-1 block text-sm font-semibold">Motivation Statement *</label>
-        <textarea name="motivation" required maxLength={750} rows={4} className={inputClass} />
+        <label htmlFor="volunteer-motivation" className="mb-1 block text-sm font-semibold">
+          Motivation Statement *
+        </label>
+        <textarea id="volunteer-motivation" name="motivation" required maxLength={750} rows={4} className={inputClass} />
       </div>
       <button
         type="submit"

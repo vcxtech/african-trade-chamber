@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SiteSearchModal } from '@/components/search/SiteSearchModal'
 import { MobileNavDrawer } from '@/components/header/MobileNavDrawer'
 import { SiteLogo } from '@/components/SiteLogo'
@@ -59,6 +59,15 @@ export function Header({ settings }: Props) {
     setMobileOpen(false)
     setSearchOpen(true)
   }
+
+  useEffect(() => {
+    if (!openDropdown) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenDropdown(null)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [openDropdown])
 
   return (
     <>
@@ -128,6 +137,7 @@ export function Header({ settings }: Props) {
         onClose={closeMobile}
         onSearch={openSearch}
         items={settings.headerNav}
+        utilityLinks={utilityLinks}
       />
     </>
   )
@@ -215,7 +225,22 @@ function NavDesktopItem({
       onMouseEnter={() => setOpenDropdown(key)}
       onMouseLeave={() => setOpenDropdown(null)}
     >
-      <Link href={item.href} className={linkClass} aria-expanded={isOpen}>
+      <Link
+        href={item.href}
+        className={linkClass}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+        onClick={(e) => {
+          e.preventDefault()
+          setOpenDropdown(isOpen ? null : key)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setOpenDropdown(isOpen ? null : key)
+          }
+        }}
+      >
         {item.label}
         <ChevronDown className={isOpen ? 'text-white' : 'text-atc-yellow'} />
       </Link>
@@ -233,6 +258,7 @@ function NavDesktopItem({
 }
 
 function NavDesktopChild({ child }: { child: NavChild }) {
+  const [flyoutOpen, setFlyoutOpen] = useState(false)
   const hasFlyout = Boolean(child.subItems?.length)
   const flyoutLeft = child.flyout === 'left'
 
@@ -245,25 +271,44 @@ function NavDesktopChild({ child }: { child: NavChild }) {
   }
 
   return (
-    <div className="group relative">
+    <div
+      className="relative"
+      onMouseEnter={() => setFlyoutOpen(true)}
+      onMouseLeave={() => setFlyoutOpen(false)}
+    >
       <Link
         href={child.href}
         className={`${dropdownLinkClass} flex items-center justify-between gap-3 pr-4`}
+        aria-expanded={flyoutOpen}
+        aria-haspopup="true"
+        onClick={(e) => {
+          e.preventDefault()
+          setFlyoutOpen((open) => !open)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setFlyoutOpen((open) => !open)
+          }
+          if (e.key === 'Escape') setFlyoutOpen(false)
+        }}
       >
         <span>{child.label}</span>
         <ChevronRight />
       </Link>
-      <div
-        className={`absolute top-0 z-[60] hidden min-w-[280px] group-hover:block ${dropdownPanelClass} ${
-          flyoutLeft ? 'right-full' : 'left-full'
-        }`}
-      >
-        {child.subItems!.map((sub) => (
-          <Link key={sub.href + sub.label} href={sub.href} className={dropdownLinkClass}>
-            {sub.label}
-          </Link>
-        ))}
-      </div>
+      {flyoutOpen ? (
+        <div
+          className={`absolute top-0 z-[60] min-w-[280px] ${dropdownPanelClass} ${
+            flyoutLeft ? 'right-full' : 'left-full'
+          }`}
+        >
+          {child.subItems!.map((sub) => (
+            <Link key={sub.href + sub.label} href={sub.href} className={dropdownLinkClass}>
+              {sub.label}
+            </Link>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

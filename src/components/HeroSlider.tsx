@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import type { HeroSlide } from '@/types/content'
 import { canOptimizeImage, getNextImageSrc } from '@/lib/image-url'
 
@@ -117,6 +118,7 @@ function HeroSideMedia({
 
 export function HeroSlider({ slides }: Props) {
   const [index, setIndex] = useState(0)
+  const reducedMotion = usePrefersReducedMotion()
   const active = slides[index] ?? slides[0]
 
   const goTo = useCallback((i: number) => {
@@ -128,10 +130,10 @@ export function HeroSlider({ slides }: Props) {
   }, [slides.length])
 
   useEffect(() => {
-    if (slides.length <= 1) return
+    if (slides.length <= 1 || reducedMotion) return
     const timer = setInterval(next, 7000)
     return () => clearInterval(timer)
-  }, [next, slides.length])
+  }, [next, slides.length, reducedMotion])
 
   useEffect(() => {
     if (slides.length <= 1) return

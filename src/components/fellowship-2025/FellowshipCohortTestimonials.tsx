@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import type { FellowTestimonial, ResourceTestimonial } from '@/types/fellowship'
 
 type ModalState = {
@@ -95,6 +96,7 @@ function TestimonialModal({
   modal: ModalState | null
   onClose: () => void
 }) {
+  const trapRef = useFocusTrap(Boolean(modal), onClose)
   useEffect(() => {
     if (!modal) return
     const onKey = (e: KeyboardEvent) => {
@@ -118,6 +120,7 @@ function TestimonialModal({
       onClick={onClose}
     >
       <div
+        ref={trapRef}
         className="relative max-h-[80vh] w-full max-w-[600px] overflow-y-auto rounded-xl bg-white p-10"
         onClick={(e) => e.stopPropagation()}
       >

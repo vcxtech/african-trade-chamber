@@ -15,6 +15,7 @@ export type SubmitFormPayload = {
   subject?: string
   jobSlug?: string
   data: Record<string, unknown>
+  _website?: string
 }
 
 async function parseSubmitResponse(res: Response): Promise<{ ok: boolean; error?: string }> {
@@ -52,17 +53,7 @@ export async function submitFormMultipart(
   }
 }
 
-export const MEMBERSHIP_NOTIFY_EMAIL =
-  process.env.NEXT_PUBLIC_MEMBERSHIP_NOTIFY_EMAIL ?? 'info@africantradechamber.org'
-
-export const FELLOWSHIP_NOTIFY_EMAIL =
-  process.env.NEXT_PUBLIC_FELLOWSHIP_NOTIFY_EMAIL ?? 'info@africantradechamber.org'
-
-export const CAREERS_NOTIFY_EMAIL =
-  process.env.NEXT_PUBLIC_CAREERS_NOTIFY_EMAIL ?? 'info@africantradechamber.org'
-
-export const NEWSLETTER_NOTIFY_EMAIL =
-  process.env.NEXT_PUBLIC_NEWSLETTER_NOTIFY_EMAIL ?? 'info@africantradechamber.org'
-
-export const SME_COUNCIL_NOTIFY_EMAIL =
-  process.env.NEXT_PUBLIC_SME_COUNCIL_NOTIFY_EMAIL ?? 'info@africantradechamber.org'
+export function getHoneypotValue(form: HTMLFormElement): string {
+  const value = new FormData(form).get('_website')
+  return typeof value === 'string' ? value : ''
+}

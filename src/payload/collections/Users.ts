@@ -108,7 +108,7 @@ export const Users: CollectionConfig = {
         position: 'sidebar',
         condition: (_, __, { user }) => (user as AtcUser | undefined)?.role === 'admin',
         description:
-          'Leave empty to grant all content areas (except Site Settings and Users). Restrict editors to specific teams.',
+          'Assign at least one content area. Editors cannot access content until areas are assigned.',
       },
     },
     {

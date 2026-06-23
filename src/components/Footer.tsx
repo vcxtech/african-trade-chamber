@@ -18,11 +18,34 @@ function FooterColumnHeading({ title }: { title: string }) {
   )
 }
 
+function FooterLink({
+  href,
+  label,
+}: {
+  href: string
+  label: string
+}) {
+  const className = 'text-sm text-white/90 transition hover:text-atc-yellow'
+
+  if (href.startsWith('http')) {
+    return (
+      <a href={href} className={className} target="_blank" rel="noopener noreferrer">
+        {label}
+      </a>
+    )
+  }
+
+  return (
+    <Link href={href} className={className}>
+      {label}
+    </Link>
+  )
+}
+
 export function Footer({ settings }: Props) {
   return (
     <footer className="bg-atc-navy text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:gap-12 lg:grid-cols-4 lg:px-8 lg:py-14">
-        {/* Column 1: logo + address + email (live site + our logo) */}
         <div>
           <SiteLogo href="/" heightClass="h-11 sm:h-12" />
           <p className="sr-only">{settings.siteName}</p>
@@ -51,12 +74,7 @@ export function Footer({ settings }: Props) {
             <ul className="space-y-2.5">
               {col.links.map((link) => (
                 <li key={link.href + link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-white/90 transition hover:text-atc-yellow"
-                  >
-                    {link.label}
-                  </Link>
+                  <FooterLink href={link.href} label={link.label} />
                 </li>
               ))}
             </ul>
@@ -65,7 +83,7 @@ export function Footer({ settings }: Props) {
       </div>
 
       <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
-        © {new Date().getFullYear()} {settings.siteName}. All rights reserved.
+        © 2025 {settings.siteName}. All rights reserved.
       </div>
     </footer>
   )

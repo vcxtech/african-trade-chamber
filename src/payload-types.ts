@@ -203,7 +203,7 @@ export interface User {
   phone?: string | null;
   role?: ('admin' | 'editor') | null;
   /**
-   * Leave empty to grant all content areas (except Site Settings and Users). Restrict editors to specific teams.
+   * Assign at least one content area. Editors cannot access content until areas are assigned.
    */
   contentAreas?: ('communications' | 'homepage' | 'programs' | 'membership' | 'careers')[] | null;
   /**
@@ -1349,11 +1349,6 @@ export interface SiteSetting {
   showTranslator?: boolean | null;
   showWhatsappHelp?: boolean | null;
   whatsappHelpLabel?: string | null;
-  fellowshipPopupEnabled?: boolean | null;
-  fellowshipPopupTitle?: string | null;
-  fellowshipPopupBody?: string | null;
-  fellowshipPopupDeadline?: string | null;
-  fellowshipPopupApplyUrl?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2135,11 +2130,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   showTranslator?: T;
   showWhatsappHelp?: T;
   whatsappHelpLabel?: T;
-  fellowshipPopupEnabled?: T;
-  fellowshipPopupTitle?: T;
-  fellowshipPopupBody?: T;
-  fellowshipPopupDeadline?: T;
-  fellowshipPopupApplyUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

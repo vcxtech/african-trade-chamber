@@ -14,6 +14,7 @@ const config: Config = {
           gold: '#e6b14a',
           yellow: '#fece00',
           light: '#f5f7fa',
+          muted: '#4a4a4a',
         },
       },
       fontFamily: {

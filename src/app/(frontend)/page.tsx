@@ -3,18 +3,13 @@ import { HeroFeatureCards } from '@/components/homepage/HeroFeatureCards'
 import { IndustryCouncilsHomepage } from '@/components/homepage/IndustryCouncilsHomepage'
 import { ThreeCardHomepageSection } from '@/components/homepage/ThreeCardHomepageSection'
 import { WhatWeDoHomepage } from '@/components/homepage/WhatWeDoHomepage'
-import { FellowshipPopup } from '@/components/FellowshipPopup'
 import { HeroPreload } from '@/components/HeroPreload'
 import { HeroSlider } from '@/components/HeroSlider'
-import { getHeroSlides, getSiteSettings } from '@/lib/cms'
+import { getHeroSlides } from '@/lib/cms'
 import { getHomepageSections } from '@/lib/cms-homepage'
 
 export default async function HomePage() {
-  const [slides, settings, sections] = await Promise.all([
-    getHeroSlides(),
-    getSiteSettings(),
-    getHomepageSections(),
-  ])
+  const [slides, sections] = await Promise.all([getHeroSlides(), getHomepageSections()])
 
   const firstSlide = slides[0]
 
@@ -31,7 +26,6 @@ export default async function HomePage() {
       <ThreeCardHomepageSection data={sections.events} ariaLabel="Events" />
       <ThreeCardHomepageSection data={sections.getInvolved} ariaLabel="Get involved" />
       <ThreeCardHomepageSection data={sections.news} ariaLabel="News" />
-      <FellowshipPopup settings={settings} />
     </>
   )
 }

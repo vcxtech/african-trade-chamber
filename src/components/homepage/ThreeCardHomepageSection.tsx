@@ -13,7 +13,7 @@ export function ThreeCardHomepageSection({ data, ariaLabel }: Props) {
       <div className="mx-auto max-w-7xl px-4 lg:px-8">
         <header className="mb-10 text-center">
           <h2 className="text-3xl font-bold text-atc-navy">{data.sectionTitle}</h2>
-          <p className="mx-auto mt-3 max-w-3xl text-base text-[#4a4a4a]">{data.sectionDescription}</p>
+          <p className="mx-auto mt-3 max-w-3xl text-base text-atc-muted">{data.sectionDescription}</p>
           {data.sectionCtaText && data.sectionCtaUrl ? (
             <HomepageCta href={data.sectionCtaUrl} variant="header">
               {data.sectionCtaText}

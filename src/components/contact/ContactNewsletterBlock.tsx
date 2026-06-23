@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { submitForm, NEWSLETTER_NOTIFY_EMAIL } from '@/lib/form-submit'
+import { FormHoneypot } from '@/components/forms/FormHoneypot'
+import { getHoneypotValue, submitForm } from '@/lib/form-submit'
 
 type Props = {
   title: string
@@ -25,10 +26,8 @@ export function ContactNewsletterBlock({ title, body, submitLabel, successMessag
       formType: 'newsletter',
       email: String(fd.get('email') ?? ''),
       subject: 'Newsletter signup',
-      data: {
-        ...(Object.fromEntries(fd.entries()) as Record<string, unknown>),
-        notifyEmail: NEWSLETTER_NOTIFY_EMAIL,
-      },
+      _website: getHoneypotValue(e.currentTarget),
+      data: Object.fromEntries(fd.entries()) as Record<string, unknown>,
     })
 
     setSubmitting(false)
@@ -55,7 +54,8 @@ export function ContactNewsletterBlock({ title, body, submitLabel, successMessag
           {successMessage}
         </p>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="relative space-y-4">
+          <FormHoneypot />
           {error ? <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p> : null}
           <div>
             <label htmlFor="newsletter-name" className="mb-1 block text-sm font-semibold text-[#002740]">
